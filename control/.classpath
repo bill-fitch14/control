@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Program Files (x86)/JMRI/lib/x64"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/appFramework-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="C:/Users/bill/eclipse-mars/libs/com.evelopers.unimod.adapter.standalone_1.3.38/com.evelopers.unimod.adapter.standalone_1.3.1.37.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bill/eclipse-mars/libs/com.evelopers.unimod.core_1.3.38/com.evelopers.unimod.core_1.3.1.37.jar"/>
+	<classpathentry kind="lib" path="lib/DeepCopyUtil.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jama.jar"/>
+	<classpathentry kind="lib" path="lib/jgrapht-jdk1.6.jar"/>
+	<classpathentry kind="lib" path="lib/stdlib-package.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/jgraph.jar"/>
+	<classpathentry kind="lib" path="lib/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/common-01.01.022-src.jar"/>
+	<classpathentry kind="lib" path="lib/common-01.01.022.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-digester-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-core.jar"/>
+	<classpathentry kind="lib" path="lib/velocity-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-adapter-standalone.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-generator-java.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-generator-symbian.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-generator-xml.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-glayout.jar"/>
+	<classpathentry kind="lib" path="lib/unimod-modeller.jar"/>
+	<classpathentry kind="lib" path="lib/vecmath.jar"/>
+	<classpathentry kind="lib" path="lib/guava-14.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
+	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

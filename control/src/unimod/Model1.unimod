@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE model PUBLIC "-//eVelopers Corp.//DTD State machine graphical model V1.0//EN" "http://www.evelopers.com/dtd/unimod/gmodel.dtd">
+<model version="1.0">
+  <property name="name" value="Model1"/>
+  <elements>
+    <node id="vuid1397171209233-1427942468" type="com.evelopers.unimod.plugin.eclipse.model.GControlledObjectHandler">
+      <property name="name" value="o2"/>
+      <property name="implName" value="unimod.C2"/>
+    </node>
+    <node id="vuid1298729809139-252510947" type="com.evelopers.unimod.plugin.eclipse.model.GControlledObjectHandler">
+      <property name="name" value="o1"/>
+      <property name="implName" value="unimod.C1"/>
+    </node>
+    <node id="vuid1298729809140-185263971" type="com.evelopers.unimod.plugin.eclipse.model.GEventProviderHandler">
+      <property name="name" value="p1"/>
+      <property name="implName" value="unimod.E1"/>
+    </node>
+    <node id="vuid1298764348602-659883115" type="com.evelopers.unimod.plugin.eclipse.model.GStateMachine">
+      <property name="name" value="A1"/>
+      <property name="configManagerClassName" value="com.evelopers.unimod.runtime.config.DistinguishConfigManager"/>
+      <composited role="top">
+        <node id="vuid1298764348602-880230366" type="com.evelopers.unimod.plugin.eclipse.model.GTopState">
+          <property name="name" value="Top"/>
+          <composited role="substates[0]">
+            <node id="vuid1298813501461-2010867767" type="com.evelopers.unimod.plugin.eclipse.model.GInitialState">
+              <property name="name" value="s1"/>
+            </node>
+          </composited>
+          <composited role="substates[1]">
+            <node id="vuid1298813501461-1334907827" type="com.evelopers.unimod.plugin.eclipse.model.GFinalState">
+              <property name="name" value="s2"/>
+            </node>
+          </composited>
+          <composited role="substates[2]">
+            <node id="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GNormalState">
+              <property name="name" value="process points"/>
+              <property name="actions" value=""/>
+              <property name="subMachineHandles" value=""/>
+            </node>
+          </composited>
+          <composited role="substates[3]">
+            <node id="vuid1299703801677-509796350" type="com.evelopers.unimod.plugin.eclipse.model.GNormalState">
+              <property name="name" value="set points"/>
+              <property name="actions" value=""/>
+              <property name="subMachineHandles" value=""/>
+            </node>
+          </composited>
+          <composited role="substates[4]">
+            <node id="vuid1300563258267-1210186176" type="com.evelopers.unimod.plugin.eclipse.model.GNormalState">
+              <property name="name" value="set train position"/>
+              <property name="actions" value=""/>
+              <property name="subMachineHandles" value=""/>
+            </node>
+          </composited>
+        </node>
+      </composited>
+    </node>
+    <edge client="vuid1298729809140-185263971" id="euid1298813501462-344476479" supplier="vuid1298764348602-659883115" type="com.evelopers.unimod.plugin.eclipse.model.GAssociation">
+      <property name="name" value=""/>
+      <property name="supplierRole" value=""/>
+    </edge>
+    <edge client="vuid1298764348602-659883115" id="euid1397171209236-143373623" supplier="vuid1397171209233-1427942468" type="com.evelopers.unimod.plugin.eclipse.model.GAssociation">
+      <property name="name" value=""/>
+      <property name="supplierRole" value="o2"/>
+    </edge>
+    <edge client="vuid1298764348602-659883115" id="euid1298813501478-1856429588" supplier="vuid1298729809139-252510947" type="com.evelopers.unimod.plugin.eclipse.model.GAssociation">
+      <property name="name" value=""/>
+      <property name="supplierRole" value="o1"/>
+    </edge>
+    <edge client="vuid1298813501461-2010867767" id="euid1298813501479-2032597898" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value=""/>
+    </edge>
+    <edge client="vuid1298813501462-189292285" id="euid1298813501480-696650697" supplier="vuid1298813501461-1334907827" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="E_stop"/>
+    </edge>
+    <edge client="vuid1298813501462-189292285" id="euid1299623281784-1859128473" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_process_queue /o1.z_processRequestQueue"/>
+    </edge>
+    <edge client="vuid1298813501462-189292285" id="euid1298813501481-835298403" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_process_point_request /o1.z_printCurrentRequest, o1.z_addRequestToQueue"/>
+    </edge>
+    <edge client="vuid1298813501462-189292285" id="euid1397171209240-934427546" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_read_stack /o2.z_process_stack"/>
+    </edge>
+    <edge client="vuid1298813501462-189292285" id="euid1299703801682-901023450" supplier="vuid1299703801677-509796350" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_initialise"/>
+    </edge>
+    <edge client="vuid1298813501462-189292285" id="euid1300563258272-1944615136" supplier="vuid1300563258267-1210186176" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_setTrainPosition /o1.init_train_no"/>
+    </edge>
+    <edge client="vuid1299703801677-509796350" id="euid1300321233260-2004279516" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_remove_stop /o1.z_removeFromJtree"/>
+    </edge>
+    <edge client="vuid1299703801677-509796350" id="euid1299703801682-164669961" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_track_position /o1.z_addToJtree"/>
+    </edge>
+    <edge client="vuid1300563258267-1210186176" id="euid1300574223245-68824239" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_remove_stop"/>
+    </edge>
+    <edge client="vuid1300563258267-1210186176" id="euid1300574223212-736278285" supplier="vuid1298813501462-189292285" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="e_track_position /o1.position_train"/>
+    </edge>
+    <edge client="vuid1300563258267-1210186176" id="euid1300574223246-981510681" supplier="vuid1300563258267-1210186176" type="com.evelopers.unimod.plugin.eclipse.model.GTransition">
+      <property name="labelText" value="*"/>
+    </edge>
+  </elements>
+  <diagrams>
+    <diagram>
+      <node-ref node="vuid1397171209233-1427942468">
+        <property name="location" value="(520, 260)"/>
+        <property name="size" value="(241, 161)"/>
+      </node-ref>
+      <node-ref node="vuid1298729809139-252510947">
+        <property name="location" value="(20, 320)"/>
+        <property name="size" value="(361, 301)"/>
+      </node-ref>
+      <node-ref node="vuid1298729809140-185263971">
+        <property name="location" value="(20, 20)"/>
+        <property name="size" value="(681, 221)"/>
+      </node-ref>
+      <node-ref node="vuid1298764348602-659883115">
+        <property name="location" value="(880, 20)"/>
+        <property name="size" value="(120, 601)"/>
+      </node-ref>
+      <edge-ref edge="euid1298813501462-344476479">
+        <property name="labelPosition" value="(100%) -&gt; (-10, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1397171209236-143373623">
+        <property name="labelPosition" value="(100%) -&gt; (-10, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1298813501478-1856429588">
+        <property name="labelPosition" value="(100%) -&gt; (238, -21)"/>
+      </edge-ref>
+    </diagram>
+    <diagram>
+      <node-ref node="vuid1298764348602-880230366"/>
+      <node-ref node="vuid1298813501461-2010867767">
+        <property name="location" value="(80, 40)"/>
+      </node-ref>
+      <node-ref node="vuid1298813501461-1334907827">
+        <property name="location" value="(600, 40)"/>
+      </node-ref>
+      <node-ref node="vuid1298813501462-189292285">
+        <property name="location" value="(300, 320)"/>
+        <property name="size" value="(101, 381)"/>
+      </node-ref>
+      <node-ref node="vuid1299703801677-509796350">
+        <property name="location" value="(600, 320)"/>
+        <property name="size" value="(101, 121)"/>
+      </node-ref>
+      <node-ref node="vuid1300563258267-1210186176">
+        <property name="location" value="(0, 360)"/>
+        <property name="size" value="(100, 121)"/>
+      </node-ref>
+      <edge-ref edge="euid1298813501479-2032597898">
+        <property name="sourceAnchor" value=""/>
+        <property name="targetAnchor" value="WEST:2"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (53, -35)"/>
+      </edge-ref>
+      <edge-ref edge="euid1298813501480-696650697">
+        <property name="sourceAnchor" value="EAST:2"/>
+        <property name="targetAnchor" value=""/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (38, 15)"/>
+      </edge-ref>
+      <edge-ref edge="euid1299623281784-1859128473">
+        <property name="sourceAnchor" value="NORTH:2"/>
+        <property name="targetAnchor" value="NORTH:4"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1298813501481-835298403">
+        <property name="sourceAnchor" value="WEST:12"/>
+        <property name="targetAnchor" value="WEST:9"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (70, 12)"/>
+      </edge-ref>
+      <edge-ref edge="euid1397171209240-934427546">
+        <property name="sourceAnchor" value="EAST:13"/>
+        <property name="targetAnchor" value="EAST:16"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(49%) -&gt; (12, -6)"/>
+      </edge-ref>
+      <edge-ref edge="euid1299703801682-901023450">
+        <property name="sourceAnchor" value="EAST:2"/>
+        <property name="targetAnchor" value="WEST:2"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1300563258272-1944615136">
+        <property name="sourceAnchor" value="WEST:2"/>
+        <property name="targetAnchor" value="NORTH:2"/>
+        <property name="bendpoints" value="-160:0:10:-10"/>
+        <property name="labelPosition" value="(50%) -&gt; (7, -20)"/>
+      </edge-ref>
+      <edge-ref edge="euid1300321233260-2004279516">
+        <property name="sourceAnchor" value="WEST:5"/>
+        <property name="targetAnchor" value="EAST:5"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1299703801682-164669961">
+        <property name="sourceAnchor" value="WEST:4"/>
+        <property name="targetAnchor" value="EAST:4"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1300574223245-68824239">
+        <property name="sourceAnchor" value="EAST:5"/>
+        <property name="targetAnchor" value="WEST:5"/>
+        <property name="bendpoints" value="11:-40:-130:0"/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1300574223212-736278285">
+        <property name="sourceAnchor" value="EAST:4"/>
+        <property name="targetAnchor" value="WEST:4"/>
+        <property name="bendpoints" value="11:-40:-130:0"/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+      <edge-ref edge="euid1300574223246-981510681">
+        <property name="sourceAnchor" value="SOUTH:4"/>
+        <property name="targetAnchor" value="SOUTH:2"/>
+        <property name="bendpoints" value=""/>
+        <property name="labelPosition" value="(50%) -&gt; (0, -10)"/>
+      </edge-ref>
+    </diagram>
+  </diagrams>
+</model>

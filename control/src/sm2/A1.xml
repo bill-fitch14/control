@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE model PUBLIC "-//eVelopers Corp.//DTD State machine model V1.0//EN" "http://www.evelopers.com/dtd/unimod/statemachine.dtd">
+<model name="Model1">
+  <controlledObject class="sm2.C1" name="o1"/>
+  <eventProvider class="sm2.E1" name="p1">
+    <association clientRole="p1" targetRef="A1"/>
+  </eventProvider>
+  <rootStateMachine>
+    <stateMachineRef name="A1"/>
+  </rootStateMachine>
+  <stateMachine name="A1">
+    <configStore class="com.evelopers.unimod.runtime.config.DistinguishConfigManager"/>
+    <association clientRole="A1" supplierRole="o1" targetRef="o1"/>
+    <state name="Top" type="NORMAL">
+      <state name="s1" type="INITIAL"/>
+      <state name="s2" type="FINAL"/>
+      <state name="stack" type="NORMAL"/>
+    </state>
+    <transition sourceRef="s1" targetRef="stack">
+      <outputAction ident="o1.z_start_stack"/>
+    </transition>
+    <transition event="e_stop_stack" sourceRef="stack" targetRef="s2"/>
+    <transition event="e_read_stack" sourceRef="stack" targetRef="stack">
+      <outputAction ident="o1.z_process_stack"/>
+    </transition>
+    <transition event="e_process_point_request" sourceRef="stack" targetRef="stack">
+      <outputAction ident="o1.z_printCurrentRequest"/>
+      <outputAction ident="o1.z_addRequestToQueue"/>
+    </transition>
+    <transition event="e_read_points_stack" sourceRef="stack" targetRef="stack">
+      <outputAction ident="o1.z_processRequestQueue"/>
+    </transition>
+  </stateMachine>
+</model>
