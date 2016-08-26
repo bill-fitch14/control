@@ -1671,8 +1671,8 @@ public class B2_LinkedLists  {
 			strEngineLength = "0";
 			engineLength = 0;
 		} else {
-			strEngineLength = "1";
-			engineLength = 1;
+			strEngineLength = "2";
+			engineLength = 2;
 		}
 		strNoTrucks = Integer.toString(deque.size());
 		int noTrucks = deque.size();

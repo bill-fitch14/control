@@ -56,6 +56,7 @@ public class Main {
 			ModelEngine me = ModelEngine.createStandAlone(
 					new QueuedHandler(),
 					new Model1EventProcessor(),
+					
 					new ControlledObjectsManager() {
 						C1 o1 = new C1();
 						//						C3 o3 = new C3();
@@ -71,6 +72,7 @@ public class Main {
 						public void dispose() {}
 						public void init(ModelEngine engine) throws CommonException {}
 					},
+					
 					new EventProvidersManager() {
 						//E3 p3 = new E3();
 						E1 e1 = new E1();

@@ -1,9 +1,14 @@
 package Adaption;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+
+import org.apache.commons.collections.functors.ForClosure;
 
 import Jama.Matrix;
 import Jama.QRDecomposition;
+import antlr.collections.List;
 
 public class actual {
 	
@@ -12,19 +17,37 @@ public class actual {
 	
 	static Random rand = new Random();
 	
+	Matrix globalSrim = new Matrix(5,5);
+	
+	static ArrayList<Matrix> SrimArray = new ArrayList<Matrix>();
+	
+
 	
 	public static void main(String[] args) {
+		
+		//set up the srimarray
+		for(int i=0;i<=10;i++){
+			SrimArray.add(new Matrix(5,5));
+		}
 		new actual();
 	}
 	
 	public 	actual(){
 		
+		int xmax = 150;
+		int xmin = -100;
+		int noBoxes = 10;
+		
 
 		//produce a set of measurements
 		for(int i = -100; i<150; i++){
 			double x = i;
+			int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);
+			
 			//produce the srim
-			processMeasurement(x, parameters, adaptors);
+			processMeasurement(x, parameters, adaptors,srimbox);
+			//get the global srim
+			globalSrim = getGlobalSrim();
 			//get the adaptors
 			getParameters(x);
 		}
@@ -33,10 +56,21 @@ public class actual {
 
 
 	
+	private Matrix getGlobalSrim() {
+			Matrix globalSrim = new Matrix(5,5);
+			for(Matrix mySrim : actual.SrimArray){
+				Matrix addsrim = addSrim(globalSrim,mySrim);
+				globalSrim=addsrim;
+			}
+			
+		return globalSrim;
+	}
+
 	private void getParameters(double x) {
+		
 		print ("Srim " + x);
-		Srim.print(10,1);
-		Matrix IM = Srim.transpose().times(Srim);
+		globalSrim.print(10,1);
+		Matrix IM = globalSrim.transpose().times(globalSrim);
 		print ("IM " + x);
 		IM.print(10,1);
 		
@@ -66,19 +100,20 @@ public class actual {
 	}
 	
 	private static void print(String x){
-		//99System.out.print(x);
+		System.out.print(x);
 	}
 
 
 
 
-	Matrix Srim = new Matrix(5,5);
+	
 
 	double meas(double x, double coeffs[]){
 		double a = coeffs[0];
 		double b = coeffs[1];
 		double c = coeffs[2];
 		double y = a*x*x + b*x + c ;
+
 		return y;
 	}
 	
@@ -86,7 +121,7 @@ public class actual {
 		
 		// y = y -y* + ad sens product
 		
-		double measy = meas(x, parameters)+1*rand.nextFloat()-0.5;
+		double measy = meas(x, parameters)+5*(rand.nextFloat()-0.5);
 		double esty = meas(x, adaptors);
 		double adSensProd = adSensProduct(x);
 		double ans = measy - esty + adSensProd;
@@ -177,7 +212,7 @@ public class actual {
 		
 	}
 	
-	void processMeasurement(double x, double[] parameters, double[] adaptors){
+	void processMeasurement(double x, double[] parameters, double[] adaptors, int srimbox){
 		double y = measY(x, parameters, adaptors);
 			print("y="+y);
 		Matrix X = sensitivities(x);
@@ -199,8 +234,8 @@ public class actual {
 		Matrix Unity = qSrim.transpose().times(qSrim);
 			print("Unity");
 			Unity.print(10,1);
-		Matrix addSrim = addSrim(this.Srim,meas_IM);
-		this.Srim = addSrim;
+		Matrix addSrim = addSrim(this.SrimArray.get(srimbox),meas_IM);
+		this.SrimArray.set(srimbox, addSrim);
 	}
 	
 }

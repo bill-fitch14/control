@@ -321,19 +321,19 @@ public class C_PickRoutines implements MouseListener {
 				Main.lo.setPoint2(1);
 			}
 		}
-		if (state.equals("OFF")){
-			if(pointno == 2){
-				Main.lo.setPoint1(0);
-			}else{;
-				Main.lo.setPoint2(0);
-			}
-		}else{
-			if(pointno == 2){
-				Main.lo.setPoint1(1);
-			}else{;
-				Main.lo.setPoint2(1);
-			}
-		}
+//		if (state.equals("OFF")){
+//			if(pointno == 2){
+//				Main.lo.setPoint1(0);
+//			}else{;
+//				Main.lo.setPoint2(0);
+//			}
+//		}else{
+//			if(pointno == 2){
+//				Main.lo.setPoint1(1);
+//			}else{;
+//				Main.lo.setPoint2(1);
+//			}
+//		}
 		
 	}
 
