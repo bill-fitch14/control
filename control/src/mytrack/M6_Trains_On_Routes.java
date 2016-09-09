@@ -31,7 +31,7 @@ public class M6_Trains_On_Routes {
 		for (M43_TruckData_Display truck : tr.getTruckPositions()) {
 			truck.setCurrentStopActive(false);
 		}
-		tr.moving = true;
+		tr.setMoving(true);
 
 	}
 
@@ -53,7 +53,7 @@ public class M6_Trains_On_Routes {
 			tr.getTruckData(truckNo).setStop(stop);
 		}
 		// set the train moving
-		tr.moving = true;
+		((M61_Train_On_Route) tr).setMoving(true);
 
 	}
 
@@ -97,7 +97,7 @@ public class M6_Trains_On_Routes {
 	public void update() {
 		for (M61_Train_On_Route t_on_route : trainsOnRoutes) {
 			// 3//99System.out.print("processing train no:" + er.getTrainNo());
-			if (t_on_route.moving) {
+			if (t_on_route.isMoving()) {
 
 				t_on_route.update();
 			}

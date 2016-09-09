@@ -22,8 +22,8 @@ import mytrack.M6_Trains_On_Routes;
 import mytrack.M75Stops;
 import mytrack.U3_Utils;
 import mytrack.U4_Constants;
-
 import sm2.E1;
+import sm2.Main;
 //import unimod.E3;
 
 public class M_TruckMovements {
@@ -187,11 +187,10 @@ public class M_TruckMovements {
 
 		U4_Constants.pbl_instructionNo++;
 
-		if (U4_Constants.pbl_instructionNo == 122){
-			int a=1;
-			a=a+1;
-			U4_Constants.speed = 10;
-		}
+//		if (U4_Constants.pbl_instructionNo == 1){
+//			//could check how the train has been set up. assume has been set up forwards
+//			Main.lo.setEngineDirection("forwards");
+//		}
 
 		E1.threads.get_serialModel().println("deque: " + instruction + "" + U4_Constants.pbl_instructionNo);
 
@@ -203,6 +202,8 @@ public class M_TruckMovements {
 		M61_Train_On_Route train0;
 		K2_Route route;
 		int noTrucks;
+		String direction = null;
+		int milli;
 		switch (instruction){
 		case "moveTrucksOneByOneOnDisplay":
 			String strNoTrucks = st[1];
@@ -232,7 +233,11 @@ public class M_TruckMovements {
 			M61_Train_On_Route tr = M6_Trains_On_Routes.getTrainOnRoute("T0");
 			//setpoints(fromBranch,toBranch);
 			M43_TruckData_Display stop = getStop(fromBranch, toBranch,"to");
+			
+			hmoveLoco(fromBranch);
+			Main.lo.pause(9000);
 			startMovingToStopFromBranch(stop, tr.getNumberTrucks2());  //counts no of trucks
+		    
 			break;
 		case "connectTrucks":
 			printreadfromdeque(st,1);
@@ -291,7 +296,9 @@ public class M_TruckMovements {
 			strFromBranch = st[1];
 			String strToBranch = st[2];
 			printreadfromdeque(st,2);
-			swapRouteOppDirection(strFromBranch, strToBranch);
+			direction = U4_Constants.swapDirection();
+			swapRouteOppDirection(strFromBranch, strToBranch,direction);
+//			Main.lo.moveLoco(direction, 0.2);
 			readDeque();
 			break;
 		case "swapRouteSameDirectionTravelling":
@@ -358,12 +365,12 @@ public class M_TruckMovements {
 		case "pause":
 			printreadfromdeque(st,1);
 			int noSecs = Integer.valueOf(st[1]);
-			try{
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			};
+			milli = 2000;
+			Main.lo.pause(milli);
+			delay(milli);
+			
 			readDeque();
+			hstopLoco();
 		default:
 			//99System.out.print("instruction " + instruction + " not processed");
 
@@ -372,6 +379,31 @@ public class M_TruckMovements {
 
 		//		//generate an event to read the deque. This will move the train
 		//	assignStop	E3.e_readList();
+	}
+
+	private static void delay(int milli) {
+		try{
+			Thread.sleep(milli);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		};
+	}
+
+	private static void hstopLoco() {
+		double engineSpeed = 0;
+		Main.lo.stopLoco( engineSpeed);
+		
+	}
+
+	private static void hmoveLoco(String fromBranch) {
+		String direction;
+		double engineSpeed = 0.2;
+		if (fromBranch.equals("sth") ){
+			direction = "forwards";
+		}else{
+			direction = "backwards";
+		}
+		Main.lo.moveLoco(direction, engineSpeed);
 	}
 
 	/**
@@ -401,14 +433,15 @@ public class M_TruckMovements {
 	/**
 	 * @param strFromBranch
 	 * @param strToBranch
+	 * @param direction 
 	 */
-	private static void swapRouteOppDirection(String strFromBranch, String strToBranch) {
+	private static void swapRouteOppDirection(String strFromBranch, String strToBranch, String direction) {
 
 		M62_train train0 = M6_Trains_On_Routes.getTrainOnRoute("T0");	
 
 		K2_Route route= assignRoute(strFromBranch, strToBranch);
 
-		if(!train0.getTruckPositions().get(0).swapDirectiontravelling(route, graph)){
+		if(!train0.getTruckPositions().get(0).swapDirectiontravelling(route, graph,direction)){
 			//99System.out.print("unable to swap route");
 		}
 		//route has changed hence comment out
@@ -442,7 +475,7 @@ public class M_TruckMovements {
 		for (M43_TruckData_Display truck : train1.getTruckPositions()){
 			truck.setCurrentStopActive(false);
 		}
-		train1.moving = true;
+		train1.setMoving(true);
 		//99System.out.print("train1.moving" + train1.moving);
 
 	}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE model PUBLIC "-//eVelopers Corp.//DTD State machine model V1.0//EN" "http://www.evelopers.com/dtd/unimod/statemachine.dtd">
+<model name="Model1">
+  <controlledObject class="unimod.C2" name="o2"/>
+  <controlledObject class="unimod.C1" name="o1"/>
+  <eventProvider class="unimod.E1" name="p1">
+    <association clientRole="p1" targetRef="A1"/>
+  </eventProvider>
+  <rootStateMachine>
+    <stateMachineRef name="A1"/>
+  </rootStateMachine>
+  <stateMachine name="A1">
+    <configStore class="com.evelopers.unimod.runtime.config.DistinguishConfigManager"/>
+    <association clientRole="A1" supplierRole="o2" targetRef="o2"/>
+    <association clientRole="A1" supplierRole="o1" targetRef="o1"/>
+    <state name="Top" type="NORMAL">
+      <state name="s1" type="INITIAL"/>
+      <state name="s2" type="FINAL"/>
+      <state name="set train position" type="NORMAL"/>
+      <state name="process points" type="NORMAL"/>
+      <state name="set points" type="NORMAL"/>
+    </state>
+    <transition sourceRef="s1" targetRef="process points"/>
+    <transition event="*" sourceRef="set train position" targetRef="set train position"/>
+    <transition event="e_remove_stop" sourceRef="set train position" targetRef="process points"/>
+    <transition event="e_track_position" sourceRef="set train position" targetRef="process points">
+      <outputAction ident="o1.position_train"/>
+    </transition>
+    <transition event="E_stop" sourceRef="process points" targetRef="s2"/>
+    <transition event="e_setTrainPosition" sourceRef="process points" targetRef="set train position">
+      <outputAction ident="o1.init_train_no"/>
+    </transition>
+    <transition event="e_process_queue" sourceRef="process points" targetRef="process points">
+      <outputAction ident="o1.z_processRequestQueue"/>
+    </transition>
+    <transition event="e_process_point_request" sourceRef="process points" targetRef="process points">
+      <outputAction ident="o1.z_printCurrentRequest"/>
+      <outputAction ident="o1.z_addRequestToQueue"/>
+    </transition>
+    <transition event="e_read_stack" sourceRef="process points" targetRef="process points">
+      <outputAction ident="o2.z_process_stack"/>
+    </transition>
+    <transition event="e_initialise" sourceRef="process points" targetRef="set points"/>
+    <transition event="e_remove_stop" sourceRef="set points" targetRef="process points">
+      <outputAction ident="o1.z_removeFromJtree"/>
+    </transition>
+    <transition event="e_track_position" sourceRef="set points" targetRef="process points">
+      <outputAction ident="o1.z_addToJtree"/>
+    </transition>
+  </stateMachine>
+</model>

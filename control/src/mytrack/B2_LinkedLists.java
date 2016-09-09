@@ -1657,8 +1657,8 @@ public class B2_LinkedLists  {
 	}
 
 	private static void getParameters(D_MyGraph graph, Queue<Integer[]> deque, String trainName) {
-		int engineLength;
-		int truckLength;
+		float engineLength;
+		float truckLength;
 		
 		if(trainName.equals("sth")){
 			trainNo = 0;
@@ -1671,8 +1671,8 @@ public class B2_LinkedLists  {
 			strEngineLength = "0";
 			engineLength = 0;
 		} else {
-			strEngineLength = "2";
-			engineLength = 2;
+			strEngineLength = "4";
+			engineLength = 4;
 		}
 		strNoTrucks = Integer.toString(deque.size());
 		int noTrucks = deque.size();
@@ -1728,7 +1728,7 @@ public class B2_LinkedLists  {
 //			route = "1_To_For,3_To_For";
 //			startArc = "2_F_3_B";
 			
-			startFraction = "3.5";
+			startFraction = "6.9";
 			startDirection = "For";
 			
 //			route = "6_From_For,1_From_For";
@@ -1758,9 +1758,8 @@ public class B2_LinkedLists  {
 			trainNo = 1; 
 			//String strEngineColor;
 			int numberEngines = 1; 
-			engineLength = 1; 
-			//int numberTrucks=deque.size();
-			truckLength = 1; 
+			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor;  
 
 //			eRoute1 = new H2_Engine_Route(trainNo, strEngineColor, strEngineLength,
 //					strNoTrucks, strTruckLength, route, startArc, startFraction,
@@ -1786,19 +1785,19 @@ public class B2_LinkedLists  {
 //			engineLength = "1";
 			//noTrucks = "6";
 
-			strTruckLength = "0.5";
+			//strTruckLength = "0.5";
 			truckLength = 1;
 			route = "5_From_For,1_From_For";
 			startArc = "5_B_4_F";
-			startFraction = "2.5";
+			startFraction = "4.9";
 			startDirection = "For";
 			trainStr = "T2";
 			trainNo = 2; 
 
 			numberEngines = 1; 
-			engineLength = 1; 
-			truckLength = 1; 
-			traincoupling = "head";
+			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor; 
+			traincoupling = "tail";
 			route2 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
 					 engineLength,  numberTrucks,  truckLength,
 					 truckNames,  route,  startArc,
@@ -1819,17 +1818,17 @@ public class B2_LinkedLists  {
 			//note the arc specification is 4F 6B
 			route = "6_From_For,1_From_For";
 			startArc = "6_B_4_F";
-			startFraction = "3.5";
+			startFraction = "4.9";
 			startDirection = "For";
 			trainStr = "T3";
 			trainNo = 3; 
-			numberEngines = 5; 
-			engineLength = 1; 			
+			numberEngines = 5; 			
 
 			trainStr = "T3";
 			trainNo = 3; 
-			truckLength = 1;
-			traincoupling = "head";
+			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor; 
+			traincoupling = "tail";
 			route31 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
 					 engineLength,  numberTrucks,  truckLength,
 					 truckNames,  route,  startArc,
@@ -1855,7 +1854,7 @@ public class B2_LinkedLists  {
 			
 			strTruckLength = "0.5";
 			
-			truckLength = 1;
+//			truckLength = 1;
 			route = "1_To_Rev,3_To_Rev";
 			startArc = "1_F_2_B";
 			startFraction = "1.5";
@@ -1864,8 +1863,8 @@ public class B2_LinkedLists  {
 			trainNo = 4; 
 
 			numberEngines = 1; 
-			engineLength = 1; 
-			truckLength = 1; 			
+			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor; 			
 			
 
 			traincoupling = "tail";

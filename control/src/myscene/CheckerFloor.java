@@ -21,8 +21,8 @@ import java.util.ArrayList;
 
 public class CheckerFloor
 {
-  private final static int x_FLOOR_LEN = 160;  // should be even
-  private final static int y_FLOOR_LEN = 25;  // should be even
+  private final static int x_FLOOR_LEN = 160;//(int) (160*U4_Constants.checkermultiplier);  // should be even
+  private final static int y_FLOOR_LEN = 25;//(int) (25*U4_Constants.checkermultiplier);  // should be even
 
   // colours for floor, etc
   private final static Color3f blue = new Color3f(0.0f, 0.1f, 0.4f);
@@ -77,6 +77,10 @@ public class CheckerFloor
     p2.scale(U4_Constants.scalefactor);
     p3.scale(U4_Constants.scalefactor);
     p4.scale(U4_Constants.scalefactor);
+    p1.scale(U4_Constants.checkermultiplier);
+    p2.scale(U4_Constants.checkermultiplier);
+    p3.scale(U4_Constants.checkermultiplier);
+    p4.scale(U4_Constants.checkermultiplier);
     
     coords.add(p1); coords.add(p2); 
     coords.add(p3); coords.add(p4);
@@ -98,7 +102,11 @@ public class CheckerFloor
     p1.scale(U4_Constants.scalefactor);
     p2.scale(U4_Constants.scalefactor);
     p3.scale(U4_Constants.scalefactor);
-    p4.scale(U4_Constants.scalefactor);    
+    p4.scale(U4_Constants.scalefactor); 
+    p1.scale(U4_Constants.checkermultiplier);
+    p2.scale(U4_Constants.checkermultiplier);
+    p3.scale(U4_Constants.checkermultiplier);
+    p4.scale(U4_Constants.checkermultiplier);
 
     ArrayList<Point3f> oCoords = new ArrayList<Point3f>();
     oCoords.add(p1); oCoords.add(p2);

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
+import sm2.Main;
 import A_Inglenook.M_TruckMovements;
 
 public class M61_Train_On_Route extends M62_train{
@@ -38,7 +39,7 @@ public class M61_Train_On_Route extends M62_train{
 	
 	//Movement Routines
 	
-	public boolean moving = false;
+	private boolean moving = false;
 	
 	
 //	public startTrain(){
@@ -59,11 +60,11 @@ public class M61_Train_On_Route extends M62_train{
 //		//99System.out.print("updating " + this.moving);
 		//boolean moving = true;
 		//this.moving = true;
-		if (this.moving == true){
+		if (this.isMoving() == true){
 			
 			for (M43_TruckData_Display truckPosition:getTruckPositions()){
 				if(truckPosition.update(distance) == false) {
-					this.moving = false;
+					this.setMoving(false);
 //					try {
 //					    Thread.sleep(5000);
 //					} catch(InterruptedException ex) {
@@ -73,13 +74,13 @@ public class M61_Train_On_Route extends M62_train{
 				}
 			}
 
-			if(this.moving == false){
+			if(this.isMoving() == false){
 				M_TruckMovements.readDeque();
 			}
 
 		}
 
-		return moving;
+		return isMoving();
 	}
 
 	public M61_Train_On_Route(String trainStr, int trainNo, String strEngineColor,
@@ -422,7 +423,26 @@ public class M61_Train_On_Route extends M62_train{
 		
 	}
 
+	public boolean isMoving() {
+		return this.moving;
+	}
 
+	public void setMoving(boolean isMoving) {
+		this.moving = isMoving;
+		
+		if(isMoving) {
+			setEngineSpeed(0);
+			//wait 1 sec
+
+		}else{
+			setEngineSpeed(0.2);
+		}
+		
+	}
+
+	private void setEngineSpeed(double engineSpeed) {
+		Main.lo.setEngineSpeed(engineSpeed);
+	}
 
 
 

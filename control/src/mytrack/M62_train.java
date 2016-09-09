@@ -155,15 +155,15 @@ public class M62_train {
 					getTruckPositions().get(referenceTruckNo));			
 			if (temp.getOrientation().equals("same")) {
 				if (this.getTrainCoupling().equals("tail")) {
-					temp.positionTrucks(-(distancesFromHead[truckEngineNo] - 0.5f));
+					temp.positionTrucks(-(distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
 				} else {
-					temp.positionTrucks(distancesFromHead[truckEngineNo] - 0.5f);
+					temp.positionTrucks(distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor);
 				}
 			} else {
 				if (this.getTrainCoupling().equals("tail")) {
-					temp.positionTrucks((distancesFromHead[truckEngineNo] - 0.5f));
+					temp.positionTrucks((distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
 				} else {
-					temp.positionTrucks(-(distancesFromHead[truckEngineNo] - 0.5f));
+					temp.positionTrucks(-(distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
 				}
 			}
 

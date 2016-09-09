@@ -23,6 +23,7 @@ import com.sun.j3d.utils.geometry.Primitive;
 
 public class G_TSegment {
 	
+//	private static final float scalemultiplier = U4_Constants.scalemultiplier;
 	Tuple3d position = new Point3d ( );    	//to display
     Vector3d tangent = new Vector3d ( );	//to display
 	
@@ -33,9 +34,11 @@ public class G_TSegment {
     Tuple3d _position2 = new Point3d ( );
 	private float _length;
 	private BranchGroup _BG = new BranchGroup();
-	private float radius = 8.98f;
+//	private float radius = 8.98f;
+	private float radius = 914.0f;
 	private float angleDivisorDouble = 4.0f;
 	private float angleDivisorFull = 8.0f;
+	private float angleDivisorLarge = 18.0f;
 	//private float botchfactor = 1.6f;
 	private float botchfactor = 1.0f;
 	private float angleDivisorHalf = 16.0f*botchfactor;
@@ -260,7 +263,10 @@ public class G_TSegment {
         		angle = +(float)Math.PI / angleDivisorHalf;
         	} 
         	else if (_TrackType.startsWith("LC")){
-        		angle = +(float)Math.PI / angleDivisorFull;
+        		angle = +(float)Math.PI / angleDivisorLarge;
+        	}
+        	else if (_TrackType.startsWith("LCL")){
+        		angle = +(float)Math.PI / angleDivisorLarge;
         	}
         	else if (_TrackType.startsWith("RC2")){
         		angle = -(float)Math.PI / angleDivisorDouble;
@@ -269,7 +275,10 @@ public class G_TSegment {
         		angle = -(float)Math.PI / angleDivisorHalf;
         	}
         	else if (_TrackType.startsWith("RC")){
-        		angle = -(float)Math.PI / angleDivisorFull;
+        		angle = -(float)Math.PI / angleDivisorLarge;
+        	}
+        	else if (_TrackType.startsWith("RCL")){
+        		angle = -(float)Math.PI / angleDivisorLarge;
         	}
             float arclength = radius * angle;
 
@@ -573,7 +582,7 @@ public class G_TSegment {
             setTangentAndPos2_Curve ( tangent,position,angle,loc_radius );
             set_length(loc_radius * Math.abs(angle));
         }
-        if (TrackType1.equals("RC") )
+        if (TrackType1.equals("RCold") )
         {
         	//was 20
             //radius = 4.0f;
@@ -587,7 +596,21 @@ public class G_TSegment {
             setTangentAndPos2_Curve ( tangent,position,angle,loc_radius );
             set_length(loc_radius * Math.abs(angle));
         }
-        if (_TrackType.equals("LC") || _TrackType.equals("LCS"))
+        if (TrackType1.equals("RC") )
+        {
+        	//was 20
+            //radius = 4.0f;
+            float angle = -(float)Math.PI / angleDivisorLarge;
+
+            tangent.normalize ( tangent );
+            float m = 0.35f * loc_radius *  Math.abs ( angle ) * scalefactor;
+            tangent.scale(m);
+            setTangentAndPos1 ( tangent, position );
+            
+            setTangentAndPos2_Curve ( tangent,position,angle,loc_radius );
+            set_length(loc_radius * Math.abs(angle));
+        }
+        if (_TrackType.equals("LCold") || _TrackType.equals("LCS"))
         {
             //float radius = 4.0f;
             float angle = +(float)Math.PI / 8.0f;
@@ -611,13 +634,30 @@ public class G_TSegment {
             setTangentAndPos2_Curve ( tangent, position, angle, loc_radius );
             set_length(loc_radius * Math.abs(angle));
         }
-        if (TrackType1.equals("ST") || TrackType1.equals("ST1") || TrackType1.equals("STS") )
+        if (_TrackType.equals("LC") )
+        {
+            //float radius = 4.0f;
+            float angle = +(float)Math.PI / (angleDivisorLarge*botchfactor);
+
+            tangent.normalize ( tangent );
+            float m = 0.35f * loc_radius * Math.abs ( angle ) * scalefactor;
+            tangent.scale(m);
+            setTangentAndPos1 ( tangent, position );
+            setTangentAndPos2_Curve ( tangent, position, angle, loc_radius );
+            set_length(loc_radius * Math.abs(angle));
+        }
+        if (TrackType1.equals("ST") || TrackType1.equals("ST1") || TrackType1.equals("STS") || TrackType1.substring(0,2).equals("STM"))
         	
         {
         	tangent.normalize ( tangent );
             setTangentAndPos1 ( tangent, position );
 //            float length = 1.0f;
-          float length = 3.43f;
+            float length;
+            if(TrackType1.substring(0,2).equals("STM")){
+            	length = U3_Utils.CStringToFloat(TrackType1.substring(3,10));
+            }else{
+            	length = 160f;  //was 3.43f
+            }
             length = (length * scalefactor);
             setTangentAndPos2_Straight ( tangent,position, length );
             set_length(length);

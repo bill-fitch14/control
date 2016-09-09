@@ -17,7 +17,7 @@ import javax.vecmath.Tuple3d;
 import javax.vecmath.Vector3d;
 
 import sm2.E1;
-
+import sm2.Main;
 import A_Inglenook.M_TruckMovements;
 import Utilities.Util;
 
@@ -50,7 +50,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent
 	String objectText; 
 	String objectType;
 	
-	private double trainSpeed = U4_Constants.speed;
+//	private double trainSpeed = U4_Constants.speed;
 	
 	//F3_TArc tArc = null;
 	//G_TSegment seg = null;
@@ -637,7 +637,7 @@ public boolean anotherRouteSameDirectiontravelling(K2_Route routeInOppDirTravell
 	
 }
 
-public boolean swapDirectiontravelling(K2_Route routeInOppDirTravelling, D_MyGraph graph) {
+public boolean swapDirectiontravelling(K2_Route routeInOppDirTravelling, D_MyGraph graph, String direction) {
 	/*
 	 * truckdate_posdition is the position of the truck
 	 * route is the route in the opposite direction traveling
@@ -655,7 +655,8 @@ public boolean swapDirectiontravelling(K2_Route routeInOppDirTravelling, D_MyGra
 	 * 1_F_2_B_For, 2_B_1_F_For, but not 1_F_2_B_Rev, 2_B_1_F_Rev 
 	 * for that we need to specify another stop 
 	 */
-
+	System.out.println("HHHswapdirection"+direction);
+	hswapDirectionTravelling(direction);
 	/*
 	 * Get the position on the track
 	 */
@@ -728,6 +729,8 @@ public boolean swapDirectiontravelling(K2_Route routeInOppDirTravelling, D_MyGra
 				
 				//99System.out.print("found new route");
 				
+				
+				
 				return true;
 
 			} else {
@@ -761,6 +764,10 @@ public boolean swapDirectiontravelling(K2_Route routeInOppDirTravelling, D_MyGra
 //public void setMoving(boolean moving) {
 //	this.moving = moving;
 //}
+
+private void hswapDirectionTravelling(String direction) {
+//	Main.lo.swapDirectionTravelling(direction, 0.2);
+}
 
 /**
  * @param referenceTrucknNo
