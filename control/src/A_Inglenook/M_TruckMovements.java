@@ -203,6 +203,7 @@ public class M_TruckMovements {
 		K2_Route route;
 		int noTrucks;
 		String direction = null;
+		String movement = null;
 		int milli;
 		switch (instruction){
 		case "moveTrucksOneByOneOnDisplay":
@@ -234,8 +235,8 @@ public class M_TruckMovements {
 			//setpoints(fromBranch,toBranch);
 			M43_TruckData_Display stop = getStop(fromBranch, toBranch,"to");
 			
-			hmoveLoco(fromBranch);
-			Main.lo.pause(9000);
+			hmoveLoco(U4_Constants.getDirection());
+//			Main.lo.pause(9000);
 			startMovingToStopFromBranch(stop, tr.getNumberTrucks2());  //counts no of trucks
 		    
 			break;
@@ -298,7 +299,8 @@ public class M_TruckMovements {
 			printreadfromdeque(st,2);
 			direction = U4_Constants.swapDirection();
 			swapRouteOppDirection(strFromBranch, strToBranch,direction);
-//			Main.lo.moveLoco(direction, 0.2);
+
+//			Main.lo.moveLoco(direction, 0);
 			readDeque();
 			break;
 		case "swapRouteSameDirectionTravelling":
@@ -331,7 +333,7 @@ public class M_TruckMovements {
 				//trucktostopat = 0;
 				startMovingToStopFromBranch(stop, trucktostopat);
 
-			}else{						//depositing a truck hence move away from sth, hence do not swap direction
+			}else{					//depositing a truck hence move away from sth, hence do not swap direction
 				//swapRouteSameDirection(strFromBranch, strToBranch);
 				tr = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				//stop = getStop("sth",strToBranch,"from");
@@ -339,6 +341,7 @@ public class M_TruckMovements {
 				startMovingToStopFromBranch(stop, trucktostopat);
 				//swapRouteOppDirection(strToBranch, strFromBranch);
 			}
+			hmoveLoco(U4_Constants.getDirection());
 			//readDeque();
 			break;
 
@@ -365,12 +368,14 @@ public class M_TruckMovements {
 		case "pause":
 			printreadfromdeque(st,1);
 			int noSecs = Integer.valueOf(st[1]);
-			milli = 2000;
+			hstopLoco();
+			milli = noSecs*1000;
 			Main.lo.pause(milli);
 			delay(milli);
 			
 			readDeque();
-			hstopLoco();
+			break;
+			
 		default:
 			//99System.out.print("instruction " + instruction + " not processed");
 
@@ -395,15 +400,18 @@ public class M_TruckMovements {
 		
 	}
 
-	private static void hmoveLoco(String fromBranch) {
+
+	private static void hmoveLoco(String dir) {
 		String direction;
-		double engineSpeed = 0.2;
-		if (fromBranch.equals("sth") ){
+		double engineSpeed = U4_Constants.getHspeed();
+		if (dir.equals("forwards") ){
 			direction = "forwards";
 		}else{
 			direction = "backwards";
 		}
+		System.out.print("hmoveloco domin move engine speed " + engineSpeed);
 		Main.lo.moveLoco(direction, engineSpeed);
+		
 	}
 
 	/**

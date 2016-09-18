@@ -18,13 +18,22 @@ public final class U4_Constants {
 	public static String projectlocationUnix = ".";
 	//public static String projectlocationUnix = "C:/Users/user/EclipseWorkspace/java3dbill"
 	
-	public static float speed = 80f;
+	public static float speed = 10f;
+	
+//	speed = ax^2 + bx + c where x is speed
+	public static float adaptorA = 0; 
+	public static float adaptorB = 0.1f/10.0f; 
+	public static float adaptorC = 0; 
 
 	public static int timeInterval = 20;
 	public static int a=1;
 	public static int pbl_instructionNo = 0;
 	
 	private static String direction = "forwards";
+	
+	public static float getHspeed(){
+		return adaptorA*speed*speed+ adaptorB*speed + adaptorC;
+	}
 
 	//public static float scalemultiplier = 1.0f/160f;
 

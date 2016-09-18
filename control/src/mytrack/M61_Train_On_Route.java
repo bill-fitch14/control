@@ -431,11 +431,11 @@ public class M61_Train_On_Route extends M62_train{
 		this.moving = isMoving;
 		
 		if(isMoving) {
-			setEngineSpeed(0);
+			setEngineSpeed(U4_Constants.getHspeed());
 			//wait 1 sec
 
 		}else{
-			setEngineSpeed(0.2);
+			setEngineSpeed(0);
 		}
 		
 	}
