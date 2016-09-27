@@ -10,10 +10,10 @@ import Jama.Matrix;
 import Jama.QRDecomposition;
 import antlr.collections.List;
 
-public class actual {
+public class ProcessSimulationMeasurement {
 	
-	double[] parameters = {1,2,3};
-	double[] adaptors = {0,0,0};
+	double[] parameters = {1,2};
+	double[] adaptors = {0,0};
 	
 	static Random rand = new Random();
 	
@@ -21,54 +21,64 @@ public class actual {
 	
 	static ArrayList<Matrix> SrimArray = new ArrayList<Matrix>();
 	
+	int noBoxes = 10;
 	
-	public static void main(String[] args) {
-		
-		//set up the srimarray
-		for(int i=0;i<=20;i++){
-			SrimArray.add(new Matrix(5,5));
-		}
-		new actual();
+	public ProcessSimulationMeasurement(double millis , double distancetravelled, double simSetting){
+		double x = simSetting;
+		double y = distancetravelled/millis;
+		double xmin = 0;
+		double xmax = 1;
+		int srimoffset;
+//		if (direction.equals("forwards")){
+//			srimoffset = 0;
+//		}else{
+//			srimoffset = noBoxes/2;
+//		}
+		int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);
+		//produce the srim
+		processMeasurement(x,y, srimbox);
+		//get the global srim
+		globalSrim = getGlobalSrim();
+		//get the adaptors
+		getParameters(x);
 	}
 	
-	private enum direction { FORWARDS, BACKWARDS};
-	
-	public 	actual(){
-		
-		int xmax = 150;
-		int xmin = -100;
-		int noBoxes = 10;
-		
-		direction enginedirection = direction.FORWARDS;
-		
-
-		//produce a set of measurements
-		int offset;
-		for(int i = -100; i<150; i++){
-			double x = i;
-			int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);
-			if(enginedirection == direction.FORWARDS){
-				offset = 0;
-			}else{
-				offset = noBoxes; 
-			}
-			srimbox = srimbox+offset;
-			
-			//produce the srim
-			processMeasurement(x, parameters, adaptors,srimbox);
-			//get the global srim
-			globalSrim = getGlobalSrim();
-			//get the adaptors
-			getParameters(x);
-		}
-	}
-	
+//	public 	ProcessEngineMeasurement(){
+//		
+//		int xmax = 150;
+//		int xmin = -100;
+//		int noBoxes = 10;
+//		
+//		direction enginedirection = direction.FORWARDS;
+//		
+//
+//		//produce a set of measurements
+//		int offset;
+//		for(int i = -100; i<150; i++){
+//			double x = i;
+//			int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);
+//			if(enginedirection == direction.FORWARDS){
+//				offset = 0;
+//			}else{
+//				offset = noBoxes; 
+//			}
+//			srimbox = srimbox+offset;
+//			
+//			//produce the srim
+//			processMeasurement(millis, distancetravelled, srimbox);
+//			//get the global srim
+//			globalSrim = getGlobalSrim();
+//			//get the adaptors
+//			getParameters(x);
+//		}
+//	}
+//	
 
 
 	
 	private Matrix getGlobalSrim() {
 			Matrix globalSrim = new Matrix(5,5);
-			for(Matrix mySrim : actual.SrimArray){
+			for(Matrix mySrim : ProcessSimulationMeasurement.SrimArray){
 				Matrix addsrim = addSrim(globalSrim,mySrim);
 				globalSrim=addsrim;
 			}
@@ -121,29 +131,35 @@ public class actual {
 	double meas(double x, double coeffs[]){
 		double a = coeffs[0];
 		double b = coeffs[1];
-		double c = coeffs[2];
-		double y = a*x*x + b*x + c ;
+		double y = a*x + b;
 
 		return y;
 	}
 	
-	double measY (double x, double[] parameters, double[] adaptors){
+//	double measY (double x, double[] parameters, double[] adaptors){
+//		
+//		// y = y -y* + ad sens product
+//		
+//		double measy = meas(x, parameters)+5*(rand.nextFloat()-0.5);
+//		double esty = meas(x, adaptors);
+//		double adSensProd = adSensProduct(x);
+//		double ans = measy - esty + adSensProd;
+//		return ans;
+//		
+//	}
+	
+	double measY(double x, double measy){
 		
-		// y = y -y* + ad sens product
-		
-		double measy = meas(x, parameters)+5*(rand.nextFloat()-0.5);
 		double esty = meas(x, adaptors);
 		double adSensProd = adSensProduct(x);
 		double ans = measy - esty + adSensProd;
 		return ans;
-		
 	}
 	
 	Matrix sensitivities(double x){
-		double sens1 = x*x;
-		double sens2 = x;
-		double sens3 = 1;
-		double[][] sens = {{sens1},{sens2},{sens3}};
+		double sens1 = x;
+		double sens2 = 1;
+		double[][] sens = {{sens1},{sens2}};
 		Matrix ans = new Matrix(sens);
 		return ans;
 	}
@@ -222,8 +238,9 @@ public class actual {
 		
 	}
 	
-	void processMeasurement(double x, double[] parameters, double[] adaptors, int srimbox){
-		double y = measY(x, parameters, adaptors);
+	void processMeasurement( 
+			double x, double yy, int srimbox){
+		double y = measY(x, yy);
 			print("y="+y);
 		Matrix X = sensitivities(x);
 			print ("sensitivities");

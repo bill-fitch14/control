@@ -15,6 +15,18 @@ public final class listenerObjects {
 	
 	//Property engine1
 	private static int engine1;
+	
+	private static int sensortime;
+	
+	public static void addPropertyChangeListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+	}
+	
+	
+	public static void setSensor( int millis) {
+		pcs.firePropertyChange("property1", listenerObjects.sensortime, millis);
+		listenerObjects.sensortime = millis;
+	}
 
 	public int getPoint1() {
 		return point1;
@@ -65,9 +77,7 @@ public final class listenerObjects {
 		}
 	}
 	
-	public static void addPropertyChangeListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-	}
+
 
 	public static void pause(int milli) {
 		pcs.firePropertyChange("pause",listenerObjects.engine1,milli);
