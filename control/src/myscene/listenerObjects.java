@@ -16,15 +16,15 @@ public final class listenerObjects {
 	//Property engine1
 	private static int engine1;
 	
-	private static int sensortime;
+	private static long sensortime;
 	
 	public static void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 	
 	
-	public static void setSensor( int millis) {
-		pcs.firePropertyChange("property1", listenerObjects.sensortime, millis);
+	public static void setSensor( String sensorName, long millis) {
+		pcs.firePropertyChange(sensorName, listenerObjects.sensortime, millis);
 		listenerObjects.sensortime = millis;
 	}
 
