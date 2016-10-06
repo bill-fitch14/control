@@ -20,10 +20,13 @@ public final class U4_Constants {
 	
 	public static float speed = 10f;
 	
+	
+	public static float[] forwardAdaptors = {0,0.1f/10.0f,0};
+	public static float[] reverseAdaptors = {0,0.1f/10.0f,0};
 //	speed = ax^2 + bx + c where x is speed
-	public static float adaptorA = 0; 
-	public static float adaptorB = 0.1f/10.0f; 
-	public static float adaptorC = 0; 
+	public static float adaptorA ; 
+	public static float adaptorB ; 
+	public static float adaptorC ; 
 
 	public static int timeInterval = 20;
 	public static int a=1;
@@ -32,6 +35,15 @@ public final class U4_Constants {
 	private static String direction = "forwards";
 	
 	public static float getHspeed(){
+		if(getDirection().equals("forwards")){
+			adaptorA = forwardAdaptors[0];
+			adaptorB = forwardAdaptors[1];
+			adaptorC = forwardAdaptors[2];
+		}else{
+			adaptorA = reverseAdaptors[0];
+			adaptorB = reverseAdaptors[1];
+			adaptorC = reverseAdaptors[2];
+		}
 		return adaptorA*speed*speed+ adaptorB*speed + adaptorC;
 	}
 
