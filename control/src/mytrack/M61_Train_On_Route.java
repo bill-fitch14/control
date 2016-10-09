@@ -10,7 +10,7 @@ import java.util.List;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 import sm2.Main;
-import A_Inglenook.M_TruckMovements;
+import A_Inglenook.MoveTrainUsingDeque;
 
 public class M61_Train_On_Route extends M62_train{
 	
@@ -75,7 +75,7 @@ public class M61_Train_On_Route extends M62_train{
 			}
 
 			if(this.isMoving() == false){
-				M_TruckMovements.readDeque();
+				MoveTrainUsingDeque.readDeque();
 			}
 
 		}

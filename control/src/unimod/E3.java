@@ -2,7 +2,9 @@ package unimod;
 
 import javax.swing.JTree;
 
-import A_Inglenook.M_TruckMovements;
+import A_Inglenook.CreateTrainMovementDeque;
+
+import A_Inglenook.MoveTrainUsingDeque;
 
 import com.evelopers.common.exception.CommonException;
 import com.evelopers.unimod.core.stateworks.Event;
@@ -40,7 +42,7 @@ public class E3 implements EventProvider {
 		Event e2 = null;
 		
 		//read from list that has already been set up
-		String[] items = M_TruckMovements.getDeque().pollFirst();
+		String[] items = CreateTrainMovementDeque.getDeque().pollFirst();
 		
 		String command = items[0];
 		switch(command){

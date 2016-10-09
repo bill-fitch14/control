@@ -18,7 +18,7 @@ import javax.vecmath.Vector3d;
 
 import sm2.E1;
 import sm2.Main;
-import A_Inglenook.M_TruckMovements;
+//import A_Inglenook.M_TruckMovements;
 import Utilities.Util;
 
 import com.sun.j3d.utils.geometry.Primitive;
@@ -78,8 +78,9 @@ public class M43_TruckData_Display extends M42_Position_Tangent
 	private TransformGroup engine_position_TG;
 	private TransformGroup rotateToTangent_TG;
 	private M43_TruckData_Display currentStop;
+	private M43_TruckData_Display[] currentSensors;
 	private boolean currentStopActive = false;
-	
+	private boolean currentSensorsActive = false;
 
 //	private void set_BG(H4_truckLocation tl, Integer truckNames2) {
 //		this.objectStr = ""+truckNames2;
@@ -179,7 +180,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent
 		} else if (objectType.equals("Sensor")) {
 			rotateToTangent.addChild(sensor_TG(this.objectType));
 		} else if (objectType.equals("Stop")) {
-			rotateToTangent.addChild(sensor_TG(this.objectType));
+			rotateToTangent.addChild(stop_TG(this.objectType));
 		} else{
 			//99System.out.print("error in objectType");
 		}
@@ -268,9 +269,18 @@ public class M43_TruckData_Display extends M42_Position_Tangent
 		float objectLen = objectLength;
 		float objectHeight = 0.5f;
 		float objectWidth = .4f;
+		Color objectColor = Color.green;
+		float textOffset = -0.3f;
+		return block_TG_stop(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
+	}
+	
+	private Node stop_TG(String type) {
+		float objectLen = objectLength;
+		float objectHeight = 0.5f;
+		float objectWidth = .4f;
 		Color objectColor = Color.cyan;
 		float textOffset = -0.3f;
-		return block_TG(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
+		return block_TG_stop(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
 	}
 	
 	private F3_TArc getArc(String[] arcPair) {
@@ -329,6 +339,60 @@ public class M43_TruckData_Display extends M42_Position_Tangent
 		Color objectColor = Color.cyan;
 		float textOffset = -.3f;
 		return block_TG(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
+	}
+private Node block_TG_stop(String type, float objectHeight, float objectWidth, float objectLen, Color objectColor, float textOffset) {
+		
+//		rotateBy90 --> objectBody --> rotateBy90Text --> makeText(pt,""+objectText)
+		
+		//define rotational transform group rotateby90
+		Transform3D t3d = new Transform3D();
+		t3d.rotY(0);
+		TransformGroup rotateBy90 = new TransformGroup(t3d);
+		U1_TAppearance A = new U1_TAppearance(Color.green);
+		Appearance app = A.get_Appearance();
+//		float boxHeight = 0.5f;
+//		float boxWidth = .4f;
+		
+		//define box
+		float boxLen = objectLength;
+		com.sun.j3d.utils.geometry.Box objectBody = new com.sun.j3d.utils.geometry.Box(
+				objectLen / 2 , objectWidth / 2, objectHeight / 2,
+				Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS,
+				app);
+		
+		//add objectbody to rotateby90
+		rotateBy90.addChild(objectBody);
+		objectBody.setName(type + "_" + objectStr);
+		
+		//define rotational transform group rotateBy90Text
+		Transform3D t3d1 = new Transform3D();
+		t3d1.rotZ(-Math.PI);   //rotates text
+		t3d1.rotZ(0);
+		TransformGroup rotateBy90Text = new TransformGroup(t3d1);
+		
+		//define translation group makeText(pt,""+objectStr)
+		Vector3d pt = new Vector3d(0,textOffset,5+objectHeight/2);
+		
+		//add the text to rotateBy90Text
+		rotateBy90Text.addChild(makeText(pt,""+objectText));
+
+		//add the text to the box
+		objectBody.addChild(rotateBy90Text);   //put this back if you want text
+
+//		Vector3d P = new Vector3d(3 * boxLen / 8, 0, objectHeight);
+//		t3d.setTranslation(P);
+//		A = new U1_TAppearance(Color.cyan);
+//		app = A.get_Appearance();
+//		TransformGroup translateToEngineCabCentre = new TransformGroup(t3d);
+//		rotateBy90.addChild(translateToEngineCabCentre);
+//
+//		com.sun.j3d.utils.geometry.Box engineCab = new com.sun.j3d.utils.geometry.Box(
+//				boxLen / 8, objectWidth / 2, objectHeight / 2,
+//				Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS,
+//				app);
+//		engineCab.setName(objectStr + "_" + type);
+		// translateToEngineCabCentre.addChild(engineCab);
+		return rotateBy90;
 	}
 	
 private Node block_TG(String type, float objectHeight, float objectWidth, float objectLen, Color objectColor, float textOffset) {

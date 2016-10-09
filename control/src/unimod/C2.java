@@ -1,5 +1,6 @@
 package unimod;
-import A_Inglenook.M_TruckMovements;
+
+import A_Inglenook.MoveTrainUsingDeque;
 
 import com.evelopers.unimod.runtime.ControlledObject;
 import com.evelopers.unimod.runtime.context.StateMachineContext;
@@ -15,7 +16,7 @@ public class C2 implements ControlledObject {
 		
 		String[] st = P1.getStackInstruction(context);
 		
-		M_TruckMovements.readDeque1(st);
+		MoveTrainUsingDeque.readDeque1(st);
 		
 		
 	}

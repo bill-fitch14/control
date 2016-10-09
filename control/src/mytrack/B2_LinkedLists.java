@@ -1275,6 +1275,28 @@ public class B2_LinkedLists  {
 	}
 	
 	
+	public static void addSensorPositions(D_MyGraph graph){
+		
+		M75Stops.addSensorPosition(graph, "fromsthf1");
+		M75Stops.addSensorPosition(graph, "fromsthf2");
+		M75Stops.addSensorPosition(graph, "tosthr1");
+		M75Stops.addSensorPosition(graph, "tosthr2");
+//		
+//		M75Stops.addStopPosition(graph, "sthr1");
+//		M75Stops.addStopPosition(graph, "sthr2");
+//		M75Stops.addStopPosition(graph, "sthr3");
+//		
+//		M75Stops.addStopPosition(graph, "st1f1");
+//		M75Stops.addStopPosition(graph, "st1r1");
+//		
+//		M75Stops.addStopPosition(graph, "st2f1");
+//		M75Stops.addStopPosition(graph, "st2r1");
+//		
+//		M75Stops.addStopPosition(graph, "st3f1");
+//		M75Stops.addStopPosition(graph, "st3r1");
+
+	}
+	
 
 
 	/*
@@ -1654,6 +1676,7 @@ public class B2_LinkedLists  {
 //				+ route + " startArc = " + startArc + " startFraction "
 //				+ startFraction + " startDirection " + startDirection);
 		addStopPositions(graph);
+		addSensorPositions(graph);
 	}
 
 	private static void getParameters(D_MyGraph graph, Queue<Integer[]> deque, String trainName) {

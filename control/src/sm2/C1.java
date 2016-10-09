@@ -3,16 +3,14 @@ package sm2;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import javax.swing.JEditorPane;
 
-import sm2.E1;
-import sm2.P1;
-import A_Inglenook.M_TruckMovements;
-
 import com.evelopers.unimod.runtime.ControlledObject;
 import com.evelopers.unimod.runtime.context.StateMachineContext;
+
+import A_Inglenook.MoveTrainUsingDeque;
+//import A_Inglenook.MoveTrainUsingDeque;
 
 public class C1 implements ControlledObject {
 
@@ -25,7 +23,7 @@ public class C1 implements ControlledObject {
 		
 		String[] st = P1.getStackInstruction(context);
 		
-		M_TruckMovements.readDeque1(st);   
+		MoveTrainUsingDeque.readDeque1(st);   
 		
 	}
 	

@@ -40,6 +40,20 @@ public final class Myfunctions {
 		
 	}
 	
+	 static Deque<Integer[]> getstack(int branch) {
+		switch (branch) {
+		case 1:
+			return getSt1();
+		case 2:
+			return getSt2();
+		case 3:
+			return getSt3();
+		case 4:
+			return getSth();
+		}
+		return null;
+	}
+	
 	public String getStackName(Deque<Integer[]> stack){
 
 		if (stack==st1){

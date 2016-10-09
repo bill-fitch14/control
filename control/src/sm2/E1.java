@@ -8,7 +8,8 @@ import mytrack.A_Setup;
 import mytrack.A_Threads;
 import sm2.P1;
 import unimod.P2b;
-import A_Inglenook.M_TruckMovements;
+import A_Inglenook.CreateTrainMovementDeque;
+import A_Inglenook.MoveTrainUsingDeque;
 
 import com.evelopers.common.exception.CommonException;
 
@@ -63,7 +64,7 @@ public class E1 implements EventProvider {
 	 */
 	public static void fire_read_stack_event() {
 
-	String[] st = M_TruckMovements.readDeque0();
+	String[] st = CreateTrainMovementDeque.readDeque0();
 		
 
 		StateMachineContext context = createContext();
@@ -82,7 +83,7 @@ public class E1 implements EventProvider {
 	
 	public static void fire_stop_stack_event() {
 
-		String[] st = M_TruckMovements.readDeque0();
+		String[] st = CreateTrainMovementDeque.readDeque0();
 
 		StateMachineContext context = createContext();
 		Event estop = new Event(
