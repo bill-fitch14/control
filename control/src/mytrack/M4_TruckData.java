@@ -36,6 +36,8 @@ public class M4_TruckData  {
 	protected String orientation;
 	protected String movement;
 	
+
+	
 	public void setArcPairList(K2_Route route) {
 		List<List<String[]>> listArcPairList = route.getRoutePath();    //not used at present
 		indexOfStartArcPairList=route.getIndexOfStartArcPairList();
@@ -54,6 +56,8 @@ public class M4_TruckData  {
 			String startFraction) {
 		set_train_location(arc, directionFacing, graph, startFraction);
 	}
+	
+
 
 	private void set_train_location(String arc2, String directionFacing2,
 			D_MyGraph graph, String startFraction) {

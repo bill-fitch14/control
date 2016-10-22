@@ -11,6 +11,7 @@ import mytrack.M61_Train_On_Route;
 import mytrack.M62_train;
 import mytrack.M6_Trains_On_Routes;
 import mytrack.M75Stops;
+import mytrack.M76Stop;
 import mytrack.U3_Utils;
 import mytrack.U4_Constants;
 import sm2.E1;
@@ -61,17 +62,17 @@ public class MoveTrainUsingDeque  {
 				String strNoTrucks = st[1];
 				String strFromBranch = st[2];
 				String strDestBranch = st[3];
-				MoveTrainUsingDeque.printreadfromdeque(st,3);
-				MoveTrainUsingDeque.moveTrucksOneByOneOnDisplay2(strNoTrucks, strFromBranch, strDestBranch);
-				MoveTrainUsingDeque.readDeque();
+				printreadfromdeque(st,3);
+				moveTrucksOneByOneOnDisplay2(strNoTrucks, strFromBranch, strDestBranch);
+				readDeque();
 				break;
 			case "moveTrucksOnDisplay":
 				strNoTrucks = st[1];
 				strFromBranch = st[2];
 				strDestBranch = st[3];
-				MoveTrainUsingDeque.printreadfromdeque(st,3);
-				MoveTrainUsingDeque.moveTrucksOnDisplay2(strNoTrucks, strFromBranch, strDestBranch);
-				MoveTrainUsingDeque.readDeque();
+				printreadfromdeque(st,3);
+				moveTrucksOnDisplay2(strNoTrucks, strFromBranch, strDestBranch);
+				readDeque();
 				break;
 			case "move":
 				//train T0 already has to be on the right route
@@ -80,31 +81,32 @@ public class MoveTrainUsingDeque  {
 				//			set up route
 				//			fromBranch = "st1";
 				//			toBranch = "sth";
-				MoveTrainUsingDeque.printreadfromdeque(st,2);
+				printreadfromdeque(st,2);
 				//			positionTrainToMove("T0",fromBranch, toBranch);
 				M61_Train_On_Route tr = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				//setpoints(fromBranch,toBranch);
-				M43_TruckData_Display stop = MoveTrainUsingDeque.getStop(fromBranch, toBranch,"to");
+				M76Stop stop = assignStop(fromBranch, toBranch,"to");
+				M76Stop[] sensors = assignSensors(fromBranch, toBranch,"to");
 				
-				MoveTrainUsingDeque.hmoveLoco(U4_Constants.getDirection());
+				hmoveLoco(U4_Constants.getDirection());
 	//			Main.lo.pause(9000);
-				MoveTrainUsingDeque.startMovingToStopFromBranch(stop, tr.getNumberTrucks2());  //counts no of trucks
+				startMovingToStopFromBranch(stop, sensors, tr.getNumberTrucks2());  //counts no of trucks
 			    
 				break;
 			case "connectTrucks":
-				MoveTrainUsingDeque.printreadfromdeque(st,1);
+				printreadfromdeque(st,1);
 				fromBranch = st[1];
-				String strBranch = MoveTrainUsingDeque.getStrBranch(fromBranch);
-				String trainStr =  MoveTrainUsingDeque.getTrainStrFromStrBranch(strBranch);
+				String strBranch = getStrBranch(fromBranch);
+				String trainStr =  getTrainStrFromStrBranch(strBranch);
 				//99System.out.print("connecting trucks");
-				MoveTrainUsingDeque.sendConnectMessage(fromBranch);
+				sendConnectMessage(fromBranch);
 				M61_Train_On_Route train1 = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				//turnmovementon(train1);
 				M61_Train_On_Route train2 = M6_Trains_On_Routes.getTrainOnRoute(trainStr);
 				////			train1.moving = false;
 				////			train2.moving = false;
 				//			//99System.out.print(train2.getNumberTrucks());
-				MoveTrainUsingDeque.decoupleFrom1CoupleTo2(train2, train1, train2.getNumberTrucks());
+				decoupleFrom1CoupleTo2(train2, train1, train2.getNumberTrucks());
 				//			//99System.out.print("trucks connected");
 				//			//99System.out.print("t1 size " + train1.getTruckPositions().size());
 				//			//99System.out.print("t2 size " + train2.getTruckPositions().size());
@@ -118,17 +120,17 @@ public class MoveTrainUsingDeque  {
 				train1 = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				train2 = M6_Trains_On_Routes.getTrainOnRoute(trainStr);
 	
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 	
 				break;
 			case "disconnectTrucks":
-				MoveTrainUsingDeque.printreadfromdeque(st,3);
+				printreadfromdeque(st,3);
 				int noTrucksBeforeConnection = Integer.valueOf(st[1]);
 				int noTrucksToAdd = Integer.valueOf(st[2]); //no of trucks to add or deposit
 				String branch = st[3];
 				String index = st[4];
-				strBranch = MoveTrainUsingDeque.getStrBranch(branch);
-				trainStr =  MoveTrainUsingDeque.getTrainStrFromStrBranch(strBranch);
+				strBranch = getStrBranch(branch);
+				trainStr =  getTrainStrFromStrBranch(strBranch);
 				//99System.out.print("disconnecting trucks");
 				train1 = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				train2 = M6_Trains_On_Routes.getTrainOnRoute(trainStr);
@@ -136,41 +138,41 @@ public class MoveTrainUsingDeque  {
 				//decoupleFrom1CoupleTo2(train1, train2, train1.getNumberTrucks()-noTrucksOnStack4-noTrucksToMove );
 				int noTrucksToMove = noTrucksBeforeConnection + noTrucksToAdd;
 				int noTrucksToTakeOffTrain1 = train1.getNumberTrucks()-noTrucksToMove;
-				MoveTrainUsingDeque.decoupleFrom1CoupleTo2(train1, train2, noTrucksToTakeOffTrain1 );
+				decoupleFrom1CoupleTo2(train1, train2, noTrucksToTakeOffTrain1 );
 				//99System.out.print("trucks disconnected");
 				//turnmovementon(train1);			
 				train1 = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				train2 = M6_Trains_On_Routes.getTrainOnRoute(trainStr);
 	
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 				break;
 			case "swapRouteOppDirectionTravelling":
 				strFromBranch = st[1];
 				String strToBranch = st[2];
-				MoveTrainUsingDeque.printreadfromdeque(st,2);
+				printreadfromdeque(st,2);
 				direction = U4_Constants.swapDirection();
-				MoveTrainUsingDeque.swapRouteOppDirection(strFromBranch, strToBranch,direction);
+				swapRouteOppDirection(strFromBranch, strToBranch,direction);
 	
 	//			Main.lo.moveLoco(direction, 0);
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 				break;
 			case "swapRouteSameDirectionTravelling":
 				strFromBranch = st[1];
 				strToBranch = st[2];
-				MoveTrainUsingDeque.printreadfromdeque(st,2);
-				MoveTrainUsingDeque.swapRouteSameDirection(strFromBranch, strToBranch);
+				printreadfromdeque(st,2);
+				swapRouteSameDirection(strFromBranch, strToBranch);
 				//turnmovementon(train1);
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 				break;
 			case "moveToDisconnectTrucks":
-				MoveTrainUsingDeque.printreadfromdeque(st,4);
+				printreadfromdeque(st,4);
 				int noTrucksOnStack4 = Integer.valueOf(st[1]);
 				noTrucksToMove = Integer.valueOf(st[2]); //deposition is -ve
 				fromBranch = st[3];
 				toBranch = st[4];
-				strFromBranch = MoveTrainUsingDeque.getStrBranch(fromBranch);
-				strToBranch = MoveTrainUsingDeque.getStrBranch(toBranch);
-				trainStr =  MoveTrainUsingDeque.getTrainStrFromStrBranch(strFromBranch);
+				strFromBranch = getStrBranch(fromBranch);
+				strToBranch = getStrBranch(toBranch);
+				trainStr =  getTrainStrFromStrBranch(strFromBranch);
 				//99System.out.print("disconnecting trucks");
 				train1 = M6_Trains_On_Routes.getTrainOnRoute("T0");
 				train2 = M6_Trains_On_Routes.getTrainOnRoute(trainStr);
@@ -180,51 +182,51 @@ public class MoveTrainUsingDeque  {
 					tr = M6_Trains_On_Routes.getTrainOnRoute("T0");
 					//stop = getStop(strFromBranch, "sth","from");
 					
-					stop = MoveTrainUsingDeque.getStop(strFromBranch,strToBranch,"from");
+					stop = assignStop(strFromBranch,strToBranch,"from");
 					//trucktostopat = 0;
-					MoveTrainUsingDeque.startMovingToStopFromBranch(stop, trucktostopat);
+					startMovingToStopFromBranch(stop, null, trucktostopat);
 	
 				}else{					//depositing a truck hence move away from sth, hence do not swap direction
 					//swapRouteSameDirection(strFromBranch, strToBranch);
 					tr = M6_Trains_On_Routes.getTrainOnRoute("T0");
-					//stop = getStop("sth",strToBranch,"from");
-					stop = MoveTrainUsingDeque.getStop(strFromBranch, strToBranch,"from");
-					MoveTrainUsingDeque.startMovingToStopFromBranch(stop, trucktostopat);
+					//stop = assignStop("sth",strToBranch,"from");
+					stop = assignStop(strFromBranch, strToBranch,"from");
+					startMovingToStopFromBranch(stop, null, trucktostopat);
 					//swapRouteOppDirection(strToBranch, strFromBranch);
 				}
-				MoveTrainUsingDeque.hmoveLoco(U4_Constants.getDirection());
+				hmoveLoco(U4_Constants.getDirection());
 				//readDeque();
 				break;
 	
 			case "moveToDisconnectTrucks2":
-				MoveTrainUsingDeque.printreadfromdeque(st,4);
+				printreadfromdeque(st,4);
 				noTrucksOnStack4 = Integer.valueOf(st[1]);
 				noTrucksToMove = Integer.valueOf(st[2]); //deposition was -ve
 				fromBranch = st[3];
 				toBranch = st[4];
-				strFromBranch = MoveTrainUsingDeque.getStrBranch(fromBranch);
-				strToBranch = MoveTrainUsingDeque.getStrBranch(toBranch);
+				strFromBranch = getStrBranch(fromBranch);
+				strToBranch = getStrBranch(toBranch);
 				if (noTrucksToMove>0){
 					//do nothing
 				}else{
 					//swapRouteOppDirection(strFromBranch, strToBranch);
 				}
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 				break;
 			case "disconnectSignal":
-				MoveTrainUsingDeque.printreadfromdeque(st,0);
+				printreadfromdeque(st,0);
 				//this to be added later
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 				break;
 			case "pause":
-				MoveTrainUsingDeque.printreadfromdeque(st,1);
+				printreadfromdeque(st,1);
 				int noSecs = Integer.valueOf(st[1]);
 				CreateTrainMovementDeque.hstopLoco();
 				milli = noSecs*1000;
 				Main.lo.pause(milli);
 				CreateTrainMovementDeque.delay(milli);
 				
-				MoveTrainUsingDeque.readDeque();
+				readDeque();
 				break;
 				
 			default:
@@ -236,6 +238,8 @@ public class MoveTrainUsingDeque  {
 			//		//generate an event to read the deque. This will move the train
 			//	assignStop	E3.e_readList();
 		}
+
+
 
 	protected static String getStrBranch(String branch){
 		switch (branch){
@@ -342,12 +346,12 @@ public class MoveTrainUsingDeque  {
 		}else{
 			direction = "backwards";
 		}
-		System.out.print("hmoveloco domin move engine speed " + engineSpeed);
+		//System.out.print("hmoveloco domin move engine speed " + engineSpeed);
 		Main.lo.moveLoco(direction, engineSpeed);
 		
 	}
 
-	protected static void startMovingToStopFromBranch(M43_TruckData_Display stop, int NoTrucks) {
+	protected static void startMovingToStopFromBranch(M76Stop stop, M76Stop[] sensors, int NoTrucks) {
 		//99System.out.print("startMovingToStopFromBranch");
 	
 		//Train T0 has to be already on the right route
@@ -369,7 +373,7 @@ public class MoveTrainUsingDeque  {
 	
 		String trainStr = null;
 		trainStr = "T0";	
-		M6_Trains_On_Routes.moveTrainCheckForStop(trainStr, stop, NoTrucks);
+		M6_Trains_On_Routes.moveTrainCheckForStop(trainStr, stop, sensors, NoTrucks);
 	
 	}
 
@@ -430,9 +434,16 @@ public class MoveTrainUsingDeque  {
 		//K2_Route route = assignRoute(fromBranch, toBranch);
 	
 		//M43_TruckData_Display stop = M75Stops.getStop("S1F1");
-		M43_TruckData_Display stop = MoveTrainUsingDeque.assignStop(fromBranch, toBranch,from_to);
+		M43_TruckData_Display stop = assignStop(fromBranch, toBranch,from_to);
 		return stop;
 	}
+	
+	private static M43_TruckData_Display[] getSensors(String fromBranch, String toBranch, String from_to) {
+		M43_TruckData_Display[] sensors = assignSensors(fromBranch, toBranch,from_to);
+		return sensors;
+	}
+
+
 
 	/**
 	 * @param strFromBranch
@@ -443,7 +454,7 @@ public class MoveTrainUsingDeque  {
 	
 		M62_train train0 = M6_Trains_On_Routes.getTrainOnRoute("T0");	
 	
-		K2_Route route= MoveTrainUsingDeque.assignRoute(strFromBranch, strToBranch);
+		K2_Route route= assignRoute(strFromBranch, strToBranch);
 	
 		if(!train0.getTruckPositions().get(0).swapDirectiontravelling(route, CreateTrainMovementDeque.graph,direction)){
 			//99System.out.print("unable to swap route");
@@ -466,7 +477,7 @@ public class MoveTrainUsingDeque  {
 	
 		M62_train train0 = M6_Trains_On_Routes.getTrainOnRoute("T0");	
 	
-		K2_Route route= MoveTrainUsingDeque.assignRoute(strFromBranch, strToBranch);
+		K2_Route route= assignRoute(strFromBranch, strToBranch);
 		
 		route.switchPointsOnRoute(CreateTrainMovementDeque.graph,CreateTrainMovementDeque.graph3);
 	
@@ -515,9 +526,9 @@ public class MoveTrainUsingDeque  {
 		return route;
 	}
 
-	protected static M43_TruckData_Display assignStop(String fromBranch,
+	protected static M76Stop assignStop(String fromBranch,
 			String toBranch, String from_to) {
-		M43_TruckData_Display stop = null;
+		M76Stop stop = null;
 		switch(fromBranch){
 		case "sth":
 			switch(toBranch){
@@ -555,6 +566,37 @@ public class MoveTrainUsingDeque  {
 			break;
 		}
 		return stop;
+	}
+	
+	protected static M76Stop[] assignSensors(String fromBranch,
+			String toBranch, String from_to) {
+		M76Stop[] sensors= new M76Stop[2];
+		switch(fromBranch){
+		case "sth":
+//			sensors[0] =  M75Stops.getStop("SENF1");
+//			sensors[1] =  M75Stops.getStop("SENF2");
+			sensors=null;
+//			switch(toBranch){
+//			case "st1":
+//				stop = M75Stops.getStop("S1F1");
+//				break;
+//			case "st2":
+//				stop = M75Stops.getStop("S2F1");
+//				break;
+//			case "st3":
+//				stop = M75Stops.getStop("S3F1");
+//				break;
+
+			break;
+		case "st1":
+		case "st2":
+		case "st3":
+			sensors[0] =  M75Stops.getStop("SENR1");
+			sensors[1] =  M75Stops.getStop("SENR2");
+			
+			break;
+		}
+		return sensors;
 	}
 
 }

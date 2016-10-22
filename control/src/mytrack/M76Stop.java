@@ -8,6 +8,7 @@ import javax.media.j3d.Node;
 public class M76Stop extends M43_TruckData_Display{
 	
 	boolean isSensor;
+	boolean isActive;
 	
 	public M76Stop(String arc, String directionFacing, D_MyGraph graph,
 			String startFraction, boolean isSensor) {

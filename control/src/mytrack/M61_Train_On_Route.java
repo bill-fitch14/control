@@ -40,6 +40,7 @@ public class M61_Train_On_Route extends M62_train{
 	//Movement Routines
 	
 	private boolean moving = false;
+	private boolean ToMoveToSensor = false;
 	
 	
 //	public startTrain(){
@@ -57,7 +58,7 @@ public class M61_Train_On_Route extends M62_train{
 	public boolean update(){
 
 		float distance = (float) N2_Time.getDistance(getTrainSpeed());
-//		//99System.out.print("updating " + this.moving);
+		//System.out.print("updating " + this.moving);
 		//boolean moving = true;
 		//this.moving = true;
 		if (this.isMoving() == true){
@@ -81,6 +82,20 @@ public class M61_Train_On_Route extends M62_train{
 		}
 
 		return isMoving();
+	}
+	
+	public void updatePositionToNextSensor()
+	{
+		boolean SensorReached = false;
+		while (SensorReached = false){
+			float distance = 0.1f;
+			for (M43_TruckData_Display truckPosition:getTruckPositions()){
+				boolean SensorReachedCurrentTruck = truckPosition.updateToSensor(distance); 
+				if (SensorReachedCurrentTruck == true){
+					SensorReached = true; 
+				}
+			}
+		}
 	}
 
 	public M61_Train_On_Route(String trainStr, int trainNo, String strEngineColor,
@@ -442,6 +457,11 @@ public class M61_Train_On_Route extends M62_train{
 
 	private void setEngineSpeed(double engineSpeed) {
 		Main.lo.setEngineSpeed(engineSpeed);
+	}
+
+	public boolean isToMoveToSensor() {
+		// TODO Auto-generated method stub
+		return ToMoveToSensor;
 	}
 
 

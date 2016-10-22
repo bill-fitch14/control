@@ -43,7 +43,8 @@ public class M62_train {
 	// private List<L3_TruckEngineObject_BG> truck_BG;
 	private float[] lengths;
 	private String[] truckType = new String[20];
-	float[] distancesFromHead;
+	float[] distancesFromHeadToMidpoint;
+	float[] distancesFromHeadToCoupling;
 
 	private BranchGroup trainBranchGroup = new BranchGroup();
 	private double trainSpeed = U4_Constants.speed;
@@ -68,15 +69,18 @@ public class M62_train {
 
 		// set the truck types
 
-		setTruckTypes();
+		setTruckTypes(numberEngines,numberTrucks);
 
 		// set the distances from the engine
-		distancesFromHead = distancesFromHead();
+		distancesFromHeadToMidpoint = distancesFromHeadToMidpointOfTruck();
+		distancesFromHeadToCoupling = distancesFromHeadToCoupling();
 
 		// setTrainDisplay();
 
 	}
 	
+
+
 	public void setTrainVariablesFromTruckPositions(){
 		
 		/*
@@ -139,10 +143,11 @@ public class M62_train {
 	}
 
 	public void reset_truck_locations(int referenceTruckNo) {
+
 		this.numberTrucks = this.getTruckPositions().size() - 1;
 		lengths = setLengthsOfTrain();
-		setTruckTypes();
-		distancesFromHead = distancesFromHead();
+		setTruckTypes(numberEngines, numberTrucks);
+		distancesFromHeadToMidpoint = distancesFromHeadToMidpointOfTruck();
 
 		// for all the items in the train
 		for (int truckEngineNo = 0; truckEngineNo < this.getNumberEngines()
@@ -155,15 +160,15 @@ public class M62_train {
 					getTruckPositions().get(referenceTruckNo));			
 			if (temp.getOrientation().equals("same")) {
 				if (this.getTrainCoupling().equals("tail")) {
-					temp.positionTrucks(-(distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
+					temp.positionTrucks(-(distancesFromHeadToMidpoint[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
 				} else {
-					temp.positionTrucks(distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor);
+					temp.positionTrucks(distancesFromHeadToMidpoint[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor);
 				}
 			} else {
 				if (this.getTrainCoupling().equals("tail")) {
-					temp.positionTrucks((distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
+					temp.positionTrucks((distancesFromHeadToMidpoint[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
 				} else {
-					temp.positionTrucks(-(distancesFromHead[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
+					temp.positionTrucks(-(distancesFromHeadToMidpoint[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
 				}
 			}
 
@@ -193,12 +198,12 @@ public class M62_train {
 		lengths = setLengthsOfTrain();
 
 		// set the truck types
-		setTruckTypes();
+		setTruckTypes(numberEngines, numberTrucks);
 		//99System.out.print(truckType[0]);
 		int dir = setdirection(truckData_Display);
 
 		// set the distances from the engine
-		float[] distanceFromHead = distancesFromHead();
+		float[] distanceFromHead = distancesFromHeadToMidpointOfTruck();
 
 		truckPositions = new LinkedList<M43_TruckData_Display>();
 		// truck_BG = new LinkedList<L3_TruckEngineObject_BG>();
@@ -234,8 +239,7 @@ public class M62_train {
 			//99System.out.print("distance from head " + truckEngineNo + "= "
 			//99		+ dir * distanceFromHead[truckEngineNo]);
 
-			m43_Data.moveWithinSegment3(distanceFromHead[truckEngineNo],
-					trainCoupling);
+			m43_Data.moveWithinSegment3(distanceFromHead[truckEngineNo],trainCoupling);
 			m43_Data.positionTrucks(distancesFromGivenTruck(0)[truckEngineNo]);
 
 			truckPositions.add(m43_Data);
@@ -290,7 +294,7 @@ public class M62_train {
 	/**
 	 * @return
 	 */
-	private float[] distancesFromHead() {
+	private float[] distancesFromHeadToMidpointOfTruck() {
 		float[] distanceFromHead = new float[20];
 		for (int i = 0; i < lengths.length; i++) {
 			for (int j = 0; j <= i; j++) {
@@ -307,33 +311,55 @@ public class M62_train {
 		}
 		return distanceFromHead;
 	}
+	
+	private float[] distancesFromHeadToCoupling() {
+		float[] distanceFromHead = new float[20];
+		for (int i = 0; i < lengths.length; i++) {
+			for (int j = 0; j <= i; j++) {
+				if (j == 0) {
+					distanceFromHead[j] = 0 + lengths[j];
+					// just add length of engine
+				} else {
+					distanceFromHead[j] = distanceFromHead[j - 1]  + lengths[j];
+					// add length of truck 
+				}
+			}
+		}
+		return distanceFromHead;
+	}
 
 	private float[] distancesFromGivenTruck(int truckNo) {
 		float[] distancesFromGivenTruck = new float[20];
-		float distanceFromHeadToGivenTruck1 = 0;
-		float[] distanceFromHeadToGivenTruck = new float[20];
+		float distanceFromHeadToCouplingOfGivenTruck1 = 0;
+		float[] distanceFromHeadToCouplingOfGivenTruck = new float[20];
 		for (int i = 0; i < truckNo; i++) {
-			distanceFromHeadToGivenTruck1 += lengths[i];
-			distanceFromHeadToGivenTruck[i] = distanceFromHeadToGivenTruck1;
+			distanceFromHeadToCouplingOfGivenTruck1 += lengths[i];
+			distanceFromHeadToCouplingOfGivenTruck[i] = distanceFromHeadToCouplingOfGivenTruck1;
 		}
 		for (int i = 0; i < truckNo; i++) {
-			distancesFromGivenTruck[i] = distancesFromHead()[i]
-					- distanceFromHeadToGivenTruck[i];
+			distancesFromGivenTruck[i] = distancesFromHeadToMidpointOfTruck()[i]
+					- distanceFromHeadToCouplingOfGivenTruck[i];
 		}
 		return distancesFromGivenTruck;
 	}
 
-	private void setTruckTypes() {
+	private void setTruckTypes(int numberEngines2, int numberTrucks2) {
 		String[] truckType = new String[20];
 
-		for (int i = 0; i < lengths.length; i++) {
-			if (i > 0) {
+		for (int i = 0; i<numberEngines2;i++ ){
+
+				truckType[i] = "Engine";
+
+		}
+			
+		for (int i = numberEngines2; i < lengths.length; i++) {
+
 				truckType[i] = "Truck";
 				//this.truckPositions.get(i+1).objectType="Truck";
-			}
+
 		}
 		// if(this.trainStr == "T0"){
-		truckType[0] = "Engine";
+		
 		//this.truckPositions.get(1).objectType="Truck";
 		// }
 		this.truckType = truckType;
@@ -534,7 +560,7 @@ public class M62_train {
 		builder.append(", truckType=");
 		builder.append(truckType);
 		builder.append(", distancesFromHead=");
-		builder.append(distancesFromHead);
+		builder.append(distancesFromHeadToMidpoint);
 		builder.append("]");
 		return builder.toString();
 	}

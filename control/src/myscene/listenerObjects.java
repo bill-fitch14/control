@@ -3,6 +3,8 @@ package myscene;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import mytrack.M61_Train_On_Route;
+
 public final class listenerObjects {
 
 	private static PropertyChangeSupport pcs = new PropertyChangeSupport(listenerObjects.class);
@@ -69,10 +71,10 @@ public final class listenerObjects {
 	
 	public static void moveLoco(String direction,double engineSpeed){
 		if (direction.equals("forwards")){
-			System.out.println("forwards loco1F: enginespeed" + engineSpeed);
+			//System.out.println("forwards loco1F: enginespeed" + engineSpeed);
 			pcs.firePropertyChange("loco1F",listenerObjects.engine1,engineSpeed);
 		}else{
-			System.out.println("forwards loco1R: enginespeed" + engineSpeed);
+			//System.out.println("forwards loco1R: enginespeed" + engineSpeed);
 			pcs.firePropertyChange("loco1R",listenerObjects.engine1,engineSpeed);
 		}
 	}

@@ -1789,6 +1789,7 @@ public class B2_LinkedLists  {
 //					startDirection, truckNames);
 			//trainStr = trainNo;
 			//trainNumber = 1;
+			
 			String traincoupling = "tail";
 			route1 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
 					 engineLength,  numberTrucks,  truckLength,

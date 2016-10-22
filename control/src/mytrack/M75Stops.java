@@ -27,7 +27,7 @@ public final class M75Stops {
 		return stops;
 	}
 
-	public static M43_TruckData_Display getStop(String string) {
+	public static M76Stop getStop(String string) {
 		for(M76Stop st: stops){
 			if(st.objectStr.equals(string)){
 				return st;
@@ -417,7 +417,7 @@ public final class M75Stops {
 			fraction = "3.625";
 			directionFacing = "Rev";
 			//stopNo = "S1";
-			M76Stop stop_displaytosthr1 = new M76Stop(arc, directionFacing, graph, fraction, false);
+			M76Stop stop_displaytosthr1 = new M76Stop(arc, directionFacing, graph, fraction, true);
 			stop_displaytosthr1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
 
 
@@ -433,7 +433,7 @@ public final class M75Stops {
 			fraction = "2.20625";
 			directionFacing = "Rev";
 			//stopNo = "S1";
-			M76Stop stop_displaytosthr2 = new M76Stop(arc, directionFacing, graph, fraction, false);
+			M76Stop stop_displaytosthr2 = new M76Stop(arc, directionFacing, graph, fraction, true);
 			stop_displaytosthr2.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
 
 
@@ -444,20 +444,20 @@ public final class M75Stops {
 			//trainsOnRoute.addtrainOnRoute(route1);
 			addstop(stop_displaytosthr2);//	
 			break;
-		case "fromsthf1":
-			arc = "1_F_2_B";
-			fraction = "3.625";
-			directionFacing = "Rev";
-			//stopNo = "S1F1";
-			M76Stop stop_displayfromsthf1 = new M76Stop(arc, directionFacing, graph, fraction, true);
-			stop_displayfromsthf1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
-			stopLength = 0.5f*U4_Constants.scalefactor;
-			stopStr = "SENF1";
-			stop_displayfromsthf1.set_BG(stopLength, stopStr, stopStr, "Sensor");
-			stop_displayfromsthf1.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
-			//trainsOnRoute.addtrainOnRoute(route1);
-			addstop(stop_displayfromsthf1);
-			break;
+//		case "fromsthf1":
+//			arc = "1_F_2_B";
+//			fraction = "3.625";
+//			directionFacing = "Rev";
+//			//stopNo = "S1F1";
+//			M76Stop stop_displayfromsthf1 = new M76Stop(arc, directionFacing, graph, fraction, true);
+//			stop_displayfromsthf1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
+//			stopLength = 0.5f*U4_Constants.scalefactor;
+//			stopStr = "SENF1";
+//			stop_displayfromsthf1.set_BG(stopLength, stopStr, stopStr, "Sensor");
+//			stop_displayfromsthf1.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
+//			//trainsOnRoute.addtrainOnRoute(route1);
+//			addstop(stop_displayfromsthf1);
+//			break;
 //		case "fromsthf2":
 //			arc = "1_F_2_B";
 //			fraction = "3.0";

@@ -148,6 +148,8 @@ public class E1 implements EventProvider {
 	@Override
 	public void init(ModelEngine engine) throws CommonException {
 		
+		
+		
 		//99System.out.print("E1.init");
 		E1.engine = engine;
 		

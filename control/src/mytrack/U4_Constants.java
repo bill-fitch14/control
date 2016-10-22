@@ -20,7 +20,6 @@ public final class U4_Constants {
 	
 	public static float speed = 10f;
 	
-	
 	public static float[] forwardAdaptors = {0,0.1f/10.0f,0};
 	public static float[] reverseAdaptors = {0,0.1f/10.0f,0};
 //	speed = ax^2 + bx + c where x is speed
@@ -33,6 +32,8 @@ public final class U4_Constants {
 	public static int pbl_instructionNo = 0;
 	
 	private static String direction = "forwards";
+	public static float[] modelForwardAdaptors = {0};
+	public static float[] modelReverseAdaptors = {0};
 	
 	public static float getHspeed(){
 		if(getDirection().equals("forwards")){

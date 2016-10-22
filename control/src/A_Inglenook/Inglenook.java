@@ -223,7 +223,7 @@ public class Inglenook {
 		Myfunctions.drawStacks(pole);
 		
 		try{
-			Thread.sleep(10000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		};
@@ -236,7 +236,7 @@ public class Inglenook {
 		
 		
 		try{
-			Thread.sleep(10000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		};

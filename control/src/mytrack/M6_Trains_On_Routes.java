@@ -38,20 +38,35 @@ public class M6_Trains_On_Routes {
 	int i = 0;
 
 	public static void moveTrainCheckForStop(String trainStr,
-			M43_TruckData_Display stop, int truckNo) {
+			M76Stop stop, M76Stop[] sensors, int truckNo) {
 
 		M61_Train_On_Route tr = getTrainOnRoute(trainStr);
 
 
 		// set stops for all trucks false
 		for (M43_TruckData_Display truck : tr.getTruckPositions()) {
-			truck.setCurrentStopActive(false);
+			truck.setCurrentStop(null);
+		}
+		
+		// set sensors for all trucks false
+		for (M43_TruckData_Display truck : tr.getTruckPositions()) {
+			truck.setCurrentSensors(null);
 		}
 
+		// make the train stop at the required truck
 		if (stop != null) {
 			// set the stop for the required truck true
 			tr.getTruckData(truckNo).setStop(stop);
 		}
+		
+		//make the engine trigger the sensor (not the truck)
+		//if its going the other way the last truck should trigger the sensor
+		if (sensors != null) {
+			// set the sensors for the required engine true
+			tr.getTruckData(0).setSensors(sensors);
+		}
+
+
 		// set the train moving
 		((M61_Train_On_Route) tr).setMoving(true);
 
@@ -100,6 +115,15 @@ public class M6_Trains_On_Routes {
 			if (t_on_route.isMoving()) {
 
 				t_on_route.update();
+			}
+		}
+	}
+	
+	public void updateToNextSensor(){
+		for (M61_Train_On_Route t_on_route : trainsOnRoutes) {
+			// 3//99System.out.print("processing train no:" + er.getTrainNo());
+			if (t_on_route.isToMoveToSensor()) {
+				t_on_route.updatePositionToNextSensor();
 			}
 		}
 	}
