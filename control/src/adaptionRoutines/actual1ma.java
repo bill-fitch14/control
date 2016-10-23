@@ -10,10 +10,10 @@ import Jama.Matrix;
 import Jama.QRDecomposition;
 import antlr.collections.List;
 
-public class actual {
+public class actual1ma {
 	
 	double[] parameters = {1,2,3};
-	double[] adaptors = {0,0,0};
+	double[] adaptors = {0.5f,0.5f,0.5f};
 	
 	static Random rand = new Random();
 	
@@ -25,15 +25,15 @@ public class actual {
 	public static void main(String[] args) {
 		
 		//set up the srimarray
-		for(int i=0;i<=20;i++){
+		for(int i=0;i<=10;i++){
 			SrimArray.add(new Matrix(5,5));
 		}
-		new actual();
+		new actual1ma();
 	}
 	
 	private enum direction { FORWARDS, BACKWARDS};
 	
-	public 	actual(){
+	public 	actual1ma(){
 		
 		int xmax = 150;
 		int xmin = -100;
@@ -44,7 +44,7 @@ public class actual {
 
 		//produce a set of measurements
 		int offset;
-		for(int i = -100; i<150; i++){
+		for(int i = 1; i<5; i++){
 			double x = i;
 			int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);
 			if(enginedirection == direction.FORWARDS){
@@ -53,7 +53,7 @@ public class actual {
 				offset = noBoxes; 
 			}
 			srimbox = srimbox+offset;
-			
+			System.out.println("srimbox" + srimbox);
 			//produce the srim
 			processMeasurement(x, parameters, adaptors,srimbox);
 			//get the global srim
@@ -69,9 +69,15 @@ public class actual {
 	
 	private Matrix getGlobalSrim() {
 			Matrix globalSrim = new Matrix(5,5);
-			for(Matrix mySrim : actual.SrimArray){
+			for(Matrix mySrim : actual1ma.SrimArray){
+				print("mySRIM in SrimArray");
+				mySrim.print(10,2);
+				print("globalSrimbefore");
+				globalSrim.print(10,2);
 				Matrix addsrim = addSrim(globalSrim,mySrim);
 				globalSrim=addsrim;
+				print("globalSrimafter");
+				globalSrim.print(10,2);
 			}
 			
 		return globalSrim;
@@ -100,6 +106,8 @@ public class actual {
 		YpU.print(10,1);
 		
 		Matrix UpU = IM.getMatrix(xDim+2, xDim+2, xDim+2, xDim+2);
+		print ("UpU");
+		UpU.print(10,1);
 		if (x>=4){		
 			Matrix D = XpX.inverse().transpose().times(XpY);
 			print ("adaptors");
@@ -158,9 +166,9 @@ public class actual {
 	
 
 	double meas(double x, double coeffs[]){
-		double a = coeffs[0];
-		double b = coeffs[1];
-		double c = coeffs[2];
+		double a = coeffs[0]*2;
+		double b = coeffs[1]*2;
+		double c = coeffs[2]*2;
 		double y = a*x*x + b*x + c ;
 
 		return y;
@@ -170,18 +178,44 @@ public class actual {
 		
 		// y = y -y* + ad sens product
 		
-		double measy = meas(x, parameters)+1*(rand.nextFloat()-0.5);
-		double esty = meas(x, adaptors);
+		double measy = meas(x, parameters);//+1*(rand.nextFloat()-0.5);
+		System.out.println("measy = " + measy);
+		double esty = est(x, parameters, adaptors);
+		System.out.println("esty = " + esty);
 		double adSensProd = adSensProduct(x);
+		System.out.println("adSensProd = " + adSensProd);
 		double ans = measy - esty + adSensProd;
 		return ans;
 		
 	}
 	
-	Matrix sensitivities(double x){
-		double sens1 = x*x;
-		double sens2 = x;
-		double sens3 = 1;
+	private double est(double x, double[] parameters2, double[] adaptors2) {
+		double a = parameters2[0];
+		double b = parameters2[1];
+		double c = parameters2[2];
+		double aa = adaptors2[0];
+		double bb = adaptors2[1];
+		double cc = adaptors2[2];
+		double y = a*(1-aa)*x*x + b*(1-bb)*x + c*(1-cc) ;
+
+		return y;
+	}
+
+
+
+
+	Matrix sensitivities(double x, double[] parameters2){
+		double a = parameters2[0];
+		System.out.println("a= " + a);
+		double b = parameters2[1];
+		System.out.println("b= " + b);
+		double c = parameters2[2];
+		System.out.println("c= " + c);
+		System.out.println("x= " + x);
+		//double y = a*(1-aa)*x*x + b*(1-bb)*x + c*(1-cc) ;
+		double sens1 = -a*x*x;
+		double sens2 = -b*x;
+		double sens3 = -c*1;
 		double[][] sens = {{sens1},{sens2},{sens3}};
 		Matrix ans = new Matrix(sens);
 		return ans;
@@ -194,9 +228,16 @@ public class actual {
 	}
 	
 	double adSensProduct(double x){
-		Matrix sens = sensitivities(x);
+		
+		Matrix sens = sensitivities(x, this.parameters);
+		print ("sens");
+		sens.print(10,3);
 		Matrix adaptors = adaptors();
-		Matrix adSensProductMat = sens.times(adaptors);
+		print ("adaptors");
+		adaptors.print(10,1);
+		Matrix adSensProductMat = adaptors.times(sens);
+		print ("adSensProductMat");
+		adSensProductMat.print(10,1);
 		double ans = adSensProductMat.det();
 		return ans;
 	}
@@ -230,17 +271,17 @@ public class actual {
 	}
 	
 	static Matrix addSrim(Matrix Srim1, Matrix Srim2){
-		if(Srim1.getRowDimension()!=Srim2.getRowDimension()){
+		if(Srim1.getColumnDimension()!=Srim2.getColumnDimension()){
 			Matrix ansSrim = null;
 			return ansSrim;
 		}
 		else{
-			print("Srim1 ColumnDimension " + Srim1.getColumnDimension() );
-			print("Srim2 ColumnDimension " + Srim2.getColumnDimension() );
+//			print("\nSrim1 ColumnDimension " + Srim1.getColumnDimension() );
+//			print("\nSrim2 ColumnDimension " + Srim2.getColumnDimension() );
 			
 			//convert srims to ims
-			//Matrix IM1 = Srim1.transpose().times(Srim1);
-			//Matrix IM2 = Srim2.transpose().times(Srim2);
+//			Matrix IM1 = Srim1.transpose().times(Srim1);
+//			Matrix IM2 = Srim2.transpose().times(Srim2);
 			
 			Matrix bigIM = new Matrix(
 					Srim1.getRowDimension()+Srim2.getRowDimension(),
@@ -261,10 +302,42 @@ public class actual {
 		
 	}
 	
+	static Matrix addMeasurement(Matrix Srim1, Matrix xy1){
+		if(Srim1.getColumnDimension()!=xy1.getColumnDimension()){
+			Matrix ansSrim = null;
+			return ansSrim;
+		}
+		else{
+			print("\nSrim1 ColumnDimension " + Srim1.getColumnDimension());
+			print("\nSrim2 ColumnDimension " + xy1.getColumnDimension());
+			
+			//convert srims to ims
+//			Matrix Srim1 = Srim1.transpose().times(Srim1);
+			//Matrix IM2 = Srim2.transpose().times(Srim2);
+			
+			Matrix bigIM = new Matrix(
+					Srim1.getRowDimension()+xy1.getRowDimension(),
+					Srim1.getColumnDimension());
+			
+			bigIM.setMatrix(
+					0,Srim1.getRowDimension()-1,
+					0,Srim1.getColumnDimension()-1,Srim1);
+			bigIM.setMatrix(
+					Srim1.getRowDimension(),
+					Srim1.getRowDimension()+xy1.getRowDimension()-1,
+					0,Srim1.getColumnDimension()-1,
+					xy1);
+			QRDecomposition qr = bigIM.qr();
+			Matrix ansSrim = qr.getR();
+			return ansSrim;
+		}
+		
+	}
+	
 	void processMeasurement(double x, double[] parameters, double[] adaptors, int srimbox){
 		double y = measY(x, parameters, adaptors);
-			print("y="+y);
-		Matrix X = sensitivities(x);
+			print("meaY="+y);
+		Matrix X = sensitivities(x, parameters);
 			print ("sensitivities");
 			X.print(10,1);
 		Matrix XY1 = xy1(X,y);
@@ -283,7 +356,16 @@ public class actual {
 		Matrix Unity = qSrim.transpose().times(qSrim);
 			print("Unity");
 			Unity.print(10,1);
-		Matrix addSrim = addSrim(this.SrimArray.get(srimbox),meas_IM);
+			Matrix temp =XY1.transpose();
+			
+			print("this.SrimArray.get(srimbox)");
+			actual1ma.SrimArray.get(srimbox).print(10,1);
+			print("temp");
+			temp.print(10,1);
+		Matrix addSrim = addSrim(actual1ma.SrimArray.get(srimbox),temp);
+
+		print("addSrim");
+		addSrim.print(10,1);
 		this.SrimArray.set(srimbox, addSrim);
 	}
 	

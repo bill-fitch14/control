@@ -100,7 +100,7 @@ public class AdaptionSim {
 		int noBoxes = 10;
 		float forgettingfactor = .99f;
 		
-		AdaptionEngine adaptModelForward = new AdaptionEngine(noBoxes, "ModelForwardAdaption", initialise, forgettingfactor);
+		AdaptionSim adaptModelForward = new AdaptionSim(noBoxes, "ModelForwardAdaption", initialise, forgettingfactor);
 		
 		for (int i = 1;i<100;i++){
 			long simRevTime = 20;
