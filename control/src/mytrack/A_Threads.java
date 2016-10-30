@@ -42,9 +42,9 @@ public final class A_Threads {
 
 	modelConsole2();
 	
-	inglenook();
+	//inglenook();
 	
-	mmi();
+	//mmi();
 
 
 

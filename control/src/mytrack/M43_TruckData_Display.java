@@ -11,6 +11,7 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Color3f;
 import javax.vecmath.Tuple3d;
 //import javax.vecmath.Point3d;
@@ -20,12 +21,21 @@ import sm2.E1;
 import sm2.Main;
 //import A_Inglenook.M_TruckMovements;
 import Utilities.Util;
+import myscene.ModelLoader;
 
 import com.sun.j3d.utils.geometry.Primitive;
 import com.sun.j3d.utils.geometry.Text2D;
 
 public class M43_TruckData_Display extends M42_Position_Tangent implements Cloneable 
 {
+	
+	private static boolean DEBUG = true;
+	private static void print(String x){
+		if (DEBUG ){
+		System.out.println(x);
+		}
+	}
+	
 	public M43_TruckData_Display(String arc, String directionFacing, D_MyGraph graph, String startFraction){
 
 		super(arc, directionFacing, graph, startFraction);
@@ -85,7 +95,8 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 
 //	private boolean[] currentSensorsActive = null;
-	private M43_TruckData_Display headOfTruck;
+	private M43_TruckData_Display tailOfTruck;
+	private M76Stop translatedStop;
 
 	//	private void set_BG(H4_truckLocation tl, Integer truckNames2) {
 	//		this.objectStr = ""+truckNames2;
@@ -194,8 +205,39 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	}
 
-
 	private Node engine_TG() {
+		Transform3D t3d = new Transform3D();
+//		t3d.rotY(0);
+		TransformGroup rotateBy90 = new TransformGroup(t3d);
+		U1_TAppearance A = new U1_TAppearance(Color.red);
+		Appearance app = A.get_Appearance();
+		float boxHeight = .5f;
+		float boxWidth = .4f;
+		float boxLen = objectLength;
+//		com.sun.j3d.utils.geometry.Box engineBody = new com.sun.j3d.utils.geometry.Box(
+//				boxLen / 2 * .9f, boxWidth / 2, boxHeight / 2,
+//				Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS,
+//				app);
+	    ModelLoader ml = new ModelLoader();
+//	    Transform3D t3d = new Transform3D();
+
+	    t3d.setIdentity();   // resets t3d  (just to be safe)
+	    t3d.setTranslation( new Vector3d(0,0,-1.5));   // move
+	    t3d.setScale(U4_Constants.enginelength*U4_Constants.scalefactor);   // enlarge
+	    t3d.setRotation( new AxisAngle4d(1,0,0, Math.toRadians(90)) ); 
+	    Transform3D temp = new Transform3D();
+	    temp.setRotation( new AxisAngle4d(0,1,0, Math.toRadians(90)) );
+	    t3d.mul(temp);
+	              // rotate 90 degrees anticlockwise around y-axis
+	    TransformGroup tg1 = new TransformGroup(t3d);
+	    //tg1.setRotation( new AxisAngle4d(0,1,0, Math.toRadians(90)) );
+	    tg1.addChild( ml.getModel("shunter.obj", 0.8) );
+	    rotateBy90.addChild(tg1);
+		//rotateBy90.addChild(engineBody);
+		//engineBody.setName("engineBody_" + objectStr);
+		return rotateBy90;
+	}
+	private Node engine_TG_old() {
 
 		//		rotateBy90 --> engineBody
 		//		           --> translateToEngineCabCentre --> engineCab
@@ -338,12 +380,17 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 
 	private Node truck_TG(String type) {
+		Transform3D t3d = new Transform3D();
+//		t3d.rotY(0);
+		TransformGroup rotateBy90 = new TransformGroup(t3d);
 		float objectLen = objectLength * .8f;
 		float objectHeight = 0.5f;
 		float objectWidth = .4f;
 		Color objectColor = Color.cyan;
 		float textOffset = -.3f;
-		return block_TG(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
+		
+	    
+		return truck_block_TG(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
 	}
 	private Node block_TG_stop(String type, float objectHeight, float objectWidth, float objectLen, Color objectColor, float textOffset) {
 
@@ -399,7 +446,61 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		// translateToEngineCabCentre.addChild(engineCab);
 		return rotateBy90;
 	}
+	private Node truck_block_TG(String type, float objectHeight, float objectWidth, float objectLen, Color objectColor, float textOffset) {
 
+		//		rotateBy90 --> objectBody --> rotateBy90Text --> makeText(pt,""+objectText)
+
+		//define rotational transform group rotateby90
+		Transform3D t3d = new Transform3D();
+		t3d.rotY(0);
+		TransformGroup rotateBy90 = new TransformGroup(t3d);
+		U1_TAppearance A = new U1_TAppearance(Color.green);
+		Appearance app = A.get_Appearance();
+		//		float boxHeight = 0.5f;
+		//		float boxWidth = .4f;
+
+		//define box
+		float boxLen = objectLength;
+		com.sun.j3d.utils.geometry.Box objectBody = new com.sun.j3d.utils.geometry.Box(
+				objectLen / 2 , objectWidth / 2, objectHeight / 2,
+				Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS,
+				app);
+		
+		t3d.setIdentity();   // resets t3d  (just to be safe)
+	    t3d.setTranslation( new Vector3d(0,0,-0.5));   // move
+	    t3d.setScale((U4_Constants.trucklength)*U4_Constants.scalefactor);   // enlarge
+	    t3d.setRotation( new AxisAngle4d(1,0,0, Math.toRadians(90)) ); 
+	    Transform3D temp = new Transform3D();
+	    temp.setRotation( new AxisAngle4d(0,1,0, Math.toRadians(90)) );
+	    t3d.mul(temp);
+	              // rotate 90 degrees anticlockwise around y-axis
+	    ModelLoader ml = new ModelLoader();
+	    TransformGroup tg1 = new TransformGroup(t3d);
+	    //tg1.setRotation( new AxisAngle4d(0,1,0, Math.toRadians(90)) );
+	    tg1.addChild( ml.getModel("truck.obj", 0.8) );
+	    rotateBy90.addChild(tg1);
+	    
+
+//		//add objectbody to rotateby90
+//		rotateBy90.addChild(objectBody);
+//		objectBody.setName(type + "_" + objectStr);
+
+		//define rotational transform group rotateBy90Text
+		Transform3D t3d1 = new Transform3D();
+		t3d1.rotZ(-Math.PI);   //rotates text
+		t3d1.rotZ(0);
+		TransformGroup rotateBy90Text = new TransformGroup(t3d1);
+
+		//define translation group makeText(pt,""+objectStr)
+		Vector3d pt = new Vector3d(0,textOffset,(U4_Constants.trucklength)/1.5f*U4_Constants.scalefactor);
+
+		//add the text to rotateBy90Text
+		rotateBy90Text.addChild(makeText(pt,""+objectText));
+
+		//add the text to the box
+		rotateBy90.addChild(rotateBy90Text);
+		return rotateBy90;
+	}
 	private Node block_TG(String type, float objectHeight, float objectWidth, float objectLen, Color objectColor, float textOffset) {
 
 		//		rotateBy90 --> objectBody --> rotateBy90Text --> makeText(pt,""+objectText)
@@ -438,20 +539,6 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 		//add the text to the box
 		objectBody.addChild(rotateBy90Text);
-
-		//		Vector3d P = new Vector3d(3 * boxLen / 8, 0, objectHeight);
-		//		t3d.setTranslation(P);
-		//		A = new U1_TAppearance(Color.cyan);
-		//		app = A.get_Appearance();
-		//		TransformGroup translateToEngineCabCentre = new TransformGroup(t3d);
-		//		rotateBy90.addChild(translateToEngineCabCentre);
-		//
-		//		com.sun.j3d.utils.geometry.Box engineCab = new com.sun.j3d.utils.geometry.Box(
-		//				boxLen / 8, objectWidth / 2, objectHeight / 2,
-		//				Primitive.GENERATE_NORMALS | Primitive.GENERATE_TEXTURE_COORDS,
-		//				app);
-		//		engineCab.setName(objectStr + "_" + type);
-		// translateToEngineCabCentre.addChild(engineCab);
 		return rotateBy90;
 	}
 
@@ -471,12 +558,12 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	public boolean updateToSensor( float distance) {
 		try {
-			headOfTruck = (M43_TruckData_Display)this.clone();
-			float distToHead = (headOfTruck.objectLength/2.0f);
-			if(headOfTruck.getOrientation().equals("same")) {
-				headOfTruck.moveWithinSegment3(distToHead);
+			tailOfTruck = (M43_TruckData_Display)this.clone();
+			float distToHead = (tailOfTruck.objectLength/2.0f);
+			if(tailOfTruck.getOrientation().equals("same")) {
+				tailOfTruck.moveWithinSegment3(distToHead);
 			}else{
-				headOfTruck.moveWithinSegment3(distToHead);
+				tailOfTruck.moveWithinSegment3(distToHead);
 			}
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
@@ -487,7 +574,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			boolean sensorReached = false;
 			for(M76Stop x:getCurrentSensors()){
 				if (x != null){
-					sensorReached = checkForStop( distance, x);
+					sensorReached = checkForStop( distance, tailOfTruck, x);
 				}
 			}
 			return sensorReached;
@@ -514,13 +601,38 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 
 		try {
-			headOfTruck = (M43_TruckData_Display)this.clone();
-			float distToHead = (headOfTruck.objectLength/2.0f);
-			if(headOfTruck.getOrientation().equals("same")) {
-				headOfTruck.moveWithinSegment3(distToHead);
+			//if the train is moving backwards!!! 
+			if(this.getMovement()=="same"){
+				this.tailOfTruck = (M43_TruckData_Display)this.clone();
+				translatedStop = getCurrentStop();
+				float distToHead = (tailOfTruck.objectLength/2.0f);
+				tailOfTruck.moveWithinSegment3(distToHead);
 			}else{
-				headOfTruck.moveWithinSegment3(distToHead);
+				this.tailOfTruck = this;
+				if( isCurrentStopActive()){	
+				translatedStop = (M76Stop) currentStop.clone();
+				float distToHead = (tailOfTruck.objectLength/2.0f);
+				translatedStop.moveWithinSegment3(distToHead);
+				}				
 			}
+			
+//				float distToHead = (headOfTruck.objectLength/2.0f);
+//				if(headOfTruck.getOrientation().equals("same")) {
+//					headOfTruck.moveWithinSegment3(distToHead);
+//				}else{
+//					headOfTruck.moveWithinSegment3(distToHead);
+//				}
+//				translatedStop = getCurrentStop();
+//			}else{
+//				translatedStop = (M76Stop) currentStop.clone();
+//				float distToHead = (this.objectLength/2.0f);
+//				if(translatedStop.getOrientation().equals("same")) {
+//					translatedStop.moveWithinSegment3(distToHead);
+//				}else{
+//					translatedStop.moveWithinSegment3(distToHead);
+//				}
+//				headOfTruck = this;
+//			}
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -540,7 +652,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 			//System.out.print("updating truck moving current stop active" + distance);
 
-			return checkForStop(distance, getCurrentStop());
+			return checkForStop(distance, tailOfTruck, translatedStop);
 
 		}else{
 			//System.out.print("updating truck moving current stop not active" + this.objectStr + distance);
@@ -603,12 +715,12 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 //	}
 
 	private void checkForSensor(float distance, M76Stop x) {
-		if(headOfTruck.getStartArcPair()[0].equals(x.getStartArcPair()[0]) && 
-				headOfTruck.getStartArcPair()[1].equals(x.getStartArcPair()[1]) &&
-				headOfTruck.getSegmentNo()==x.getSegmentNo()){
-			if(headOfTruck.getOrientation().equals("same")) {
-				if(headOfTruck.getSegmentFraction() > x.getSegmentFraction()){
-					System.out.print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&whoopee sensor detected " + x.objectStr);
+		if(tailOfTruck.getStartArcPair()[0].equals(x.getStartArcPair()[0]) && 
+				tailOfTruck.getStartArcPair()[1].equals(x.getStartArcPair()[1]) &&
+				tailOfTruck.getSegmentNo()==x.getSegmentNo()){
+			if(tailOfTruck.getOrientation().equals("same")) {
+				if(tailOfTruck.getSegmentFraction() > x.getSegmentFraction()){
+					print("&&& sensor detected " + x.objectStr);
 					long millis = System.currentTimeMillis();
 					Main.lo.setSensor(x.objectStr, millis);
 					x.isActive = false;
@@ -616,8 +728,8 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 				}
 
 			}else if (this.getOrientation().equals("opposite")){
-				if(headOfTruck.getSegmentFraction() < x.getSegmentFraction()){
-					System.out.print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&whoopee sensor detected " + x.objectStr);
+				if(tailOfTruck.getSegmentFraction() < x.getSegmentFraction()){
+					print("&&& sensor detected " + x.objectStr);
 					long millis = System.currentTimeMillis();
 					Main.lo.setSensor(x.objectStr, millis);
 					x.isActive = false;
@@ -632,14 +744,14 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	}
 
-	private boolean checkForStop(float distance, M76Stop x) {
-		if(headOfTruck.getStartArcPair()[0].equals(x.getStartArcPair()[0]) && 
-				headOfTruck.getStartArcPair()[1].equals(x.getStartArcPair()[1]) &&
-				headOfTruck.getSegmentNo()==x.getSegmentNo()){
-			if(headOfTruck.getOrientation().equals("same")) {
-				if(headOfTruck.getSegmentFraction() > x.getSegmentFraction()){
+	private boolean checkForStop(float distance,M43_TruckData_Display truckPosition, M76Stop stopPosition) {
+		if(truckPosition.getStartArcPair()[0].equals(stopPosition.getStartArcPair()[0]) && 
+				truckPosition.getStartArcPair()[1].equals(stopPosition.getStartArcPair()[1]) &&
+				truckPosition.getSegmentNo()==stopPosition.getSegmentNo()){
+			if(truckPosition.getOrientation().equals("same")) {
+				if(truckPosition.getSegmentFraction() > stopPosition.getSegmentFraction()){
 					//99System.out.print("whoopee");
-					x.isActive = false;
+					stopPosition.isActive = false;
 
 					return false;
 				}else{
@@ -652,9 +764,9 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 					return true;
 				}
 			}else if (this.getOrientation().equals("opposite")){
-				if(headOfTruck.getSegmentFraction() < x.getSegmentFraction()){
+				if(truckPosition.getSegmentFraction() < stopPosition.getSegmentFraction()){
 					//99System.out.print("whoopee");
-					x.isActive = false;
+					stopPosition.isActive = false;
 
 					return false;
 				}else{
@@ -674,7 +786,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			printPair("this.startarcpairlist" , this.getStartArcPair() );
 			//99System.out.print("this.getSegmentNo()" + this.getSegmentNo());
 			//99System.out.print("currentStop.getSegmentNo()" + currentStop.getSegmentNo());
-			printPair("currentstop " , x.getStartArcPair());
+			printPair("currentstop " , stopPosition.getStartArcPair());
 			moveWithinSegment3(distance);
 			setPositionTangent();
 			updatePositionAndTangent(getPosition(),getTangent());

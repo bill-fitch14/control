@@ -14,6 +14,12 @@ import A_Inglenook.MoveTrainUsingDeque;
 
 public class C1 implements ControlledObject {
 
+	private static boolean DEBUG = false;
+	private static void print(String x){
+		if (DEBUG ){
+		System.out.print(x);
+		}
+	}
 	/**
 	 * @unimod.action.descr process stack
 	 */
@@ -92,7 +98,7 @@ public class C1 implements ControlledObject {
 				}
 			}
 			println("SWITCHING: " + message);
-			System.out.println(serialmessage);
+			print(serialmessage);
 			E1.get_serialModel().writeSerial(serialmessage);
 			//sm2.Main.setpoint(message);
 			

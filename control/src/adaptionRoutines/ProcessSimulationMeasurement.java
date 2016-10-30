@@ -21,7 +21,15 @@ public class ProcessSimulationMeasurement {
 	
 	static ArrayList<Matrix> SrimArray = new ArrayList<Matrix>();
 	
+	
 	int noBoxes = 10;
+	
+	private static boolean DEBUG = false;
+	private static void print(String x){
+		if (DEBUG ){
+		System.out.print(x);
+		}
+	}
 	
 	public ProcessSimulationMeasurement(double millis , double distancetravelled, double simSetting){
 		double x = simSetting;
@@ -119,15 +127,6 @@ public class ProcessSimulationMeasurement {
 		
 	}
 	
-	private static void print(String x){
-		System.out.print(x);
-	}
-
-
-
-
-	
-
 	double meas(double x, double coeffs[]){
 		double a = coeffs[0];
 		double b = coeffs[1];

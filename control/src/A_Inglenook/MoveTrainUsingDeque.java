@@ -22,6 +22,38 @@ public class MoveTrainUsingDeque  {
 	static List<M43_TruckData_Display> trainData1;
 
 	static List<M43_TruckData_Display> trainData2;
+	
+	private static boolean DEBUG = false;
+	private static void print(String x){
+		if (DEBUG ){
+		System.out.print(x);
+		}
+	}
+	
+	protected static void printreadfromdeque(String[] st, int i) {
+		boolean DEBUG = false;
+		if(DEBUG){
+		E1.threads.get_serialModel().print("readfromdeque  ");
+		for (int j = 0; j <= i; j++) {
+			String string = st[j];
+			E1.threads.get_serialModel().print(" "+string);
+		}
+		E1.threads.get_serialModel().println();
+	
+	
+		print("readfromdeque  ");
+		for (int j = 0; j <= i; j++) {
+			String string = st[j];
+			print(" "+string);
+		}
+		//99System.out.print();
+		for (int j = 0; j <= i; j++) {
+			String string = st[j];
+			//E1.threads.get_serialModel().print(" "+string);
+		}
+		E1.threads.get_serialModel().println();
+		}
+	}
 
 	public static List<M43_TruckData_Display> getTrainData1() {
 		return trainData1;
@@ -255,27 +287,7 @@ public class MoveTrainUsingDeque  {
 		return null;
 	}
 
-	protected static void printreadfromdeque(String[] st, int i) {
-		E1.threads.get_serialModel().print("readfromdeque  ");
-		for (int j = 0; j <= i; j++) {
-			String string = st[j];
-			E1.threads.get_serialModel().print(" "+string);
-		}
-		E1.threads.get_serialModel().println();
-	
-	
-		System.out.println("readfromdeque  ");
-		for (int j = 0; j <= i; j++) {
-			String string = st[j];
-			System.out.print(" "+string);
-		}
-		//99System.out.print();
-		for (int j = 0; j <= i; j++) {
-			String string = st[j];
-			//E1.threads.get_serialModel().print(" "+string);
-		}
-		E1.threads.get_serialModel().println();
-	}
+
 
 	protected static void sendConnectMessage(String fromBranch) {
 		//serialcommand
@@ -575,7 +587,7 @@ public class MoveTrainUsingDeque  {
 		case "sth":
 //			sensors[0] =  M75Stops.getStop("SENF1");
 //			sensors[1] =  M75Stops.getStop("SENF2");
-			sensors=null;
+//			sensors=null;
 //			switch(toBranch){
 //			case "st1":
 //				stop = M75Stops.getStop("S1F1");
@@ -586,7 +598,8 @@ public class MoveTrainUsingDeque  {
 //			case "st3":
 //				stop = M75Stops.getStop("S3F1");
 //				break;
-
+			sensors[0] =  M75Stops.getStop("SENF1");
+			sensors[1] =  M75Stops.getStop("SENF2");
 			break;
 		case "st1":
 		case "st2":

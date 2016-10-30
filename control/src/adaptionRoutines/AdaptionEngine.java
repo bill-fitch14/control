@@ -32,6 +32,13 @@ public class AdaptionEngine {
 
 	private Matrix globalSrim = new Matrix(5,5);
 	double[][] globalSrimArray;
+	
+	private static boolean DEBUG = false;
+	private static void print(Object x){
+		if (DEBUG ){
+		System.out.print(x);
+		}
+	}
 
 	public double[][] getGlobalSrim() {
 		return globalSrim.getArray();
@@ -110,7 +117,7 @@ public class AdaptionEngine {
 
 		for (int i = 1;i<5;i++){
 			long simRevTime = 1;
-			//			i=1;
+//				i=1;
 			long simDistancetravelled = (long) (2.0f*parameters[0]*i*i +2.0f*parameters[1]*i+2.0f*parameters[2]);
 			float speedatSENR2 = i;
 			int min = 0;
@@ -124,26 +131,26 @@ public class AdaptionEngine {
 	public boolean processMeasurement(long millis , long distancetravelled, float enginesetting,
 			float min, float max){
 
-		System.out.println("SRIM Analysis: " + AdaptionName + " engine setting: " + enginesetting);
+		print("SRIM Analysis: " + AdaptionName + " engine setting: " + enginesetting);
 		double x = (double)enginesetting;				//80 for simulation
 		double y = (double)distancetravelled/(double)millis;  // 80/100 = 0.8
-		System.out.println("distancetravelled = "+distancetravelled + "millis = "+millis + "y = "+y );
+		print("distancetravelled = "+distancetravelled + "millis = "+millis + "y = "+y );
 		double xmin = min;
 		double xmax = max;
-		System.out.println("millis =" + millis);
-		System.out.println("distancetravelled =" + distancetravelled);
-		System.out.println("enginesetting =" + enginesetting);
-		//		System.out.println("direction =" + direction);
+		print("millis =" + millis);
+		print("distancetravelled =" + distancetravelled);
+		print("enginesetting =" + enginesetting);
+		//		print("direction =" + direction);
 		int srimoffset;
 		//		srimoffset = getSrimOffset(direction);
-		//		System.out.println("srimoffset =" + srimoffset);
+		//		print("srimoffset =" + srimoffset);
 		int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);//+ srimoffset;
-		System.out.println("srimbox =" + srimbox);
+		print("srimbox =" + srimbox);
 
 		//produce the srim
 
 		processMeasurement(x,y, srimbox, forgettingfactor);
-		System.out.println("finished processMeasurement");
+		print("finished processMeasurement");
 		// the new srim is now saved in SrimArray
 		// save the newly updated srimi
 //		try {
@@ -167,10 +174,11 @@ public class AdaptionEngine {
 		//		
 		//update the adaptors if enough measurements have been taken
 		NoOfTimesRoutineHasBeenCalled++;
+		System.out.println("Adaption Engine called " + NoOfTimesRoutineHasBeenCalled);
 		Matrix newAdaptors = getParameters2(NoOfTimesRoutineHasBeenCalled);
 		if(NoOfTimesRoutineHasBeenCalled>=4){
 
-
+			
 			saveAdaptorsToU4Constants(newAdaptors);
 			try {
 				saveAdaptorsToFile(newAdaptors);
@@ -178,6 +186,7 @@ public class AdaptionEngine {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("Adaption Engine Adaptors saved");
 			return true;
 		}
 		//update the adaptors
@@ -197,6 +206,8 @@ public class AdaptionEngine {
 			}
 		}
 		String filename = getAdaptorsFilename(); 
+		
+		
 		//	    Path path = Paths.get("/Users/Home/");
 		CSVWriter writer;
 
@@ -227,10 +238,10 @@ public class AdaptionEngine {
 		}else if( this.AdaptionName.equals("ModelReverseAdaption")){
 			U4_Constants.modelReverseAdaptors = floatAdaptors;
 		}else{
-			System.out.println("error in saving adaptors");
+			print("error in saving adaptors");
 			return;
 		}
-		System.out.println("adaptors have been saved. \n  A=" + floatAdaptors[0] + "\n  B=" + floatAdaptors[1] + "\n  C=" + floatAdaptors[2]);
+		print("adaptors have been saved. \n  A=" + floatAdaptors[0] + "\n  B=" + floatAdaptors[1] + "\n  C=" + floatAdaptors[2]);
 
 	}
 
@@ -260,6 +271,8 @@ public class AdaptionEngine {
 			}
 		}
 		String filename = getSrimFilename(index); 
+		
+		
 		//	    Path path = Paths.get("/Users/Home/");
 		CSVWriter writer;
 
@@ -338,13 +351,13 @@ public class AdaptionEngine {
 	}
 
 	private String getAdaptorsFilename() {
-		String filename = "Adaptors_" + this.AdaptionName ;
+		String filename = "Adaptors_" + this.AdaptionName + ".csv" ;
 		return filename;
 	}
 
 
 	private String getSrimFilename(int index) {
-		String filename = "Srim_" + this.AdaptionName + "_" + index;
+		String filename = "Srim_" + this.AdaptionName + "_" + index + ".csv";
 		return filename;
 	}
 
@@ -365,13 +378,13 @@ public class AdaptionEngine {
 
 	public void testlong(long millis){
 
-		System.out.println("millisxxx" + millis);
+		print("millisxxx" + millis);
 
 	}
 
 	public void testString(String direction){
 
-		System.out.println("directionxxx" + direction);
+		print("directionxxx" + direction);
 
 	}
 
@@ -388,17 +401,17 @@ public class AdaptionEngine {
 //	}
 	
 	private Matrix calcGlobalSrim() {
-		System.out.println("in calcGlobalSrim");
+		print("in calcGlobalSrim");
 		Matrix globalSrim = new Matrix(5,5);
 		for(Matrix mySrim : SrimArray){
 			print("mySRIM in SrimArray");
-			mySrim.print(10,2);
+			if (DEBUG) mySrim.print(10,2);
 			print("globalSrimbefore");
-			globalSrim.print(10,2);
+			if (DEBUG) globalSrim.print(10,2);
 			Matrix addsrim = addSrim(globalSrim,mySrim);
 			globalSrim=addsrim;
 			print("globalSrimafter");
-			globalSrim.print(10,2);
+			if (DEBUG) globalSrim.print(10,2);
 		}
 		
 	return globalSrim;
@@ -407,10 +420,10 @@ public class AdaptionEngine {
 	private double[] calculateAdaptors() {
 
 		//		print ("Srim " + x);
-		globalSrim.print(10,1);
+		if (DEBUG) globalSrim.print(10,1);
 		Matrix IM = globalSrim.transpose().times(globalSrim);
 		//		print ("IM " + x);
-		IM.print(10,1);
+		if (DEBUG) IM.print(10,1);
 
 		int xDim = IM.getColumnDimension() -3;
 		Matrix XpX = IM.getMatrix(0, xDim, 0, xDim);
@@ -418,30 +431,30 @@ public class AdaptionEngine {
 
 		Matrix XpU = IM.getMatrix(0, xDim, xDim+2, xDim+2);
 		print ("XpU");
-		XpU.print(10,1);
+		if (DEBUG) XpU.print(10,1);
 		Matrix YpY = IM.getMatrix(xDim+1, xDim+1, xDim+1, xDim+1);
 		Matrix YpU = IM.getMatrix(xDim+1, xDim+1, xDim+2, xDim+2);
 		print ("XpX");
-		XpX.print(10,1);
+		if (DEBUG) XpX.print(10,1);
 		print ("YpY");
-		YpY.print(10,1);
+		if (DEBUG) YpY.print(10,1);
 		print ("YpU");
-		YpU.print(10,1);
+		if (DEBUG) YpU.print(10,1);
 
 		Matrix UpU = IM.getMatrix(xDim+2, xDim+2, xDim+2, xDim+2);
 		print ("UpU");
-		UpU.print(10, 1);
+		if (DEBUG) UpU.print(10, 1);
 
 		Matrix XpXIT = XpX.inverse().transpose();
 		print ("XpXIT");
-		XpXIT.print(10, 1);
+		if (DEBUG) XpXIT.print(10, 1);
 
 		print ("XpY");
-		XpY.print(10,1);
+		if (DEBUG) XpY.print(10,1);
 
 		Matrix D = XpX.inverse().transpose().times(XpY);
 		print ("adaptors");
-		D.print(10,1);
+		if (DEBUG) D.print(10,1);
 
 		double ymean = YpU.det() / UpU.det();  //mean of sensitivities
 		Matrix xmean = XpU.times(1/ UpU.det());
@@ -451,11 +464,11 @@ public class AdaptionEngine {
 
 	private Matrix getParameters2(int noOfTimesRoutineHasBeenCalled2) {
 
-		globalSrim.print(10,1);
+		if (DEBUG) globalSrim.print(10,1);
 		Matrix RZS = globalSrim;
 
 		int xDim = RZS.getColumnDimension() -3;
-		Matrix R = RZS.getMatrix(0, xDim, 0, xDim);
+		Matrix R  = RZS.getMatrix(0, xDim, 0, xDim);
 		Matrix Z = RZS.getMatrix(0, xDim, xDim+1, xDim+1);
 		Matrix sz = RZS.getMatrix(0, xDim, xDim+2, xDim+2);
 
@@ -466,15 +479,15 @@ public class AdaptionEngine {
 		Matrix sm = RZS.getMatrix(xDim+2, xDim+2, xDim+2, xDim+2);
 
 		print ("R");
-		R.print(10,1);
+		if (DEBUG)R.print(10,1);
 		print ("f");
-		f.print(10,1);
+		if (DEBUG) f.print(10,1);
 		print ("sy");
-		sy.print(10,1);
+		if (DEBUG) sy.print(10,1);
 		if (noOfTimesRoutineHasBeenCalled2>=4){
 			Matrix D = R.inverse().times(Z);
 			print ("adaptors");
-			D.print(10,1);
+			if (DEBUG) D.print(10,1);
 			//
 			//		double ymean = sy.det() / sm.det();  //mean of sensitivities
 			//		Matrix xmean = sz.times(1/ sm.det());
@@ -487,9 +500,6 @@ public class AdaptionEngine {
 	}
 
 
-	private static void print(String x){
-		System.out.print(x);
-	}
 
 
 
@@ -508,28 +518,28 @@ public class AdaptionEngine {
 
 		double y =  a*(1-aa)*x*x+ b*(1-bb)*x + c*(1-cc) ;
 		print ("est= ");
-		System.out.println(y);
+		print(y);
 		return y;
 	}
 
 	void processMeasurement( 
 			double x, double yy, int srimbox, double forgettingfactor){
-		System.out.println("processMeasurement");
+		print("processMeasurement");
 		double esty = est(x, parameters, matrixAdaptors);
-		System.out.println("x= " + x + " yy= " + yy + " esty= " + esty);
+		print("x= " + x + " yy= " + yy + " esty= " + esty);
 
 		double y = measY(x, yy, esty);
 		print("y="+y);
 		Matrix X = sensitivities(x, matrixAdaptors);
 		print ("sensitivities");
-		X.print(10,1);
+		if (DEBUG) X.print(10,1);
 		Matrix XY1 = xy1(X,y,forgettingfactor);
 		print ("XY1");
-		XY1.print(10,1);
+		if (DEBUG) XY1.print(10,1);
 
 		Matrix meas_IM = meas_IM(XY1);
 		print("meas_IM");
-		meas_IM.print(10,2);
+		if (DEBUG) meas_IM.print(10,2);
 		//Matrix measSrim = srim(meas_IM);
 		//	print("measSrim");
 		//	measSrim.print(20,10);
@@ -539,7 +549,7 @@ public class AdaptionEngine {
 		//		Matrix Unity = qSrim.transpose().times(qSrim);
 		//			print("Unity");
 		//			Unity.print(10,1);
-		System.out.println("srimbox =" + srimbox);
+		print("srimbox =" + srimbox);
 		//		print("meas_IM");
 		//		meas_IM.print(10,1);
 		//		print("this.SrimArray.get(srimbox)");
@@ -547,9 +557,9 @@ public class AdaptionEngine {
 		Matrix temp =XY1.transpose();
 
 		print("this.SrimArray.get(srimbox)");
-		this.SrimArray.get(srimbox).print(10,1);
+		if (DEBUG) this.SrimArray.get(srimbox).print(10,1);
 		print("temp");
-		temp.print(10,1);
+		if (DEBUG) temp.print(10,1);
 		Matrix addSrim = addSrim(this.SrimArray.get(srimbox),temp);
 		//		this.SrimArray.get(srimbox).print(10,1);
 		this.SrimArray.set(srimbox, addSrim);
@@ -559,14 +569,14 @@ public class AdaptionEngine {
 
 	double measY(double x, double measy, double esty){
 
-		System.out.println("x= " + x + " measy= " + measy + " esty= " + esty);
+		print("x= " + x + " measy= " + measy + " esty= " + esty);
 		double adSensProd = adSensProduct(x);
 		double ans = measy - esty + adSensProd;
 
-		System.out.println("measy= " + measy + " esty= " + esty + " adSensProd= " + adSensProd);
+		print("measy= " + measy + " esty= " + esty + " adSensProd= " + adSensProd);
 
-		System.out.println("measy - esty + adSensProd" + (measy - esty + adSensProd));
-		System.out.println("measy - esty + adSensProd" + ans);
+		print("measy - esty + adSensProd" + (measy - esty + adSensProd));
+		print("measy - esty + adSensProd" + ans);
 		return ans;
 	}
 
@@ -588,7 +598,7 @@ public class AdaptionEngine {
 		double[][] sens = {{sens1},{sens2},{sens3}};
 		Matrix ans = new Matrix(sens);
 		print ("sens");
-		ans.print(10,1);
+		if (DEBUG) ans.print(10,1);
 		return ans;
 	}
 
@@ -598,7 +608,7 @@ public class AdaptionEngine {
 		Matrix sens = sensitivities(x, matrixAdaptors);
 		Matrix adSensProductMat = sens.transpose().times(matrixAdaptors);
 		print ("adSensProductMat");
-		adSensProductMat.print(10,1);
+		if (DEBUG) adSensProductMat.print(10,1);
 
 		double ans = adSensProductMat.det();  //convert to double
 		return ans;

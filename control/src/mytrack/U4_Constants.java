@@ -18,7 +18,7 @@ public final class U4_Constants {
 	public static String projectlocationUnix = ".";
 	//public static String projectlocationUnix = "C:/Users/user/EclipseWorkspace/java3dbill"
 	
-	public static float speed = 10f;
+	public static float speed = 50f;
 	
 	public static float[] forwardAdaptors = {0,0.1f/10.0f,0};
 	public static float[] reverseAdaptors = {0,0.1f/10.0f,0};

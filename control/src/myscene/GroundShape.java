@@ -41,7 +41,7 @@ public class GroundShape extends OrientedShape3D
   { 
     // rotate about the y-axis to follow the viewer
 	setAlignmentAxis( 0.0f, 1.0f, 0.0f);
-
+    
     createGeometry(screenSize);
     createAppearance(IMAGES_DIR + fnm);
   } // end of GroundShape()

@@ -296,7 +296,7 @@ public final class M75Stops {
 
 		case "sthr1":
 			arc = "2_B_1_F";
-			fraction = "2.1";
+			fraction = "2.7";
 			directionFacing = "Rev";
 			//stopNo = "S1";
 			M76Stop stop_displayhr1 = new M76Stop(arc, directionFacing, graph, fraction, false);
@@ -313,7 +313,7 @@ public final class M75Stops {
 
 		case "sthr2":
 			arc = "2_B_1_F";
-			fraction = "2.1";
+			fraction = "2.7";
 			directionFacing = "Rev";
 			//stopNo = "S1";
 			M76Stop stop_displayhr2 = new M76Stop(arc, directionFacing, graph, fraction, false);
@@ -330,7 +330,7 @@ public final class M75Stops {
 
 		case "sthr3":
 			arc = "2_B_1_F";
-			fraction = "2.1";
+			fraction = "2.7";
 			directionFacing = "Rev";
 			//stopNo = "S1";
 			M76Stop stop_displayhr3 = new M76Stop(arc, directionFacing, graph, fraction, false);
@@ -444,34 +444,34 @@ public final class M75Stops {
 			//trainsOnRoute.addtrainOnRoute(route1);
 			addstop(stop_displaytosthr2);//	
 			break;
-//		case "fromsthf1":
-//			arc = "1_F_2_B";
-//			fraction = "3.625";
-//			directionFacing = "Rev";
-//			//stopNo = "S1F1";
-//			M76Stop stop_displayfromsthf1 = new M76Stop(arc, directionFacing, graph, fraction, true);
-//			stop_displayfromsthf1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
-//			stopLength = 0.5f*U4_Constants.scalefactor;
-//			stopStr = "SENF1";
-//			stop_displayfromsthf1.set_BG(stopLength, stopStr, stopStr, "Sensor");
-//			stop_displayfromsthf1.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
-//			//trainsOnRoute.addtrainOnRoute(route1);
-//			addstop(stop_displayfromsthf1);
-//			break;
-//		case "fromsthf2":
-//			arc = "1_F_2_B";
-//			fraction = "3.0";
-//			directionFacing = "Rev";
-//			//stopNo = "S1F1";
-//			M76Stop stop_displayfromsthf2 = new M76Stop(arc, directionFacing, graph, fraction, true);
-//			stop_displayfromsthf2.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
-//			stopLength = 0.5f*U4_Constants.scalefactor;
-//			stopStr = "S1F1";
-//			stop_displayfromsthf2.set_BG(stopLength, stopStr, stopStr, "Sensor");
-//			stop_displayfromsthf2.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
-//			//trainsOnRoute.addtrainOnRoute(route1);
-//			addstop(stop_displayfromsthf2);
-//			break;
+		case "fromsthf1":
+			arc = "1_F_2_B";
+			fraction = "2.20625";
+			directionFacing = "Rev";
+			//stopNo = "S1F1";
+			M76Stop stop_displayfromsthf1 = new M76Stop(arc, directionFacing, graph, fraction, true);
+			stop_displayfromsthf1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
+			stopLength = 0.5f*U4_Constants.scalefactor;
+			stopStr = "SENF1";
+			stop_displayfromsthf1.set_BG(stopLength, stopStr, stopStr, "Sensor");
+			stop_displayfromsthf1.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
+			//trainsOnRoute.addtrainOnRoute(route1);
+			addstop(stop_displayfromsthf1);
+			break;
+		case "fromsthf2":
+			arc = "1_F_2_B";
+			fraction = "3.625";
+			directionFacing = "Rev";
+			//stopNo = "S1F1";
+			M76Stop stop_displayfromsthf2 = new M76Stop(arc, directionFacing, graph, fraction, true);
+			stop_displayfromsthf2.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
+			stopLength = 0.5f*U4_Constants.scalefactor;
+			stopStr = "SENF2";
+			stop_displayfromsthf2.set_BG(stopLength, stopStr, stopStr, "Sensor");
+			stop_displayfromsthf2.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
+			//trainsOnRoute.addtrainOnRoute(route1);
+			addstop(stop_displayfromsthf2);
+			break;
 			
 
 		}

@@ -23,6 +23,7 @@ public class ColouredTiles extends Shape3D
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 );
     createGeometry(coords, col);
     createAppearance();
+    
   }    
 
 

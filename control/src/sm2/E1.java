@@ -169,7 +169,7 @@ public class E1 implements EventProvider {
 //		thread.start();
 		E1.threads = new A_Threads();
 		
-		E1.threads.getModelSetup();
+		//E1.threads.getModelSetup();
 		//A_Setup.get_modelArcAndNodeLinkedList();
 	}
 

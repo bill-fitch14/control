@@ -32,6 +32,14 @@ public class C_PickRoutines implements MouseListener {
 	
 	private static PickCanvas pickCanvas;
 	private static C1_BranchGroup _BG;
+	
+	private static boolean DEBUG = false;
+	private static void print(String x){
+		if (DEBUG ){
+		System.out.print(x);
+		}
+	}
+	
 
 	public  C_PickRoutines(Canvas3D canvas3D, BranchGroup _sceneBG, C1_BranchGroup _BG){
 		
@@ -306,7 +314,7 @@ public class C_PickRoutines implements MouseListener {
 	}
 	
 	public static void setpoint(String pointno_str, String state) {
-		System.out.println("cxbccxbbbcb" + pointno_str + " " + state);
+		print("cxbccxbbbcb" + pointno_str + " " + state);
 		int pointno=Integer.parseInt(pointno_str.trim());
 		if (state.equals("OFF")){
 			if(pointno == 2){

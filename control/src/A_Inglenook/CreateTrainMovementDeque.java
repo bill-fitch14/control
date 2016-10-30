@@ -26,203 +26,203 @@ import sm2.Main;
 //import unimod.E3;
 
 public class CreateTrainMovementDeque {
-	
+
 	static C2_DJGraph graph3 = new C2_DJGraph();
 
 	static Deque <String[]> deque = new ArrayDeque<String[]>();
 
 	static D_MyGraph graph;
-	
-	 static boolean use3Dgraphics = false;
-	
-	 static boolean displayStackWhileMoving = false;
 
-	 static void movetrainbackandforth(boolean use3Dgraphics2, boolean displayStackWhileMoving2) {
-		 
-			use3Dgraphics = use3Dgraphics2;
-			displayStackWhileMoving = displayStackWhileMoving2;
+	static boolean use3Dgraphics = false;
 
-		 int noTrucksToMove = 2;
-		 for (int i = 0; i < 10; i++) {
-			 int fromBranch = 2;
-			 int toBranch = 4;
-			 moveTruckstest(fromBranch, noTrucksToMove, toBranch);
-			 fromBranch = 4;
-			 toBranch = 2;
-			 moveTrucks(fromBranch, noTrucksToMove, toBranch);
-		 }
-	 }
-		private static void moveTruckstest(int fromBranch, int noTrucks, int destBranch) {
+	static boolean displayStackWhileMoving = false;
 
+	static void movetrainbackandforth(boolean use3Dgraphics2, boolean displayStackWhileMoving2) {
 
-			if(noTrucks == 0){
-				int a = 0;
-				a=a+1;
-			}
-			if ((fromBranch==4)&&(destBranch==2)){
-				int a=1;
-				a++;
-			}
-			if (use3Dgraphics) {
-				E1.threads.get_serialModel().println(
-						"xxxx movetrucks" + " fromBranch: " + fromBranch
-						+ " noTrucks: " + noTrucks + " destBranch: "
-						+ destBranch);
-				// moveTrucks3D(fromBranch, noTrucks, destBranch);
-			}
-
-			if(displayStackWhileMoving){
-				moveTrucksOnDisplay(noTrucks,fromBranch, destBranch);
-			}
-
-			// moves trucks as block
-			// doesn't matter how many trucks are on receiving branch
-			Integer[] temp;
-			int noTrucksOnStack4 = getstack(4).size();
-			if (fromBranch != 4) {
-				for (int i = 0; i < noTrucks; i++) {
-					temp = Myfunctions.mypop(getstack(fromBranch));
-					Myfunctions.mypush(getstack(4), temp);
-					Myfunctions.drawStacks();
-				}
-				//setroute(fromBranch, 4, noTrucks);
-				Myfunctions.drawStacks();
-
-				// assume trucks are connected
-				if (use3Dgraphics) {
-
-					//move from 4 to from branch
-					swapRouteSameDirectionTravelling(4, fromBranch);
-
-					moveEngineToBranch(4, fromBranch); // move and connect with existing trucks if any
-
-					pause(1);
-
-					//change trucks and change direction
-					//connect and swap direction
-					//pick up truck
-					connectTrucks(fromBranch); // move from one liked list to another
-					pause(1);								
-					swapRouteOppDirectionTravelling(fromBranch, 4);
-					swapRouteSameDirectionTravelling(fromBranch, 4);
-
-					int noTrucksInitially = noTrucksOnStack4;
-					int noTrucksToMove = noTrucks;
-					//move back to 4
-					moveToDisconnectTrucks(noTrucksInitially,
-							noTrucksToMove, fromBranch, 4); // move to right place
-					pause(1);										// to
-					// disconnect unwanted trucks
-					disconnectTrucks(noTrucksOnStack4,
-							noTrucksToMove, fromBranch, destBranch); // move from
-					// one
-					// linked
-					// list to
-					// another
-					pause(1); // pause for 1 sec
-					disconnectSignal(fromBranch); // pulse the
-					// disconnect
-					// signal
-					//move back to branch 4
-					moveEngineToBranch(fromBranch, 4);
-					// connectTrucksToTrain4(destBranch);
-					pause(1);
-					swapRouteOppDirectionTravelling(4, fromBranch);
-					//				swapRouteSameDirectionTravelling(4,
-					//						fromBranch);
-					//then in next section go to dest branch (dest branch != 4)
-				}
-			}
-
-			int noTruckPickedUp;
-			if (fromBranch != 4) {
-				noTruckPickedUp = noTrucks;
-			}else{
-				noTruckPickedUp = 0;
-			}
-
-
-			// get no trucks on from branch
-			if (destBranch != 4) {
-				for (int i = 0; i < noTrucks; i++) {
-					temp = Myfunctions.mypop(getstack(4));
-					Myfunctions.mypush(getstack(destBranch), temp);
-					Myfunctions.drawStacks();
-				}
-
-				if (use3Dgraphics) {
-
-
-
-					//move to dest branch
-					swapRouteSameDirectionTravelling(4, destBranch);
-
-					moveEngineToBranch(4, destBranch);
-					//connect and swap direction 
-					int noTrucksToMove = -noTrucks; // deposit a truck
-					int noTrucksInitially = noTrucksOnStack4 + noTruckPickedUp; // we have
-
-					connectTrucks(destBranch);
-					//if add trucks swap direction then move back to disconnect and then disconnect and move
-					//if deposit trucks move forward to disconnect then disconnect then swap direction and move	
-					//swap direction
-					if(noTrucksToMove>=0){ 
-						//swap direction then move back to disconnect
-						swapRouteOppDirectionTravelling(destBranch, 4);
-						// should not do anything, but does
-						swapRouteSameDirectionTravelling(destBranch, 4);
-						//move back to disconnect
-						moveToDisconnectTrucks(noTrucksInitially,
-								noTrucksToMove, destBranch, 4);
-
-					}else{
-						//move forward to disconnect
-						moveToDisconnectTrucks(noTrucksInitially,
-								noTrucksToMove, 4, destBranch);	
-					}
-					//disconnect
-					disconnectTrucks(noTrucksInitially,
-							noTrucksToMove, destBranch, 10);
-					disconnectSignal(destBranch);
-					if(noTrucksToMove<0){ //remove truck
-						//swap direction
-						swapRouteOppDirectionTravelling(destBranch, 4);
-						// should not do anything, but does
-						swapRouteSameDirectionTravelling(destBranch, 4); 
-					}
-
-					pause(2); // pause for 1 sec
-					//move
-					moveEngineToBranch(destBranch, 4);
-					swapRouteOppDirectionTravelling(4, destBranch);
-					//				// should not do anything, but does added recently
-					swapRouteSameDirectionTravelling(4, destBranch);
-
-				}
-			}
-
-		}
-
-	
-	public static void solvePuzzle(boolean use3Dgraphics2, boolean displayStackWhileMoving2) {
-		
 		use3Dgraphics = use3Dgraphics2;
 		displayStackWhileMoving = displayStackWhileMoving2;
-		
+
+		int noTrucksToMove = 2;
+		for (int i = 0; i < 10; i++) {
+			int fromBranch = 2;
+			int toBranch = 4;
+			moveTruckstest(fromBranch, noTrucksToMove, toBranch);
+			fromBranch = 4;
+			toBranch = 2;
+			moveTrucks(fromBranch, noTrucksToMove, toBranch);
+		}
+	}
+	private static void moveTruckstest(int fromBranch, int noTrucks, int destBranch) {
+
+
+		if(noTrucks == 0){
+			int a = 0;
+			a=a+1;
+		}
+		if ((fromBranch==4)&&(destBranch==2)){
+			int a=1;
+			a++;
+		}
+		if (use3Dgraphics) {
+			E1.threads.get_serialModel().println(
+					"xxxx movetrucks" + " fromBranch: " + fromBranch
+					+ " noTrucks: " + noTrucks + " destBranch: "
+					+ destBranch);
+			// moveTrucks3D(fromBranch, noTrucks, destBranch);
+		}
+
+		if(displayStackWhileMoving){
+			moveTrucksOnDisplay(noTrucks,fromBranch, destBranch);
+		}
+
+		// moves trucks as block
+		// doesn't matter how many trucks are on receiving branch
+		Integer[] temp;
+		int noTrucksOnStack4 = getstack(4).size();
+		if (fromBranch != 4) {
+			for (int i = 0; i < noTrucks; i++) {
+				temp = Myfunctions.mypop(getstack(fromBranch));
+				Myfunctions.mypush(getstack(4), temp);
+				Myfunctions.drawStacks();
+			}
+			//setroute(fromBranch, 4, noTrucks);
+			Myfunctions.drawStacks();
+
+			// assume trucks are connected
+			if (use3Dgraphics) {
+
+				//move from 4 to from branch
+				swapRouteSameDirectionTravelling(4, fromBranch);
+
+				moveEngineToBranch(4, fromBranch); // move and connect with existing trucks if any
+
+				pause(1);
+
+				//change trucks and change direction
+				//connect and swap direction
+				//pick up truck
+				connectTrucks(fromBranch); // move from one liked list to another
+				pause(1);								
+				swapRouteOppDirectionTravelling(fromBranch, 4);
+				swapRouteSameDirectionTravelling(fromBranch, 4);
+
+				int noTrucksInitially = noTrucksOnStack4;
+				int noTrucksToMove = noTrucks;
+				//move back to 4
+				moveToDisconnectTrucks(noTrucksInitially,
+						noTrucksToMove, fromBranch, 4); // move to right place
+				pause(1);										// to
+				// disconnect unwanted trucks
+				disconnectTrucks(noTrucksOnStack4,
+						noTrucksToMove, fromBranch, destBranch); // move from
+				// one
+				// linked
+				// list to
+				// another
+				pause(1); // pause for 1 sec
+				disconnectSignal(fromBranch); // pulse the
+				// disconnect
+				// signal
+				//move back to branch 4
+				moveEngineToBranch(fromBranch, 4);
+				// connectTrucksToTrain4(destBranch);
+				pause(1);
+				swapRouteOppDirectionTravelling(4, fromBranch);
+				//				swapRouteSameDirectionTravelling(4,
+				//						fromBranch);
+				//then in next section go to dest branch (dest branch != 4)
+			}
+		}
+
+		int noTruckPickedUp;
+		if (fromBranch != 4) {
+			noTruckPickedUp = noTrucks;
+		}else{
+			noTruckPickedUp = 0;
+		}
+
+
+		// get no trucks on from branch
+		if (destBranch != 4) {
+			for (int i = 0; i < noTrucks; i++) {
+				temp = Myfunctions.mypop(getstack(4));
+				Myfunctions.mypush(getstack(destBranch), temp);
+				Myfunctions.drawStacks();
+			}
+
+			if (use3Dgraphics) {
+
+
+
+				//move to dest branch
+				swapRouteSameDirectionTravelling(4, destBranch);
+
+				moveEngineToBranch(4, destBranch);
+				//connect and swap direction 
+				int noTrucksToMove = -noTrucks; // deposit a truck
+				int noTrucksInitially = noTrucksOnStack4 + noTruckPickedUp; // we have
+
+				connectTrucks(destBranch);
+				//if add trucks swap direction then move back to disconnect and then disconnect and move
+				//if deposit trucks move forward to disconnect then disconnect then swap direction and move	
+				//swap direction
+				if(noTrucksToMove>=0){ 
+					//swap direction then move back to disconnect
+					swapRouteOppDirectionTravelling(destBranch, 4);
+					// should not do anything, but does
+					swapRouteSameDirectionTravelling(destBranch, 4);
+					//move back to disconnect
+					moveToDisconnectTrucks(noTrucksInitially,
+							noTrucksToMove, destBranch, 4);
+
+				}else{
+					//move forward to disconnect
+					moveToDisconnectTrucks(noTrucksInitially,
+							noTrucksToMove, 4, destBranch);	
+				}
+				//disconnect
+				disconnectTrucks(noTrucksInitially,
+						noTrucksToMove, destBranch, 10);
+				disconnectSignal(destBranch);
+				if(noTrucksToMove<0){ //remove truck
+					//swap direction
+					swapRouteOppDirectionTravelling(destBranch, 4);
+					// should not do anything, but does
+					swapRouteSameDirectionTravelling(destBranch, 4); 
+				}
+
+				pause(2); // pause for 1 sec
+				//move
+				moveEngineToBranch(destBranch, 4);
+				swapRouteOppDirectionTravelling(4, destBranch);
+				//				// should not do anything, but does added recently
+				swapRouteSameDirectionTravelling(4, destBranch);
+
+			}
+		}
+
+	}
+
+
+	public static void solvePuzzle(boolean use3Dgraphics2, boolean displayStackWhileMoving2) {
+
+		use3Dgraphics = use3Dgraphics2;
+		displayStackWhileMoving = displayStackWhileMoving2;
+
 		// renumber
-	
+
 		// how to move truck to buffer
 		// other truck has to be nearest engine on a siding
 		// get two trucks on siding
 		// move two trucks to branch 4
 		// move reqd truck to branch 4
 		// move branch 4 to reqd branch
-	
+
 		// 1) Renumber the trucks so we get truck 5 to go nearest the buffers on
 		// the top siding, truck 1 nearest the exit.
-	
+
 		// 2) Ensure that truck 5 moves to the buffers of top siding
-	
+
 		int destSiding = 1;
 		moveTruckToDesiredPosition(5, destSiding);
 		printlist();
@@ -230,14 +230,14 @@ public class CreateTrainMovementDeque {
 		moveTruckToDesiredPosition(3, destSiding);
 		moveTruckToDesiredPosition(2, destSiding);
 		moveTruckToDesiredPosition(1, destSiding);
-	
+
 		// for (int truckNo = 5; truckNo >=0; truckNo--) {
 		// moveTruckToDesiredPosition(truckNo, destSiding);
 		// }
-	
+
 	}
 
-	 static void moveTruckToDesiredPosition(int truckNo, int destSiding) {
+	static void moveTruckToDesiredPosition(int truckNo, int destSiding) {
 		if (truckInSiding(truckNo, destSiding, Myfunctions.getPositions())) {
 			// a) If Truck 5 is in top siding, but not nearest buffers, move to
 			// other siding
@@ -298,7 +298,7 @@ public class CreateTrainMovementDeque {
 					}
 				}
 				refPos = desiredPosition + 3;
-	
+
 				if (truckAtPositionFromEnd(truckNo, destSiding, refPos,
 						Myfunctions.getPositions())
 						|| truckAtPositionFromEnd(truckNo, destSiding,
@@ -315,7 +315,7 @@ public class CreateTrainMovementDeque {
 				// to another branch
 				insertTruck(freeBranch, destSiding, 5 - truckNo,
 						Myfunctions.getPositions());
-	
+
 			}
 		}
 		if (!truckInSiding(truckNo, destSiding, Myfunctions.getPositions())) {
@@ -330,7 +330,7 @@ public class CreateTrainMovementDeque {
 				if (noTrucks > 0) {
 					// better occupied branch excluding all trucks less than
 					// current truck
-	
+
 					int otherBranch = getOtherBranch(destSiding, truckSiding,
 							Myfunctions.getPositions());
 					if (noOfTrucksInBranch(otherBranch) == 0) {
@@ -366,7 +366,7 @@ public class CreateTrainMovementDeque {
 				int refPos = 5 - truckNo;
 				insertTruck(truckSiding, destSiding, refPos,
 						Myfunctions.getPositions());
-	
+
 			}
 			if (truckAtPositionFromEnd(truckNo, truckSiding, 1,
 					Myfunctions.getPositions())) {
@@ -420,10 +420,10 @@ public class CreateTrainMovementDeque {
 				// Myfunctions.getPositions());
 				// moveTrucks(destSiding,refPos,noTrucksToMove, freeBranch);
 				// }
-	
+
 			}
 			// refPos = 3;
-	
+
 			// if(truckAtPositionFromEnd(truckNo,destSiding,refPos,Myfunctions.getPositions())||
 			// truckAtPositionFromEnd(truckNo,destSiding,refPos+1,Myfunctions.getPositions())||
 			// truckAtPositionFromEnd(truckNo,destSiding,refPos+2,Myfunctions.getPositions())){
@@ -440,10 +440,10 @@ public class CreateTrainMovementDeque {
 			// Move a Truck to buffer
 			// Truck 5 is now in position 3
 		}
-	
+
 	}
 
-	
+
 	static int getIntBranch(String branch){
 		switch (branch){
 		case "st1":
@@ -544,7 +544,7 @@ public class CreateTrainMovementDeque {
 		return st;
 	}
 
-	 static void delay(int milli) {
+	static void delay(int milli) {
 		try{
 			Thread.sleep(milli);
 		} catch (InterruptedException e) {
@@ -552,16 +552,16 @@ public class CreateTrainMovementDeque {
 		};
 	}
 
-	 static void hstopLoco() {
+	static void hstopLoco() {
 		double engineSpeed = 0;
 		Main.lo.stopLoco( engineSpeed);
-		
+
 	}
 
 
-	
 
-	
+
+
 
 	//	private static void turnmovementoff(M61_Train_On_Route train1) {
 	//		for (M43_TruckData_Display truck : train1.getTruckPositions()){
@@ -592,9 +592,9 @@ public class CreateTrainMovementDeque {
 
 	}
 
-	
 
-	
+
+
 
 
 	//	}
@@ -638,17 +638,17 @@ public class CreateTrainMovementDeque {
 
 
 
-	
+
 
 
 
 	//private static M62_train trainData2;
 
 
-//	public static void setup(M62_train train1, M62_train train2){
-//		M_TruckMovements2.setTrainData1(train1.getTruckPositions());
-//		M_TruckMovements2.trainData2 = train2.getTruckPositions();
-//	}
+	//	public static void setup(M62_train train1, M62_train train2){
+	//		M_TruckMovements2.setTrainData1(train1.getTruckPositions());
+	//		M_TruckMovements2.trainData2 = train2.getTruckPositions();
+	//	}
 
 	public static M43_TruckData_Display getTruckCopy(M43_TruckData_Display truck){
 
@@ -748,9 +748,9 @@ public class CreateTrainMovementDeque {
 		E1.threads.get_serialModel().println("swapRoute");
 
 	}
-	
+
 	public static void moveTrucksOneByOneOnDisplay(int noTrucks, int fromBranch, int destBranch) {
-		
+
 		String strFromBranch = null;
 		String strDestBranch = null;
 		String strNoTrucks = null;
@@ -769,9 +769,9 @@ public class CreateTrainMovementDeque {
 			E1.threads.get_serialModel().print(i + " ");
 		}
 		E1.threads.get_serialModel().println("moveTrucksOneByOneOnDisplay");
-		
+
 	}
-	
+
 	public static void moveTrucksOnDisplay(int noTrucks, int fromBranch, int destBranch) {
 		String strFromBranch = null;
 		String strNoTrucks = null;
@@ -793,8 +793,8 @@ public class CreateTrainMovementDeque {
 		E1.threads.get_serialModel().println("moveTrucksOnDisplay");
 	}
 
-	
-	 static boolean truckAtPositionFromEnd(int truckNo, int branchNo, int position, Long[] layout) {
+
+	static boolean truckAtPositionFromEnd(int truckNo, int branchNo, int position, Long[] layout) {
 		int _branchNo = getBranchNo(truckNo, layout);
 		int _position = getPositionInBranchFromEnd(truckNo, layout);
 		if ((branchNo == _branchNo) && (position == _position)) {
@@ -805,25 +805,25 @@ public class CreateTrainMovementDeque {
 		}
 	}
 
-	 static int noOfTrucksToLeftFromEnd(int branchNo, int posfromend) {
+	static int noOfTrucksToLeftFromEnd(int branchNo, int posfromend) {
 		// posfromend counts from 0
 		int noOfTrucksToLeft = noOfTrucksInBranch(branchNo) - posfromend - 1;
 		return noOfTrucksToLeft;
 	}
 
-	 static void insertTruck(int fromBranch, int destBranch, int refPos, Long[] layout) {
-	
+	static void insertTruck(int fromBranch, int destBranch, int refPos, Long[] layout) {
+
 		// for this to work there must be no more than 2 trucks to move from the
 		// dest branch
-	
+
 		// move trucks from toBranch to head
 		int noTrucksToMove = noOfTrucksToLeftFromEnd(destBranch, refPos) + 1;
-	
+
 		if (noTrucksToMove == 0) {
 			moveTrucks(fromBranch, 1, destBranch);
 			return;
 		}
-	
+
 		if (noTrucksToMove > 2) {
 			// move the excess trucks to another branch
 			int noTrucks1 = noTrucksToMove - 2;
@@ -844,15 +844,15 @@ public class CreateTrainMovementDeque {
 				moveTrucks(destBranch, noTrucks1, otherBranch);
 			}
 		}
-	
+
 		moveTrucks(destBranch, Math.min(noTrucksToMove, 2), 4);
-	
+
 		// move truck from fromBranch to head
 		noTrucksToMove = 1;
 		moveTrucks(fromBranch, noTrucksToMove, 4);
-	
+
 		// move trucks from head to toBranch
-	
+
 		// positions=Myfunctions.convertStacksToLong();
 		int noTrucksToMove1 = Math.min(noOfTrucksInBranch(4),
 				capacityOfBranch(destBranch) - noOfTrucksInBranch(destBranch));
@@ -861,12 +861,12 @@ public class CreateTrainMovementDeque {
 		// there may be some trucks left on branch 4. move them
 		int noTrucksToMove2 = noOfTrucksInBranch(4);
 		if (noTrucksToMove2!= 0){
-		int freeBranch = getFreeBranch(noTrucksToMove2, layout);
-		moveTrucks(4, noTrucksToMove2, freeBranch);
+			int freeBranch = getFreeBranch(noTrucksToMove2, layout);
+			moveTrucks(4, noTrucksToMove2, freeBranch);
 		}
 	}
 
-	 static int capacityOfBranch(int destBranch) {
+	static int capacityOfBranch(int destBranch) {
 		switch (destBranch) {
 		case 1:
 			return 5;
@@ -878,11 +878,11 @@ public class CreateTrainMovementDeque {
 		return 0;
 	}
 
-	 static int noSpacesinBranch(int Branch) {
+	static int noSpacesinBranch(int Branch) {
 		return capacityOfBranch(Branch) - noOfTrucksInBranch(Branch);
 	}
 
-	 static int getOtherBranch(int fromBranch, int destBranch, Long[] layout) {
+	static int getOtherBranch(int fromBranch, int destBranch, Long[] layout) {
 		for (int i = 1; i <= 3; i++) {
 			if (i != fromBranch && i != destBranch)
 				return i;
@@ -890,162 +890,162 @@ public class CreateTrainMovementDeque {
 		return 99;
 	}
 
-	 static void moveTrucks(int fromBranch, int noTrucks, int destBranch) {
-	
-			
-			if(noTrucks == 0){
-				int a = 0;
-				a=a+1;
-			}
-			if ((fromBranch==4)&&(destBranch==2)){
-				int a=1;
-				a++;
-			}
-			if (use3Dgraphics) {
-				E1.threads.get_serialModel().println(
-						"xxxx movetrucks" + " fromBranch: " + fromBranch
-								+ " noTrucks: " + noTrucks + " destBranch: "
-								+ destBranch);
-				// moveTrucks3D(fromBranch, noTrucks, destBranch);
-			}
-	
-			if(displayStackWhileMoving){
-				moveTrucksOnDisplay(noTrucks,fromBranch, destBranch);
-			}
-			
-			// moves trucks as block
-			// doesn't matter how many trucks are on receiving branch
-			Integer[] temp;
-			int noTrucksOnStack4 = getstack(4).size();
-			if (fromBranch != 4) {
-				for (int i = 0; i < noTrucks; i++) {
-					temp = Myfunctions.mypop(getstack(fromBranch));
-					Myfunctions.mypush(getstack(4), temp);
-					Myfunctions.drawStacks();
-				}
-				//setroute(fromBranch, 4, noTrucks);
-				Myfunctions.drawStacks();
-				
-				// assume trucks are connected
-				if (use3Dgraphics) {
-	
-					// if (initialmove) {
-					swapRouteSameDirectionTravelling(4, fromBranch);
-					moveEngineToBranch(4, fromBranch); // move
-																		// and
-																		// connect
-																		// with
-																		// existing
-																		// trucks
-																		// if
-																		// any
-					pause(1);
-					connectTrucks(fromBranch); // move from one
-																// linked list
-																// to another
-					swapRouteOppDirectionTravelling(fromBranch, 4);
-					swapRouteSameDirectionTravelling(fromBranch, 4);
-					// initialmove = false;
-					// }
-					int noTrucksInitially = noTrucksOnStack4;
-					int noTrucksToMove = noTrucks;
-					moveToDisconnectTrucks(noTrucksInitially,
-							noTrucksToMove, fromBranch, 4); // move to right place
-															// to
-					// disconnect
-					disconnectTrucks(noTrucksOnStack4,
-							noTrucksToMove, fromBranch, destBranch); // move from
-																		// one
-																		// linked
-																		// list to
-																		// another
-					pause(1); // pause for 1 sec
-					disconnectSignal(fromBranch); // pulse the
-																	// disconnect
-																	// signal
-	
-					moveEngineToBranch(fromBranch, 4);
-					// connectTrucksToTrain4(destBranch);
-					swapRouteOppDirectionTravelling(4, fromBranch);
-					//swapRouteSameDirectionTravelling(4,
-					//		fromBranch);
-				}
-			}
-	
-			int noTruckPickedUp;
-			if (fromBranch != 4) {
-				noTruckPickedUp = noTrucks;
-			}else{
-				noTruckPickedUp = 0;
-			}
-			
-			
-				// get no trucks on from branch
-			if (destBranch != 4) {
-				for (int i = 0; i < noTrucks; i++) {
-					temp = Myfunctions.mypop(getstack(4));
-					Myfunctions.mypush(getstack(destBranch), temp);
-					Myfunctions.drawStacks();
-				}
-	
-				if (use3Dgraphics) {
-				
-					
-					
-	
-					swapRouteSameDirectionTravelling(4, destBranch);
-	
-					moveEngineToBranch(4, destBranch);
-					connectTrucks(destBranch);
-	
-					int noTrucksToMove = -noTrucks; // deposit a truck
-					int noTrucksInitially = noTrucksOnStack4 + noTruckPickedUp; // we have
-	
-					if(noTrucksToMove>0){ //remove truck
-						swapRouteOppDirectionTravelling(destBranch, 4);
-						// should not do anything, but does
-						swapRouteSameDirectionTravelling(destBranch, 4); 
-						moveToDisconnectTrucks(noTrucksInitially,
-								noTrucksToMove, destBranch, 4);
-					}else{
-						moveToDisconnectTrucks(noTrucksInitially,
-								noTrucksToMove, 4, destBranch);	
-					}
-					// picked
-					// a
-					// truck
-					// up
-	
-					//				moveToDisconnectTrucks(noTrucksInitially,
-					//						noTrucksToMove, destBranch, 4);
-					//				moveToDisconnectTrucks(noTrucksInitially,
-					//				noTrucksToMove, 4, destBranch);				
-					disconnectTrucks(noTrucksInitially,
-							noTrucksToMove, destBranch, 10);
-					disconnectSignal(destBranch);
-					if(noTrucksToMove<0){ //remove truck
-						swapRouteOppDirectionTravelling(destBranch, 4);
-						// should not do anything, but does
-						swapRouteSameDirectionTravelling(destBranch, 4); 
-					}
-					//				M_TruckMovements
-					//						.swapRouteSameDirectionTravelling(destBranch, 4); // should
-	////																			// not
-	////																			// do
-	////																			// anything,
-	////																			// but
-	////																			// does
-					pause(2); // pause for 1 sec
-					moveEngineToBranch(destBranch, 4);
-					swapRouteOppDirectionTravelling(4, destBranch);
-					//swapRouteSameDirectionTravelling(4, destBranch);
-	
-				}
-			}
-	
+	static void moveTrucks(int fromBranch, int noTrucks, int destBranch) {
+
+
+		if(noTrucks == 0){
+			int a = 0;
+			a=a+1;
+		}
+		if ((fromBranch==4)&&(destBranch==2)){
+			int a=1;
+			a++;
+		}
+		if (use3Dgraphics) {
+			E1.threads.get_serialModel().println(
+					"xxxx movetrucks" + " fromBranch: " + fromBranch
+					+ " noTrucks: " + noTrucks + " destBranch: "
+					+ destBranch);
+			// moveTrucks3D(fromBranch, noTrucks, destBranch);
 		}
 
-	 static int getFreeBranch(int NoOfTrucksRequired, Long[] layout) {
+		if(displayStackWhileMoving){
+			moveTrucksOnDisplay(noTrucks,fromBranch, destBranch);
+		}
+
+		// moves trucks as block
+		// doesn't matter how many trucks are on receiving branch
+		Integer[] temp;
+		int noTrucksOnStack4 = getstack(4).size();
+		if (fromBranch != 4) {
+			for (int i = 0; i < noTrucks; i++) {
+				temp = Myfunctions.mypop(getstack(fromBranch));
+				Myfunctions.mypush(getstack(4), temp);
+				Myfunctions.drawStacks();
+			}
+			//setroute(fromBranch, 4, noTrucks);
+			Myfunctions.drawStacks();
+
+			// assume trucks are connected
+			if (use3Dgraphics) {
+
+				// if (initialmove) {
+				swapRouteSameDirectionTravelling(4, fromBranch);
+				moveEngineToBranch(4, fromBranch); // move
+				// and
+				// connect
+				// with
+				// existing
+				// trucks
+				// if
+				// any
+				pause(1);
+				connectTrucks(fromBranch); // move from one
+				// linked list
+				// to another
+				swapRouteOppDirectionTravelling(fromBranch, 4);
+				swapRouteSameDirectionTravelling(fromBranch, 4);
+				// initialmove = false;
+				// }
+				int noTrucksInitially = noTrucksOnStack4;
+				int noTrucksToMove = noTrucks;
+				moveToDisconnectTrucks(noTrucksInitially,
+						noTrucksToMove, fromBranch, 4); // move to right place
+				// to
+				// disconnect
+				disconnectTrucks(noTrucksOnStack4,
+						noTrucksToMove, fromBranch, destBranch); // move from
+				// one
+				// linked
+				// list to
+				// another
+				pause(1); // pause for 1 sec
+				disconnectSignal(fromBranch); // pulse the
+				// disconnect
+				// signal
+
+				moveEngineToBranch(fromBranch, 4);
+				// connectTrucksToTrain4(destBranch);
+				swapRouteOppDirectionTravelling(4, fromBranch);
+				//swapRouteSameDirectionTravelling(4,
+				//		fromBranch);
+			}
+		}
+
+		int noTruckPickedUp;
+		if (fromBranch != 4) {
+			noTruckPickedUp = noTrucks;
+		}else{
+			noTruckPickedUp = 0;
+		}
+
+
+		// get no trucks on from branch
+		if (destBranch != 4) {
+			for (int i = 0; i < noTrucks; i++) {
+				temp = Myfunctions.mypop(getstack(4));
+				Myfunctions.mypush(getstack(destBranch), temp);
+				Myfunctions.drawStacks();
+			}
+
+			if (use3Dgraphics) {
+
+
+
+
+				swapRouteSameDirectionTravelling(4, destBranch);
+
+				moveEngineToBranch(4, destBranch);
+				connectTrucks(destBranch);
+
+				int noTrucksToMove = -noTrucks; // deposit a truck
+				int noTrucksInitially = noTrucksOnStack4 + noTruckPickedUp; // we have
+
+				if(noTrucksToMove>0){ //remove truck
+					swapRouteOppDirectionTravelling(destBranch, 4);
+					// should not do anything, but does
+					swapRouteSameDirectionTravelling(destBranch, 4); 
+					moveToDisconnectTrucks(noTrucksInitially,
+							noTrucksToMove, destBranch, 4);
+				}else{
+					moveToDisconnectTrucks(noTrucksInitially,
+							noTrucksToMove, 4, destBranch);	
+				}
+				// picked
+				// a
+				// truck
+				// up
+
+				//				moveToDisconnectTrucks(noTrucksInitially,
+				//						noTrucksToMove, destBranch, 4);
+				//				moveToDisconnectTrucks(noTrucksInitially,
+				//				noTrucksToMove, 4, destBranch);				
+				disconnectTrucks(noTrucksInitially,
+						noTrucksToMove, destBranch, 10);
+				disconnectSignal(destBranch);
+				if(noTrucksToMove<0){ //remove truck
+					swapRouteOppDirectionTravelling(destBranch, 4);
+					// should not do anything, but does
+					swapRouteSameDirectionTravelling(destBranch, 4); 
+				}
+				//				M_TruckMovements
+				//						.swapRouteSameDirectionTravelling(destBranch, 4); // should
+				////																			// not
+				////																			// do
+				////																			// anything,
+				////																			// but
+				////																			// does
+				pause(2); // pause for 1 sec
+				moveEngineToBranch(destBranch, 4);
+				swapRouteOppDirectionTravelling(4, destBranch);
+				//swapRouteSameDirectionTravelling(4, destBranch);
+
+			}
+		}
+
+	}
+
+	static int getFreeBranch(int NoOfTrucksRequired, Long[] layout) {
 		// finds a free branch if not creates one
 		if ((3 - noOfTrucksInBranch(2)) >= NoOfTrucksRequired) {
 			return 2;
@@ -1093,15 +1093,15 @@ public class CreateTrainMovementDeque {
 		return 0;
 	}
 
-	 static int noOfTrucksInBranch(int branchNo) {
-	
+	static int noOfTrucksInBranch(int branchNo) {
+
 		String pos = StringUtils.leftPad(
 				(Myfunctions.getPositions()[1]).toString(), 14);
 		pos = pos.replace(' ', '0');
 		int count = 0;
-	
+
 		int noOfTrucksInBranch = 0;
-	
+
 		switch (branchNo) {
 		case 1:
 			count = StringUtils.countMatches(pos.substring(9, 14), "0");
@@ -1120,137 +1120,137 @@ public class CreateTrainMovementDeque {
 			noOfTrucksInBranch = 3 - count;
 			break;
 		}
-	
+
 		return noOfTrucksInBranch;
-	
+
 	}
 
-	 static Deque<Integer[]> getstack(int branch) {
-		 return Myfunctions.getstack(branch);
-	 }
+	static Deque<Integer[]> getstack(int branch) {
+		return Myfunctions.getstack(branch);
+	}
 
-	 static void moveTrucksOneByOne(int fromBranch, int refPos, int noTrucks, int destBranch) {
-	
-			if (use3Dgraphics) {
-				E1.threads.get_serialModel().println(
-						"xxxx movetrucksOneByOne" + " fromBranch: " + fromBranch
-								+ " refPos: " + refPos + " noTrucks: " + noTrucks
-								+ " destBranch: " + destBranch);
-	
-				// moveTrucksOneByOne3D(fromBranch, refPos, noTrucks, destBranch);
-			}
-			
-			if(displayStackWhileMoving){
-				moveTrucksOneByOneOnDisplay(noTrucks,fromBranch,destBranch);
-			}
-	
-			Integer[] temp;
-	
-			boolean init = true;
-			for (int i = 0; i < noTrucks; i++) {
-				int noTrucksOnStack4 = getstack(4).size();
-				if (fromBranch != 4) {
-					temp = Myfunctions.mypop(getstack(fromBranch));
-					Myfunctions.mypush(getstack(4), temp);
-					Myfunctions.drawStacks();
-					
-	
-					if (use3Dgraphics) {
-						init = false;
-						swapRouteSameDirectionTravelling(4,
-								fromBranch);
-						moveEngineToBranch(4, fromBranch); // move
-																			// engine
-																			// so
-																			// engine
-																			// is at
-																			// stop
-						connectTrucks(fromBranch);
-						swapRouteOppDirectionTravelling(
-								fromBranch, 4);
-	
-						int noTrucksInitially = noTrucksOnStack4;
-						int noTrucksToMove = 1; // if noTruckstomove is +ve then
-												// picking up a truck
-	
-						moveToDisconnectTrucks(noTrucksInitially,
-								noTrucksToMove, fromBranch, 4); // move engine back
-																// so
-																// can disconnect
-						disconnectTrucks(noTrucksOnStack4,
-								noTrucksToMove, fromBranch, i); // disconnect on
-																// graphic
-						disconnectSignal(fromBranch); // i have
-																		// added
-																		// destbranch
-																		// it
-																		// is not
-																		// needed
-						moveEngineToBranch(fromBranch, 4);
-						swapRouteOppDirectionTravelling(4,
-								fromBranch);
-						//swapRouteSameDirectionTravelling(4,fromBranch);
-	
-					}
-				}
-				
-	
-	
-				if (destBranch != 4) {
-					temp = Myfunctions.mypop(getstack(4));
-					Myfunctions.mypush(getstack(destBranch), temp);
-					Myfunctions.drawStacks();
-	
-					if (use3Dgraphics) {
-	
-						swapRouteSameDirectionTravelling(4,
-								destBranch);
-	
-						moveEngineToBranch(4, destBranch);
-						connectTrucks(destBranch);
-	
-						int noTrucksInitially = noTrucksOnStack4 + 1; // we have
-																		// picked a
-																		// truck up
-						int noTrucksToMove = -1; // deposit a truck
-						
-						if(noTrucksToMove>0){ //remove truck
-							swapRouteOppDirectionTravelling(destBranch, 4);
-							moveToDisconnectTrucks(noTrucksInitially,
-									noTrucksToMove, destBranch, 4);
-						}else{
-							moveToDisconnectTrucks(noTrucksInitially,
-									noTrucksToMove, 4, destBranch);	
-						}
-	//					moveToDisconnectTrucks(noTrucksInitially,
-	//							noTrucksToMove, 4, destBranch);
-					
-						disconnectTrucks(noTrucksInitially,
-								noTrucksToMove, destBranch, i * 10);
-						disconnectSignal(destBranch);
-						if(noTrucksToMove<0){ //remove truck
-							swapRouteOppDirectionTravelling(destBranch, 4);
-							swapRouteSameDirectionTravelling(
-									destBranch, 4); // should not do anything, but does
-						}
-	//					swapRouteOppDirectionTravelling(destBranch, 4);
-	//							
-	////					swapRouteOppDirectionTravelling(
-	////							destBranch, 4);
-	//					swapRouteSameDirectionTravelling(
-	//							destBranch, 4); // should not do anything, but does
-						pause(0); // pause for 1 sec
-						moveEngineToBranch(destBranch, 4);
-						swapRouteOppDirectionTravelling(4,
-								destBranch);
-						//swapRouteSameDirectionTravelling(4,destBranch);
-	
-					}
-				}
-	
-			}
-	
+	static void moveTrucksOneByOne(int fromBranch, int refPos, int noTrucks, int destBranch) {
+
+		if (use3Dgraphics) {
+			E1.threads.get_serialModel().println(
+					"xxxx movetrucksOneByOne" + " fromBranch: " + fromBranch
+					+ " refPos: " + refPos + " noTrucks: " + noTrucks
+					+ " destBranch: " + destBranch);
+
+			// moveTrucksOneByOne3D(fromBranch, refPos, noTrucks, destBranch);
 		}
+
+		if(displayStackWhileMoving){
+			moveTrucksOneByOneOnDisplay(noTrucks,fromBranch,destBranch);
+		}
+
+		Integer[] temp;
+
+		boolean init = true;
+		for (int i = 0; i < noTrucks; i++) {
+			int noTrucksOnStack4 = getstack(4).size();
+			if (fromBranch != 4) {
+				temp = Myfunctions.mypop(getstack(fromBranch));
+				Myfunctions.mypush(getstack(4), temp);
+				Myfunctions.drawStacks();
+
+
+				if (use3Dgraphics) {
+					init = false;
+					swapRouteSameDirectionTravelling(4,
+							fromBranch);
+					moveEngineToBranch(4, fromBranch); // move
+					// engine
+					// so
+					// engine
+					// is at
+					// stop
+					connectTrucks(fromBranch);
+					swapRouteOppDirectionTravelling(
+							fromBranch, 4);
+
+					int noTrucksInitially = noTrucksOnStack4;
+					int noTrucksToMove = 1; // if noTruckstomove is +ve then
+					// picking up a truck
+
+					moveToDisconnectTrucks(noTrucksInitially,
+							noTrucksToMove, fromBranch, 4); // move engine back
+					// so
+					// can disconnect
+					disconnectTrucks(noTrucksOnStack4,
+							noTrucksToMove, fromBranch, i); // disconnect on
+					// graphic
+					disconnectSignal(fromBranch); // i have
+					// added
+					// destbranch
+					// it
+					// is not
+					// needed
+					moveEngineToBranch(fromBranch, 4);
+					swapRouteOppDirectionTravelling(4,
+							fromBranch);
+					//swapRouteSameDirectionTravelling(4,fromBranch);
+
+				}
+			}
+
+
+
+			if (destBranch != 4) {
+				temp = Myfunctions.mypop(getstack(4));
+				Myfunctions.mypush(getstack(destBranch), temp);
+				Myfunctions.drawStacks();
+
+				if (use3Dgraphics) {
+
+					swapRouteSameDirectionTravelling(4,
+							destBranch);
+
+					moveEngineToBranch(4, destBranch);
+					connectTrucks(destBranch);
+
+					int noTrucksInitially = noTrucksOnStack4 + 1; // we have
+					// picked a
+					// truck up
+					int noTrucksToMove = -1; // deposit a truck
+
+					if(noTrucksToMove>0){ //remove truck
+						swapRouteOppDirectionTravelling(destBranch, 4);
+						moveToDisconnectTrucks(noTrucksInitially,
+								noTrucksToMove, destBranch, 4);
+					}else{
+						moveToDisconnectTrucks(noTrucksInitially,
+								noTrucksToMove, 4, destBranch);	
+					}
+					//					moveToDisconnectTrucks(noTrucksInitially,
+					//							noTrucksToMove, 4, destBranch);
+
+					disconnectTrucks(noTrucksInitially,
+							noTrucksToMove, destBranch, i * 10);
+					disconnectSignal(destBranch);
+					if(noTrucksToMove<0){ //remove truck
+						swapRouteOppDirectionTravelling(destBranch, 4);
+						swapRouteSameDirectionTravelling(
+								destBranch, 4); // should not do anything, but does
+					}
+					//					swapRouteOppDirectionTravelling(destBranch, 4);
+					//							
+					////					swapRouteOppDirectionTravelling(
+					////							destBranch, 4);
+					//					swapRouteSameDirectionTravelling(
+					//							destBranch, 4); // should not do anything, but does
+					pause(0); // pause for 1 sec
+					moveEngineToBranch(destBranch, 4);
+					swapRouteOppDirectionTravelling(4,
+							destBranch);
+					//swapRouteSameDirectionTravelling(4,destBranch);
+
+				}
+			}
+
+		}
+
+	}
 
 	private boolean truckAtPosition(int truckNo, int branchNo, int position, Long[] positions) {
 		int _branchNo = getBranchNo(truckNo, positions);
@@ -1263,8 +1263,8 @@ public class CreateTrainMovementDeque {
 		}
 	}
 
-	 static int getPositionInBranchFromEnd(Integer truckNo, Long[] layout) {
-	
+	static int getPositionInBranchFromEnd(Integer truckNo, Long[] layout) {
+
 		int branchNo = getBranchNo(truckNo, layout);
 		int position = StringUtils.indexOf(
 				StringUtils.leftPad(layout[1].toString(), 14, "0"),
@@ -1292,14 +1292,14 @@ public class CreateTrainMovementDeque {
 			return (noTrucksInBranch - (2 - position) - 1);
 		}
 		return position;
-	
+
 	}
 
-	 static int getBranchNo(Integer truckNo, Long[] layout) {
-	
+	static int getBranchNo(Integer truckNo, Long[] layout) {
+
 		int positionOfTruck = getPosition(truckNo, layout);
 		int branchNo = 0;
-	
+
 		switch (positionOfTruck) {
 		case 13:
 		case 12:
@@ -1327,8 +1327,8 @@ public class CreateTrainMovementDeque {
 		return branchNo;
 	}
 
-	 static boolean truckInSiding(int truckNo, int branchNo, Long[] layout) {
-	
+	static boolean truckInSiding(int truckNo, int branchNo, Long[] layout) {
+
 		if (branchNo == getBranchNo(truckNo, layout)) {
 			return true;
 		} else {
@@ -1336,17 +1336,17 @@ public class CreateTrainMovementDeque {
 		}
 	}
 
-	 static void printlist() {
-	
+	static void printlist() {
+
 		int i = 0;
 		for (String[] elem : deque) {
 			//99System.out.print("index " + i++ + " " + Arrays.toString(elem));
 		}
-	
+
 	}
 
-	 int getPositionInBranch(Integer truckNo, Long[] positions) {
-	
+	int getPositionInBranch(Integer truckNo, Long[] positions) {
+
 		int branchNo;
 		int position = StringUtils.indexOf(
 				StringUtils.leftPad(positions[1].toString(), 14, "0"),
@@ -1373,11 +1373,11 @@ public class CreateTrainMovementDeque {
 			return position;
 		}
 		return position;
-	
+
 	}
 
-	 static int getPosition(Integer truckNo, Long[] layout) {
-	
+	static int getPosition(Integer truckNo, Long[] layout) {
+
 		// int positionOfTruck = 0;
 		// for (int j = 0; j < 14; j++) {
 		// if(StringUtils.leftPad(positions.toString(),14,"0").charAt(j) ==
@@ -1386,13 +1386,13 @@ public class CreateTrainMovementDeque {
 		// }
 		// }
 		// return positionOfTruck;
-	
+
 		int position = StringUtils.indexOf(
 				StringUtils.leftPad(layout[1].toString(), 14, "0"),
 				truckNo.toString());
-	
+
 		return position;
-	
+
 	}
 
 
