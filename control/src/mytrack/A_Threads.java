@@ -108,7 +108,7 @@ public final class A_Threads {
 					_consoleModel.setVisible(true);
 
 					_serialModel = new Serial_IO("Model", _consoleModel);
-					_serialModel.SIO_connect(1);
+					//_serialModel.SIO_connect(1); //commented out because causing problems on startup
 				}
 			});
 		}
@@ -128,7 +128,7 @@ public final class A_Threads {
 					_consoleModel2.setVisible(true);
 
 					_serialModel2 = new Serial_IO("Model2", _consoleModel2);
-					_serialModel2.SIO_connect(2);
+					//_serialModel2.SIO_connect(2); //commented out because causing problems on startup
 				}
 			});
 		}

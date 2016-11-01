@@ -47,7 +47,7 @@ public class M62_train {
 	float[] distancesFromHeadToCoupling;
 
 	private BranchGroup trainBranchGroup = new BranchGroup();
-	private double trainSpeed = U4_Constants.speed;
+	private double trainSpeed = U4_Constants.simSpeedSetting;
 
 	public M62_train(String trainStr, int trainNo, String strEngineColor,
 			int numberEngines, float engineLength, int numberTrucks,

@@ -27,7 +27,7 @@ public class AdaptionSim {
 	private boolean initialise;
 	
 	double[] parameters = {0.005};
-	double[] adaptors = {0.5};
+	double[] doubleAdaptors = {0.5};
 	
 	double forgettingfactor = .99;    //.99 = 50 measurements  no measurements = 1/(1-forgettingfactor^2)
 	
@@ -50,7 +50,7 @@ public class AdaptionSim {
 	int noBoxes = 20;
 	String AdaptionName;
 	
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 	private static void print(Object x){
 		if (DEBUG ){
 		System.out.println(x);
@@ -67,15 +67,15 @@ public class AdaptionSim {
 				SrimArray.add(new Matrix(3,3));
 			}
 		}else{
-//			//make copy of srim and adaptors in case of corruption if program is halted
-//			File theSource = new File(getSrimAndAdaptorsDirectory());
-//			File theDest = new File(getSrimAndAdaptorsDirectory() + "_copyMadeBeforeRunningProgram");
-//			try {
-//				FileUtils.copyDirectory(theSource,theDest);
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			//make copy of srim and adaptors in case of corruption if program is halted
+			File theSource = new File(getSrimAndAdaptorsDirectory());
+			File theDest = new File(getSrimAndAdaptorsDirectory() + "_copyMadeBeforeRunningProgram");
+			try {
+				FileUtils.copyDirectory(theSource,theDest);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			for (int i = 0; i < noBoxes; i++) {
 				Matrix srim;
 				try {
@@ -96,9 +96,11 @@ public class AdaptionSim {
 
 			}
 			
-			
 			try {
 				Matrix	adaptors = loadAdaptors();
+				print("loaded adaptors");
+				if(DEBUG) adaptors.print(10, 3);
+				saveAdaptorsToU4Constants(adaptors);				      
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -235,18 +237,14 @@ public class AdaptionSim {
 
 	private void saveAdaptorsToU4Constants(Matrix Adaptors) {
 		
-		double[][] adaptors2D = Adaptors.getArray();
-		double[] adaptors1D = adaptors2D[0];
+		float[] floatAdaptors = convertMatrixToFloatArray(Adaptors);
 
-		float[] floatAdaptors = new float[adaptors1D.length];
-		for (int i = 0 ; i < adaptors1D.length; i++)
-		{
-			floatAdaptors[i] = (float) adaptors1D[i];
-		}
 		if( this.AdaptionName.equals("ModelForwardAdaption")){
 			U4_Constants.modelForwardAdaptors = floatAdaptors;
+			print("adaptors have been saved.  U4forward=" + U4_Constants.modelForwardAdaptors[0]  );
 		}else if( this.AdaptionName.equals("ModelReverseAdaption")){
 			U4_Constants.modelReverseAdaptors = floatAdaptors;
+			print("adaptors have been saved.  U4reverse=" + U4_Constants.modelReverseAdaptors[0]  );
 		}else{
 			print("error in saving adaptors");
 			return;
@@ -254,8 +252,70 @@ public class AdaptionSim {
 		print("adaptors have been saved.  C=" + floatAdaptors[0]  );
 		
 	}
+
+
+	private float[] convertMatrixToFloatArray(Matrix Adaptors) {
+		double[] adaptors1D = convertMatrixtoDouble1DArray(Adaptors);
+
+		float[] floatAdaptors = convertDouble1DArrayToFloat1DArray(adaptors1D);
+		return floatAdaptors;
+	}
+
+
+	private float[] convertDouble1DArrayToFloat1DArray(double[] adaptors1D) {
+		float[] floatAdaptors = new float[adaptors1D.length];
+		
+		for (int i = 0 ; i < adaptors1D.length; i++)
+		{
+			floatAdaptors[i] = (float) adaptors1D[i];
+		}
+		return floatAdaptors;
+	}
+
+
+	private double[] convertMatrixtoDouble1DArray(Matrix Adaptors) {
+		double[][] adaptors2D = Adaptors.getArray();
+		double[] adaptors1D = adaptors2D[0];
+		return adaptors1D;
+	}
 	
+	private double[] load1DAdaptorsFromU4Constants(){
+		
+		
+		float[] floatAdaptors = new float[U4_Constants.modelForwardAdaptors.length]; 	//forward and reverse adaptors are the same length
+		
+		if( this.AdaptionName.equals("ModelForwardAdaption")){
+			floatAdaptors = U4_Constants.modelForwardAdaptors;
+		}else if( this.AdaptionName.equals("ModelReverseAdaption")){
+			floatAdaptors = U4_Constants.modelReverseAdaptors;
+		}else{
+			print("error in saving adaptors");
+			return null;
+		}
+		double[] adaptors1D = convertFloatArrayToDoubleArray(floatAdaptors);
+//		double[][] adaptors2D = null;
+//		adaptors2D[0] = adaptors1D;
+//		Matrix Adaptors = new Matrix(adaptors2D);
+		
+		return adaptors1D;
+	}
+
+
+	private double[] convertFloatArrayToDoubleArray(float[] floatAdaptors) {
+		double[] adaptors1D;
+		adaptors1D = new double[floatAdaptors.length];
+		for (int i = 0 ; i < floatAdaptors.length; i++)
+		{
+			adaptors1D[i] = (double) floatAdaptors[i];
+		}
+		return adaptors1D;
+	}
 	
+	Matrix convert1DArrayToMatrix(){
+		double[][] adaptors = {this.doubleAdaptors};
+		Matrix ans = new Matrix(adaptors);
+		return ans;
+	}
 
 
 	private void saveSRIM (Matrix srim, int index) throws IOException{
@@ -356,7 +416,7 @@ public class AdaptionSim {
 
 
 	private String getAdaptorsFilename() {
-		String filename = getSrimAndAdaptorsDirectory()+"Adaptors_" + this.AdaptionName + ".csv";
+		String filename = getSrimAndAdaptorsDirectory()+"/Adaptors_" + this.AdaptionName + ".csv";
 		String directory = getSrimAndAdaptorsDirectory();
 		//create the directory structure
 		File theFile = new File(directory);
@@ -365,13 +425,13 @@ public class AdaptionSim {
 	}
 
 	private String getSrimAndAdaptorsDirectory(){
-		String directory = "srimAndAdaptors/";
+		String directory = "srimAndAdaptors";
 		return directory;
 	}
 
 	private String getSrimFilename(int index) {
-		String filename = getSrimAndAdaptorsDirectory()+"Srim_" + this.AdaptionName+ "/Srim_" + this.AdaptionName + "_" + index +".csv";
-		String directory = getSrimAndAdaptorsDirectory()+"Srim_" + this.AdaptionName;
+		String filename = getSrimAndAdaptorsDirectory()+"/Srim_" + this.AdaptionName+ "/Srim_" + this.AdaptionName + "_" + index +".csv";
+		String directory = getSrimAndAdaptorsDirectory()+"/Srim_" + this.AdaptionName;
 		//create the directory structure
 		File theFile = new File(directory);
 		theFile.mkdirs();
@@ -526,18 +586,11 @@ public class AdaptionSim {
 		double[][] adaptors2D = D.getArray();
 		return D;
 	}
-	
-
-
-
-
-
-	
 
 	double est(double x, double parameters[], double adaptors[]){
 		double b = parameters[0];
 		double a = adaptors[0];
-		double y =  b*x*(1-a) ;
+		double y = b*x*(1-a);
 		print ("b=" + b);
 		print ("a=" + a);
 		print ("x=" + x);
@@ -560,7 +613,11 @@ public class AdaptionSim {
 	
 	void processMeasurement( 
 			double x, double yy, int srimbox, double forgettingfactor){
-		double esty = est(x, parameters, adaptors);
+		
+		doubleAdaptors = load1DAdaptorsFromU4Constants();
+
+		
+		double esty = est(x, parameters, doubleAdaptors);
 		print("x= " + x + " yy= " + yy + " esty= " + esty);
 		
 		double y = measY(x, yy, esty);
@@ -616,15 +673,13 @@ public class AdaptionSim {
 		return ans;
 	}
 	
-	Matrix adaptors(){
-		double[][] adaptors = {this.adaptors};
-		Matrix ans = new Matrix(adaptors);
-		return ans;
-	}
+
+	
+
 	
 	double adSensProduct(double x){
 		Matrix sens = sensitivities(x);
-		Matrix adaptors = adaptors();
+		Matrix adaptors = convert1DArrayToMatrix();
 		Matrix adSensProductMat = sens.times(adaptors);
 		print ("adSensProductMat");
 		if(DEBUG) adSensProductMat.print(10,1);

@@ -18,14 +18,16 @@ public final class U4_Constants {
 	public static String projectlocationUnix = ".";
 	//public static String projectlocationUnix = "C:/Users/user/EclipseWorkspace/java3dbill"
 	
-	public static float speed = 50f;
+	public static float simSpeedSetting = 50f;
 	
 	public static float[] forwardAdaptors = {0,0.1f/10.0f,0};
 	public static float[] reverseAdaptors = {0,0.1f/10.0f,0};
 //	speed = ax^2 + bx + c where x is speed
-	public static float adaptorA ; 
-	public static float adaptorB ; 
-	public static float adaptorC ; 
+	public static float termA ; 
+	public static float termB ; 
+	public static float termC ; 
+	public static float mmPerSecSpeedForwards; 
+	public static float mmPerSecSpeedReverse; 
 
 	public static int timeInterval = 20;
 	public static int a=1;
@@ -35,20 +37,41 @@ public final class U4_Constants {
 	public static float[] modelForwardAdaptors = {0};
 	public static float[] modelReverseAdaptors = {0};
 	
+	public static float[] modelParameters ={0.005f};
+	private static float[] engineParameters;
+	public static float getMmPerSecSpeed(){
+		
+		if(getDirection().equals("forwards")){
+			
+			mmPerSecSpeedForwards = modelParameters[0] *(1-modelForwardAdaptors[0])*simSpeedSetting;
+		}else{
+			mmPerSecSpeedReverse = modelParameters[0] *(1-modelReverseAdaptors[0])*simSpeedSetting;
+		}
+		return mmPerSecSpeedForwards;
+	}
+	
 	public static float getHspeed(){
 		if(getDirection().equals("forwards")){
-			adaptorA = forwardAdaptors[0];
-			adaptorB = forwardAdaptors[1];
-			adaptorC = forwardAdaptors[2];
+			termA = engineParameters[0]*(1-forwardAdaptors[0]);
+			termB = engineParameters[1]*(1-forwardAdaptors[1]);
+			termC = engineParameters[2]*(1-forwardAdaptors[2]);
 		}else{
-			adaptorA = reverseAdaptors[0];
-			adaptorB = reverseAdaptors[1];
-			adaptorC = reverseAdaptors[2];
+			termA = engineParameters[0]*(1-reverseAdaptors[0]);
+			termB = engineParameters[1]*(1-reverseAdaptors[1]);
+			termC = engineParameters[2]*(1-reverseAdaptors[2]);
 		}
-		return adaptorA*speed*speed+ adaptorB*speed + adaptorC;
+		
+		float hspeed = solnOfQuadratic(termA,termB,termC,mmPerSecSpeedForwards);
+		return hspeed;
 	}
 
 	//public static float scalemultiplier = 1.0f/160f;
+
+	private static float solnOfQuadratic(float a, float b, float c, float x) {
+		double y = Math.max((-b + Math.sqrt(b*b-4*a*c))/2*a,(-b - Math.sqrt(b*b-4*a*c))/2*a);
+		float yy = (float) y;
+		return yy;
+	}
 
 	public static String getDirection() {
 		return direction;
