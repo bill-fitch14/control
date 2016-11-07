@@ -151,7 +151,7 @@ public class ModelLoader
 		double maxDim = getMaxDimension(lower, upper);
 		if (maxDim > MAX_SIZE) {
 			scaleFactor = MAX_SIZE/maxDim;
-			System.out.println("Applying scaling factor: " + scaleFactor);
+			//System.out.println("Applying scaling factor: " + scaleFactor);
 		}
 
 		return scaleFactor;

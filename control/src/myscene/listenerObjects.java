@@ -16,16 +16,19 @@ public final class listenerObjects {
 	private static int point2;
 	
 	//Property engine1
-	private static int engine1;
+	private static double engineSpeed;
 	
 	private static long sensortime;
+
+	private static int engineDirection;
 	
 	public static void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
 	
 	
-	public static void setSensor( String sensorName, long millis) {
+	public static void setSensor( String sensorAddress, 
+			String sensorName, long millis) {
 		pcs.firePropertyChange(sensorName, listenerObjects.sensortime, millis);
 		listenerObjects.sensortime = millis;
 	}
@@ -57,38 +60,48 @@ public final class listenerObjects {
 //	}
 	
 	public static void setEngineSpeed(double engineSpeed){
-		pcs.firePropertyChange("loco1SetSpeed",listenerObjects.engine1,engineSpeed);
+		pcs.firePropertyChange("locoSetSpeed",listenerObjects.engineSpeed,engineSpeed);
+		listenerObjects.engineSpeed = engineSpeed;
 	}
 	
 	public static void setEngineDirection(String direction){
+		int intDirection;
 		if (direction.equals("forwards")){
-			pcs.firePropertyChange("locoSetDirection",listenerObjects.engine1,1);
+			intDirection = 1;
 		}else{
-			pcs.firePropertyChange("locoSetDirection",listenerObjects.engine1,0);
+			intDirection = 0;
 		}
-			
+		pcs.firePropertyChange("locoSetDirection",listenerObjects.engineDirection,intDirection);
+		listenerObjects.engineDirection = intDirection;	
 	}
 	
 	public static void moveLoco(String direction,double engineSpeed){
-		if (direction.equals("forwards")){
-			//System.out.println("forwards loco1F: enginespeed" + engineSpeed);
-			pcs.firePropertyChange("loco1F",listenerObjects.engine1,engineSpeed);
-		}else{
-			//System.out.println("forwards loco1R: enginespeed" + engineSpeed);
-			pcs.firePropertyChange("loco1R",listenerObjects.engine1,engineSpeed);
-		}
+		setEngineDirection(direction);
+		setEngineSpeed(engineSpeed);
+		
+//		if (direction.equals("forwards")){
+//			//System.out.println("forwards loco1F: enginespeed" + engineSpeed);
+//
+//			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$direction = " + direction);
+//			pcs.firePropertyChange("loco1F",listenerObjects.engineSpeed,engineSpeed);
+//		}else{
+//			//System.out.println("forwards loco1R: enginespeed" + engineSpeed);
+//			//pcs.firePropertyChange("locoSetDirection",listenerObjects.engine1,0);
+//			pcs.firePropertyChange("loco1R",listenerObjects.engineSpeed,engineSpeed);
+//		}
+//		listenerObjects.engineSpeed = engineSpeed;
 	}
 	
 
 
 	public static void pause(int milli) {
-		pcs.firePropertyChange("pause",listenerObjects.engine1,milli);
+		pcs.firePropertyChange("pause",listenerObjects.engineSpeed,milli);
 		
 	}
 
 	public static void stopLoco(double engineSpeed) {
-		pcs.firePropertyChange("loco1SetSpeedZero",listenerObjects.engine1,engineSpeed);
-		
+		pcs.firePropertyChange("loco1SetSpeedZero",listenerObjects.engineSpeed,engineSpeed);
+		listenerObjects.engineSpeed = engineSpeed;
 	}
 	
 	

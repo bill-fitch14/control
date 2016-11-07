@@ -116,9 +116,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		this.getCurrentStop().isActive= currentStopActive;
 		//engine_position_TG = engine_position_TG();
 
-		System.out
-		.println("set_BG before  engine_position_TG[truckNo], truckno"
-				+ engine_position_TG.toString() );
+		//System.out.println("set_BG before  engine_position_TG[truckNo], truckno"+ engine_position_TG.toString() );
 		//this._BG.addChild(engine_position_TG);
 	}
 
@@ -129,9 +127,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		this.objectType = objectType;
 		engine_position_TG = engine_position_TG();
 
-		System.out
-		.println("set_BG before  engine_position_TG[truckNo], truckno"
-				+ engine_position_TG.toString() );
+		//System.out.println("set_BG before  engine_position_TG[truckNo], truckno"+ engine_position_TG.toString() );
 		this._BG.addChild(engine_position_TG);
 	}
 
@@ -231,7 +227,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 	              // rotate 90 degrees anticlockwise around y-axis
 	    TransformGroup tg1 = new TransformGroup(t3d);
 	    //tg1.setRotation( new AxisAngle4d(0,1,0, Math.toRadians(90)) );
-	    tg1.addChild( ml.getModel("shunter.obj", 0.8) );
+	    tg1.addChild( ml.getModel("Locomotive TGM3.obj", 0.8) );
 	    rotateBy90.addChild(tg1);
 		//rotateBy90.addChild(engineBody);
 		//engineBody.setName("engineBody_" + objectStr);
@@ -720,18 +716,18 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 				tailOfTruck.getSegmentNo()==x.getSegmentNo()){
 			if(tailOfTruck.getOrientation().equals("same")) {
 				if(tailOfTruck.getSegmentFraction() > x.getSegmentFraction()){
-					print("&&& sensor detected " + x.objectStr);
 					long millis = System.currentTimeMillis();
-					Main.lo.setSensor(x.objectStr, millis);
+					print("&&& sensor detected " + x.objectStr + " " + millis);
+					Main.lo.setSensor(x.objectStr,x.objectStr, millis);
 					x.isActive = false;
 
 				}
 
 			}else if (this.getOrientation().equals("opposite")){
 				if(tailOfTruck.getSegmentFraction() < x.getSegmentFraction()){
-					print("&&& sensor detected " + x.objectStr);
 					long millis = System.currentTimeMillis();
-					Main.lo.setSensor(x.objectStr, millis);
+					print("&&& sensor detected " + x.objectStr + " " + millis);
+					Main.lo.setSensor(x.objectStr,x.objectStr, millis);
 					x.isActive = false;
 				}
 

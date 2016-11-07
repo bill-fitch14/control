@@ -27,9 +27,9 @@ public class AdaptionSim {
 	private boolean initialise;
 	
 	double[] parameters = {0.005};
-	double[] doubleAdaptors = {0.5};
+
 	
-	double forgettingfactor = .99;    //.99 = 50 measurements  no measurements = 1/(1-forgettingfactor^2)
+	double forgettingfactor = .99;    //.99 = 50 measurements  no measurements = 1/(1-forgetting_factor^2)
 	
 	static Random rand = new Random();
 	
@@ -47,15 +47,46 @@ public class AdaptionSim {
 
 	static ArrayList<Matrix> SrimArray = new ArrayList<Matrix>();
 	
-	int noBoxes = 20;
 	String AdaptionName;
+	private int noBoxes;
 	
-	private static boolean DEBUG = true;
-	private static void print(Object x){
+	private boolean DEBUG = false;
+	private void print(Object x){
 		if (DEBUG ){
-		System.out.println(x);
+		System.out.println(this.AdaptionName + ": " + x);
 		}
 	}
+	
+	private boolean INFO = true;
+	private void lprint(Object x){
+		if (INFO ){
+		System.out.println(this.AdaptionName + ": " + x);
+		}
+	}
+	
+	public static void main(String[] args) {
+		int noBoxes = 10;
+		//set up the srimarray
+		for(int i=0;i<=noBoxes;i++){
+			SrimArray.add(new Matrix(3,3));
+		}
+		boolean initialise = true;
+
+		
+		float forgettingfactor = .99f;
+		
+		AdaptionSim adaptModelForward = new AdaptionSim(noBoxes, "ModelTestAdaption", initialise, forgettingfactor);
+		
+		for (int i = 1;i<100;i++){
+			long simRevTime = 20;
+			long simDistancetravelled = 100;
+			float speedatSENR2 = 80f;
+			int min = 0;
+			int max = 1000;
+			adaptModelForward.processMeasurement(simRevTime , simDistancetravelled, speedatSENR2, min, max);
+		}
+	}
+	
 	public AdaptionSim(int noBoxes,String adaptionName, boolean initialise, float forgettingfactor) {
 		super();
 		this.initialise = initialise;
@@ -66,6 +97,17 @@ public class AdaptionSim {
 			for(int i=0;i<=noBoxes;i++){
 				SrimArray.add(new Matrix(3,3));
 			}
+			//guess some non zero adaptors
+			double[] doubleAdaptors = new double[1];;
+			if (AdaptionName.equals("ModelTestAdaption")){
+				doubleAdaptors[0] = 0.005;
+			}else{
+				doubleAdaptors[0] = 0.005;
+			}
+			Matrix	adaptors = convert1DArrayToMatrix(doubleAdaptors);
+			print("loaded adaptors");
+			if(DEBUG) adaptors.print(10, 3);
+			saveAdaptorsToU4Constants(adaptors);
 		}else{
 			//make copy of srim and adaptors in case of corruption if program is halted
 			File theSource = new File(getSrimAndAdaptorsDirectory());
@@ -113,28 +155,7 @@ public class AdaptionSim {
 	
 
 
-	public static void main(String[] args) {
-		
-		//set up the srimarray
-		for(int i=0;i<=20;i++){
-			SrimArray.add(new Matrix(3,3));
-		}
-		boolean initialise = true;
-		int noBoxes = 10;
-		float forgettingfactor = .99f;
-		
-		AdaptionSim adaptModelForward = new AdaptionSim(noBoxes, "ModelForwardAdaption", initialise, forgettingfactor);
-		
-		for (int i = 1;i<100;i++){
-			long simRevTime = 20;
-			long simDistancetravelled = 100;
-			float speedatSENR2 = 80f;
-			int min = 0;
-			int max = 1000;
-			adaptModelForward.processMeasurement(
-                simRevTime , simDistancetravelled, speedatSENR2, min, max);
-		}
-	}
+
 	
 
 	public boolean processMeasurement(long millis , long distancetravelled, float enginesetting,
@@ -143,7 +164,7 @@ public class AdaptionSim {
 		print("SRIM Analysis: " + AdaptionName + " engine setting: " + enginesetting);
 		double x = (double)enginesetting;				//80 for simulation
 		double y = (double)distancetravelled/(double)millis;  // 80/100 = 0.8
-		print("distancetravelled = "+distancetravelled + "millis = "+millis + "y = "+y );
+		print("distancetravelled = "+ distancetravelled + ", millis = "+ millis + ", y = "+y );
 		double xmin = min;
 		double xmax = max;
 		print("millis =" + millis);
@@ -156,10 +177,11 @@ public class AdaptionSim {
 		int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);//+ srimoffset;
 		print("srimbox =" + srimbox);
 		
-		//produce the srim
-		
-		processMeasurement(x,y, srimbox, forgettingfactor);
-		
+		//must have saved the adaptors in AdaptionSim()
+		double[] doubleAdaptors = new double[1];
+		doubleAdaptors = load1DAdaptorsFromU4Constants();
+		processMeasurement(x,y, srimbox, forgettingfactor, doubleAdaptors);
+		print("finished processMeasurement");
 		// the new srim is now saved in SrimArray
 		// save the newly updated srimi
 		try {
@@ -172,25 +194,18 @@ public class AdaptionSim {
 		//get the global srim from SrimArray
 		globalSrim = calcGlobalSrim();
 		
-//		//save the srim
-//		try {
-//			saveSRIM(globalSrim);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
+	
 		//update the adaptors if enough measurements have been taken
 		NoOfTimesRoutineHasBeenCalled++;
-		System.out.println("AdaptionSim called " + NoOfTimesRoutineHasBeenCalled);
+		lprint("AdaptionSim called " + NoOfTimesRoutineHasBeenCalled);
 		if(initialise == false || NoOfTimesRoutineHasBeenCalled>7){
 			Matrix newAdaptors = getParameters2();
-			System.out.println("about to write adaptors to U4Constants");
+			print("about to write adaptors to U4Constants");
 			saveAdaptorsToU4Constants(newAdaptors);
-			System.out.println("AdaptionSim saved adaptors");
+			lprint("AdaptionSim saved adaptors to U4Constants");
 			try {
-				System.out.println("about to write wrote adaptors to " + getAdaptorsFilename());
 				saveAdaptorsToFile(newAdaptors);
+				lprint("saved adaptors to " + getAdaptorsFilename());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -230,7 +245,7 @@ public class AdaptionSim {
 			writer.writeNext(stringAdaptors[i]);
 		}
 		writer.close();
-		System.out.println("wrote adaptors to " + filename);
+		lprint("wrote adaptors to " + filename);
 		
 	}
 
@@ -245,12 +260,19 @@ public class AdaptionSim {
 		}else if( this.AdaptionName.equals("ModelReverseAdaption")){
 			U4_Constants.modelReverseAdaptors = floatAdaptors;
 			print("adaptors have been saved.  U4reverse=" + U4_Constants.modelReverseAdaptors[0]  );
+		}else if( this.AdaptionName.equals("ModelTestAdaption")){
+			U4_Constants.modelTestAdaptors = floatAdaptors;
+			print("adaptors have been saved.  U4reverse=" + U4_Constants.modelTestAdaptors[0]  );
 		}else{
 			print("error in saving adaptors");
 			return;
 		}
 		print("adaptors have been saved.  C=" + floatAdaptors[0]  );
 		
+	}
+	
+	String Left(String text, int noOfChars){
+		return text.substring(text.length() - noOfChars);
 	}
 
 
@@ -288,8 +310,11 @@ public class AdaptionSim {
 			floatAdaptors = U4_Constants.modelForwardAdaptors;
 		}else if( this.AdaptionName.equals("ModelReverseAdaption")){
 			floatAdaptors = U4_Constants.modelReverseAdaptors;
+		}else if( this.AdaptionName.equals("ModelTestAdaption")){
+			floatAdaptors = U4_Constants.modelTestAdaptors;
+			print("modelTestAdaptor " + floatAdaptors[0] );
 		}else{
-			print("error in saving adaptors");
+			print("error in loading adaptors");
 			return null;
 		}
 		double[] adaptors1D = convertFloatArrayToDoubleArray(floatAdaptors);
@@ -311,8 +336,8 @@ public class AdaptionSim {
 		return adaptors1D;
 	}
 	
-	Matrix convert1DArrayToMatrix(){
-		double[][] adaptors = {this.doubleAdaptors};
+	Matrix convert1DArrayToMatrix(double[] doubleAdaptors){
+		double[][] adaptors = {doubleAdaptors};
 		Matrix ans = new Matrix(adaptors);
 		return ans;
 	}
@@ -335,13 +360,10 @@ public class AdaptionSim {
 		//delete the file if it exists so can overwrite
 		File theFile = new File(filename);
 		boolean result = Files.deleteIfExists(theFile.toPath());
-		
-		//	    Path path = Paths.get("/Users/Home/");
+
 		CSVWriter writer;
 
-			writer = new CSVWriter(new FileWriter(filename));
-
-			// TODO Auto-generated catch block
+		writer = new CSVWriter(new FileWriter(filename));
 
 
 		for (int i=0; i < stringAdaptors.length; i++) {
@@ -465,47 +487,21 @@ public class AdaptionSim {
 		
 	}
 
-	
-//	public 	ProcessEngineMeasurement(){
-//		
-//		int xmax = 150;
-//		int xmin = -100;
-//		int noBoxes = 10;
-//		
-//		direction enginedirection = direction.FORWARDS;
-//		
-//
-//		//produce a set of measurements
-//		int offset;
-//		for(int i = -100; i<150; i++){
-//			double x = i;
-//			int srimbox = (int) Math.round((x-xmin)/(xmax-xmin)*noBoxes);
-//			if(enginedirection == direction.FORWARDS){
-//				offset = 0;
-//			}else{
-//				offset = noBoxes; 
-//			}
-//			srimbox = srimbox+offset;
-//			
-//			//produce the srim
-//			processMeasurement(millis, distancetravelled, srimbox);
-//			//get the global srim
-//			globalSrim = getGlobalSrim();
-//			//get the adaptors
-//			getParameters(x);
-//		}
-//	}
-//	
-
 
 	
 	private Matrix calcGlobalSrim() {
-			//int srimoffset = getSrimOffset(direction);
-			Matrix globalSrim = new Matrix(3,3);
-			for (int i = 0;i<noBoxes;i++){
-				Matrix addsrim = addSrim(globalSrim,SrimArray.get(i));
-				globalSrim=addsrim;
-			}
+		print("in calcGlobalSrim");
+		Matrix globalSrim = new Matrix(3,3);
+		for(Matrix mySrim : SrimArray){
+			print("mySRIM in SrimArray");
+			if (DEBUG) mySrim.print(10,2);
+			print("globalSrimbefore");
+			if (DEBUG) globalSrim.print(10,2);
+			Matrix addsrim = addSrim(globalSrim,mySrim);
+			globalSrim=addsrim;
+			print("globalSrimafter");
+			if (DEBUG) globalSrim.print(10,2);
+		}
 		return globalSrim;
 	}
 
@@ -515,7 +511,7 @@ public class AdaptionSim {
 		if (DEBUG) globalSrim.print(10,1);
 		Matrix IM = globalSrim.transpose().times(globalSrim);
 //		print ("IM " + x);
-		IM.print(10,1);
+		if (DEBUG) IM.print(10,1);
 		
 		int xDim = IM.getColumnDimension() -3;
 		Matrix XpX = IM.getMatrix(0, xDim, 0, xDim);
@@ -554,7 +550,7 @@ public class AdaptionSim {
 		return adaptors2D[0];
 	}
 	
-	private Matrix getParameters2() {
+private Matrix getParameters2() {
 		
 		if (DEBUG) globalSrim.print(10,1);
 		Matrix RZS = globalSrim;
@@ -612,59 +608,57 @@ public class AdaptionSim {
 //	}
 	
 	void processMeasurement( 
-			double x, double yy, int srimbox, double forgettingfactor){
-		
-		doubleAdaptors = load1DAdaptorsFromU4Constants();
+			double x, double yy, int srimbox, double forgettingfactor, double[] doubleAdaptors){
 
-		
+
 		double esty = est(x, parameters, doubleAdaptors);
 		print("x= " + x + " yy= " + yy + " esty= " + esty);
-		
-		double y = measY(x, yy, esty);
-			print("y="+y);
+
+		double y = measY(x, yy, esty, doubleAdaptors);
+		print("y= "+y);
 		Matrix X = sensitivities(x);
-			print ("sensitivities");
-			if(DEBUG) X.print(10,1);
+		print ("sensitivities");
+		if(DEBUG) X.print(10,1);
 		Matrix XY1 = xy1(X,y,forgettingfactor);
-			print ("XY1");
-			if(DEBUG) XY1.print(10,1);
-		
+		print ("XY1");
+		if(DEBUG) XY1.print(10,1);
+
 		Matrix meas_IM = meas_IM(XY1);
-			print("meas_IM");
-			if(DEBUG) meas_IM.print(10,1);
+		print("meas_IM");
+		if(DEBUG) meas_IM.print(10,1);
 		//Matrix measSrim = srim(meas_IM);
 		//	print("measSrim");
 		//	measSrim.print(20,10);
 		Matrix qSrim = getQ(meas_IM);
-			print("qSrim");
-			if(DEBUG) qSrim.print(10,1);
+		print("qSrim");
+		if(DEBUG) qSrim.print(10,1);
 		Matrix Unity = qSrim.transpose().times(qSrim);
-			print("Unity");
-			if(DEBUG) Unity.print(10,1);
-			print("srimbox =" + srimbox);
+		print("Unity");
+		if(DEBUG) Unity.print(10,1);
+		print("srimbox =" + srimbox);
 		Matrix addSrim = addSrim(this.SrimArray.get(srimbox),meas_IM);
 		this.SrimArray.set(srimbox, addSrim);
 	}
-	
-	
-	double measY(double x, double measy, double esty){
-		
+
+
+	double measY(double x, double measy, double esty, double[] doubleAdaptors){
+
 		print("x= " + x + " measy= " + measy + " esty= " + esty);
-		double adSensProd = adSensProduct(x);
+		double adSensProd = adSensProduct(x, doubleAdaptors);
 		double ans = measy - esty + adSensProd;
-		
+
 		print("measy= " + measy + " esty= " + esty + " adSensProd= " + adSensProd);
-		
+
 		print("measy - esty + adSensProd" + (measy - esty + adSensProd));
-		print("measy - esty + adSensProd" + ans);
+		print("measy - esty + adSensProd = " + ans);
 		return ans;
 	}
-	
+
 	Matrix sensitivities(double x){
 		double b = parameters[0];
-//		double a = adaptors[0];
-//		double y =  b*x*(1+a) ;
-		
+		//		double a = adaptors[0];
+		//		double y =  b*x*(1+a) ;
+
 		double sens1 = -b*x*x;
 		double sens2 = -b*x;
 		double sens3 = 0;
@@ -672,17 +666,21 @@ public class AdaptionSim {
 		Matrix ans = new Matrix(sens);
 		return ans;
 	}
-	
 
-	
 
-	
-	double adSensProduct(double x){
+
+
+
+	double adSensProduct(double x, double[] doubleAdaptors){
 		Matrix sens = sensitivities(x);
-		Matrix adaptors = convert1DArrayToMatrix();
+		print ("sens");
+		if(DEBUG) sens.print(10,4);
+		Matrix adaptors = convert1DArrayToMatrix(doubleAdaptors);
+		print ("adaptors");
+		if(DEBUG) adaptors.print(10,4);
 		Matrix adSensProductMat = sens.times(adaptors);
 		print ("adSensProductMat");
-		if(DEBUG) adSensProductMat.print(10,1);
+		if(DEBUG) adSensProductMat.print(10,8);
 		
 		double ans = adSensProductMat.det();  //convert to double
 		return ans;
@@ -719,7 +717,7 @@ public class AdaptionSim {
 		return mySrim;
 	}
 	
-	static Matrix addSrim(Matrix Srim1, Matrix Srim2){
+	Matrix addSrim(Matrix Srim1, Matrix Srim2){
 		if(Srim1.getRowDimension()!=Srim2.getRowDimension()){
 			Matrix ansSrim = null;
 			return ansSrim;

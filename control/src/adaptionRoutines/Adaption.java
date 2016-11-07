@@ -137,9 +137,9 @@ public class Adaption {
 			floatAdaptors[i] = (float) adaptors[i];
 		}
 		if( this.AdaptionName.equals("EngineForwardAdaption")){
-			U4_Constants.forwardAdaptors = floatAdaptors;
+			U4_Constants.engineForwardAdaptors = floatAdaptors;
 		}else if( this.AdaptionName.equals("EngineReverseAdaption")){
-			U4_Constants.reverseAdaptors = floatAdaptors;
+			U4_Constants.engineReverseAdaptors = floatAdaptors;
 		}else{
 			System.out.println("error in saving adaptors");
 			return;

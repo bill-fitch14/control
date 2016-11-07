@@ -44,8 +44,8 @@ public final class U1_TAppearance {
 		File dir1 = new File (".");
 	     File dir2 = new File ("..");
 	     try {
-	      System.out.print ("Current dir : " + dir1.getCanonicalPath());
-	      System.out.print ("Parent  dir : " + dir2.getCanonicalPath());
+//	      System.out.print ("Current dir : " + dir1.getCanonicalPath());
+//	      System.out.print ("Parent  dir : " + dir2.getCanonicalPath());
 	       }
 	     catch(Exception e) {
 	       e.printStackTrace();

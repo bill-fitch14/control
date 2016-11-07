@@ -46,7 +46,7 @@ public class CreateTrainMovementDeque {
 		for (int i = 0; i < 10; i++) {
 			int fromBranch = 2;
 			int toBranch = 4;
-			moveTruckstest(fromBranch, noTrucksToMove, toBranch);
+			moveTruckstest(fromBranch, noTrucksToMove, toBranch);  //this adds a section at the end to move the engine back to 2
 			fromBranch = 4;
 			toBranch = 2;
 			moveTrucks(fromBranch, noTrucksToMove, toBranch);
@@ -142,7 +142,7 @@ public class CreateTrainMovementDeque {
 		}
 
 
-		// get no trucks on from branch
+		// get no trucks on from branch   this is the difference in the test routine
 		if (destBranch != 4) {
 			for (int i = 0; i < noTrucks; i++) {
 				temp = Myfunctions.mypop(getstack(4));

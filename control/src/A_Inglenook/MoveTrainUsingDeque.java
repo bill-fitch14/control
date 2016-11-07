@@ -184,7 +184,7 @@ public class MoveTrainUsingDeque  {
 				printreadfromdeque(st,2);
 				direction = U4_Constants.swapDirection();
 				swapRouteOppDirection(strFromBranch, strToBranch,direction);
-	
+				//Main.lo.setEngineDirection(direction);  //don't need this 'cos in move
 	//			Main.lo.moveLoco(direction, 0);
 				readDeque();
 				break;
@@ -193,6 +193,8 @@ public class MoveTrainUsingDeque  {
 				strToBranch = st[2];
 				printreadfromdeque(st,2);
 				swapRouteSameDirection(strFromBranch, strToBranch);
+				direction=U4_Constants.getDirection();
+				//Main.lo.setEngineDirection(direction);  //don't need this 'cos in move
 				//turnmovementon(train1);
 				readDeque();
 				break;
