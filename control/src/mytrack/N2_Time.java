@@ -20,6 +20,11 @@ public class N2_Time {
 			TimeIntInSecs = TimeInterval/10E9f;
 		}
 	}
+	
+	public static void initialise(){
+		//this to be called each time the engine starts
+		currentFrameTime=System.nanoTime();
+	}
 
 	//speed is in metres per second
 	public static double getDistance(double speed){

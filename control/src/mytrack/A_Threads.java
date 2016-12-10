@@ -11,6 +11,7 @@ import net.net_Console;
 //import sm2.E1;
 import sm2.MMI;
 
+
 public final class A_Threads {
 
 	
@@ -25,7 +26,7 @@ public final class A_Threads {
 	private net_Console _consoleModel2;
 	private Serial_IO _serialModel2;
 	
-	private A_Setup modelSetup;
+	private static A_Setup modelSetup;
 	
 	private A_Adaption modelAdaption;
 	
@@ -47,10 +48,37 @@ public final class A_Threads {
 	//mmi();
 
 
-
+	//checkKeyPresses();
 	
 
 }
+	
+	/**
+	 * 
+	 */
+	private void checkKeyPresses() {
+		Thread thread0 = new Thread() {
+
+			//private Serial_IO _serialModel;
+
+			
+
+			public void run() {
+				//99System.out.print("running init");
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				new KeyListenerTester("Key Listener Tester");
+			
+
+			}
+		};
+		thread0.start();
+	}
 
 	private void mmi(){
 		SwingUtilities.invokeLater(new Runnable() {
@@ -64,34 +92,7 @@ public final class A_Threads {
 		});
 	}
 
-
-	/**
-	 * 
-	 */
-	private void inglenook() {
-		Thread thread2 = new Thread() {
-
-			public void run() {
-				//99System.out.print("running Inglenook");
-				//while (!thread.isInterrupted()) {
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						return;
-					}
-
-
-
-					// StateMachineContext context = createContext();
-					//e_process_queue();
-				//}
-			}
-
-		};
-		thread2.start();
-	}
-
-
+	
 
 	/**
 	 * 

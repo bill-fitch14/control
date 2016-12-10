@@ -36,6 +36,12 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		}
 	}
 	
+	private static boolean LDEBUG = false;
+	private static void lprint(String x){
+		if (LDEBUG ){
+		System.out.println(x);
+		}
+	}
 	public M43_TruckData_Display(String arc, String directionFacing, D_MyGraph graph, String startFraction){
 
 		super(arc, directionFacing, graph, startFraction);
@@ -95,7 +101,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 
 //	private boolean[] currentSensorsActive = null;
-	private M43_TruckData_Display tailOfTruck;
+	public M43_TruckData_Display tailOfTruck;
 	private M76Stop translatedStop;
 
 	//	private void set_BG(H4_truckLocation tl, Integer truckNames2) {
@@ -550,9 +556,56 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		return _BG;
 	}	
 
+	
+	public boolean updateToSensor(float distance, String sensorName, int truckno) {
+		createTailOfTruck();
+		String currentSensorsState;
+		if(getCurrentSensors()!=null){
+			currentSensorsState = "not null";
+		}else{
+			currentSensorsState = "null";
+		}
+		print("in M43 updatetosensor, truckno = " + truckno + " currentsensors state =" + currentSensorsState);
+		if(getCurrentSensors()!=null){
+			boolean sensorReached = false;
+			boolean correctSensorLookedFor = false;
+			print("in M43 updatetosensor, truckno = " + truckno);
+			for(M76Stop x:getCurrentSensors()){
+				if(x.objectStr.equals(sensorName)){
+					correctSensorLookedFor = true;
+					print("M43 " + " sensor reached " +sensorReached + " x " + x.objectStr + " " + x.objectText);
+					boolean sensorNotReached = true;
+					while (sensorNotReached){
+						sensorNotReached = checkForSensor( distance, tailOfTruck, x);
+					}
+					sensorReached = !sensorNotReached;
+					print("M43 " + " sensor reached " +sensorReached + " x " + x.objectStr + " " + x.objectText);
+					if (sensorReached == true) {
+						print("sensor to aim for "+ sensorName+ " sensor reached " +sensorReached + " " + x.objectStr + " " + x.objectText);	
+					}
+				}
+			}
+			if(correctSensorLookedFor = false){
+				print ("M43 required sensor not found !!!!!!!!!!!!!!!!!!!!!!!!!!!!should not reach here");
+				System.out.print ("sensors looking for " + sensorName);
+				System.out.print ("current sensors are:");
+				for(M76Stop x:getCurrentSensors()){
+						System.out.print(x.objectStr);
+				}
+				System.out.println();
+				return false;
+			}
+			return false;
+		}else{
+			print("M43 Current Sensors are null returning false");
+			return false;
+		}
+//		print ("M43 required sensor not found ");
+//		System.out.println("arc orient movement " + getArc()+ getOrientation() + getMovement() );
 
+	}
 
-	public boolean updateToSensor( float distance) {
+	void createTailOfTruck() {
 		try {
 			tailOfTruck = (M43_TruckData_Display)this.clone();
 			float distToHead = (tailOfTruck.objectLength/2.0f);
@@ -565,18 +618,34 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		if(getCurrentSensors()!=null){
-			boolean sensorReached = false;
-			for(M76Stop x:getCurrentSensors()){
-				if (x != null){
-					sensorReached = checkForStop( distance, tailOfTruck, x);
-				}
-			}
-			return sensorReached;
-		}
-		return false;
 	}
+
+
+//	public boolean updateToSensor( float distance) {
+//		try {
+//			tailOfTruck = (M43_TruckData_Display)this.clone();
+//			float distToHead = (tailOfTruck.objectLength/2.0f);
+//			if(tailOfTruck.getOrientation().equals("same")) {
+//				tailOfTruck.moveWithinSegment3(distToHead);
+//			}else{
+//				tailOfTruck.moveWithinSegment3(distToHead);
+//			}
+//		} catch (CloneNotSupportedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		if(getCurrentSensors()!=null){
+//			boolean sensorReached = false;
+//			for(M76Stop x:getCurrentSensors()){
+//				if (x != null){
+//					sensorReached = checkForStop( distance, tailOfTruck, x);
+//				}
+//			}
+//			return sensorReached;
+//		}
+//		return false;
+//	}
 
 
 	public boolean update( float distance) {
@@ -611,7 +680,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 				translatedStop.moveWithinSegment3(distToHead);
 				}				
 			}
-			
+
 //				float distToHead = (headOfTruck.objectLength/2.0f);
 //				if(headOfTruck.getOrientation().equals("same")) {
 //					headOfTruck.moveWithinSegment3(distToHead);
@@ -717,7 +786,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			if(tailOfTruck.getOrientation().equals("same")) {
 				if(tailOfTruck.getSegmentFraction() > x.getSegmentFraction()){
 					long millis = System.currentTimeMillis();
-					print("&&& sensor detected " + x.objectStr + " " + millis);
+					print("&&& sensor detected " + x.objectStr + " " + millis + " Orientation " + tailOfTruck.getOrientation() + " Movement " + tailOfTruck.getMovement());
 					Main.lo.setSensor(x.objectStr,x.objectStr, millis);
 					x.isActive = false;
 
@@ -726,7 +795,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			}else if (this.getOrientation().equals("opposite")){
 				if(tailOfTruck.getSegmentFraction() < x.getSegmentFraction()){
 					long millis = System.currentTimeMillis();
-					print("&&& sensor detected " + x.objectStr + " " + millis);
+					print("&&& sensor detected " + x.objectStr + " " + millis + " Orientation " + tailOfTruck.getOrientation() + " Movement " + tailOfTruck.getMovement());
 					Main.lo.setSensor(x.objectStr,x.objectStr, millis);
 					x.isActive = false;
 				}
@@ -739,14 +808,72 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 
 	}
+	
+	private boolean checkForSensor(float distance,M43_TruckData_Display truckPosition, M76Stop stopPosition) {
 
-	private boolean checkForStop(float distance,M43_TruckData_Display truckPosition, M76Stop stopPosition) {
+		//only stops if the startArcPairs have been set up
+		
 		if(truckPosition.getStartArcPair()[0].equals(stopPosition.getStartArcPair()[0]) && 
 				truckPosition.getStartArcPair()[1].equals(stopPosition.getStartArcPair()[1]) &&
 				truckPosition.getSegmentNo()==stopPosition.getSegmentNo()){
 			if(truckPosition.getOrientation().equals("same")) {
 				if(truckPosition.getSegmentFraction() > stopPosition.getSegmentFraction()){
+					//System.out.print("whoopee");
+					stopPosition.isActive = false;
+
+					return false;
+				}else{
+					//					//99System.out.print("movement " + this.getMovement() + " orientation " + this.getOrientation());
+					//					//99System.out.print("not yet"  + "this.getSegmentFraction()" + this.getSegmentFraction()+ "currentStop.getSegmentFraction()" + currentStop.getSegmentFraction() );
+					moveWithinSegment3(distance);
+					//setPositionTangent();
+					//updatePositionAndTangent(getPosition(),getTangent());
+					//generate new event
+					return true;
+				}
+			}else if (this.getOrientation().equals("opposite")){
+				if(truckPosition.getSegmentFraction() < stopPosition.getSegmentFraction()){
 					//99System.out.print("whoopee");
+					stopPosition.isActive = false;
+
+					return false;
+				}else{
+					//					//99System.out.print("movement " + this.getMovement() + " orientation " + this.getOrientation());
+					//					//99System.out.print("not yet"  + "this.getSegmentFraction()" + this.getSegmentFraction()+ "currentStop.getSegmentFraction()" + currentStop.getSegmentFraction() );
+					moveWithinSegment3(distance);
+					//setPositionTangent();
+					//updatePositionAndTangent(getPosition(),getTangent());
+					//generate new event
+					return true;
+				}
+			}else{
+				System.out.print("by gum there is an error here");
+				return true;
+			}
+		}else{
+			printPair("this.startarcpairlist" , this.getStartArcPair() );
+			//99System.out.print("this.getSegmentNo()" + this.getSegmentNo());
+			//99System.out.print("currentStop.getSegmentNo()" + currentStop.getSegmentNo());
+			printPair("currentstop " , stopPosition.getStartArcPair());
+			System.out.println("movement "+ this.movement);
+			moveWithinSegment3(distance);
+			//setPositionTangent();
+			//updatePositionAndTangent(getPosition(),getTangent());
+			return true;
+		}
+	}
+
+
+	private boolean checkForStop(float distance,M43_TruckData_Display truckPosition, M76Stop stopPosition) {
+		
+		//only stops if the startArcPairs have been set up
+		if(truckPosition.getStartArcPair()[0].equals(stopPosition.getStartArcPair()[0]) && 
+				truckPosition.getStartArcPair()[1].equals(stopPosition.getStartArcPair()[1]) &&
+				truckPosition.getSegmentNo()==stopPosition.getSegmentNo()){
+			print("got to same segment");
+			if(truckPosition.getOrientation().equals("same")) {
+				if(truckPosition.getSegmentFraction() > stopPosition.getSegmentFraction()){
+					System.out.print("whoopee");
 					stopPosition.isActive = false;
 
 					return false;
@@ -783,6 +910,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			//99System.out.print("this.getSegmentNo()" + this.getSegmentNo());
 			//99System.out.print("currentStop.getSegmentNo()" + currentStop.getSegmentNo());
 			printPair("currentstop " , stopPosition.getStartArcPair());
+			System.out.println("movement" + this.getMovement() + "segmentNo" + this.getSegmentNo() + " IndexOfStartArcPairList " + this.getIndexOfStartArcPairList());
 			moveWithinSegment3(distance);
 			setPositionTangent();
 			updatePositionAndTangent(getPosition(),getTangent());
@@ -792,7 +920,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	public void printPair(String name, String[] sarray){
 
-		//99System.out.print(name + " = " + sarray[0] + " , " + sarray[1]);
+		print(name + " = " + sarray[0] + " , " + sarray[1]);
 	}
 
 	public void updatePositionAndTangent(Tuple3d position2, Vector3d newTangent) {
@@ -958,7 +1086,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 		@SuppressWarnings("unused")
 		String arcPairKey = getEngineRoutePairKey(this.getStartArcPair());
-		String[] startArcStringArray=U7_StartArcPairs.getStringArraySameDirectionTravellingSameDirectionFacing(this.getStartArcPair(), graph);
+		String[] startArcStringArray=U7_StartArcPairs.getStringArraySameDirectionTravellingSameDirectionFacing(this.getStartArcPair(), graph); //this ends up with the same thing
 		String[] startArcStringArray2=U7_StartArcPairs.getStringArrayOppDirectionTravellingSameDirectionFacing(this.getStartArcPair(), graph);
 		String[] startArcStringArray3=U7_StartArcPairs.getStringArraySameDirectionTravellingOppDirectionFacing(this.getStartArcPair(), graph);
 		String[] startArcStringArray4=U7_StartArcPairs.getStringArrayOppDirectionTravellingOppDirectionFacing(this.getStartArcPair(), graph);
@@ -999,6 +1127,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 					//				truckdata_position.setStartArcPair(startArcPair);
 
 					String startArcPairKey = getEngineRoutePairKey(this.getStartArcPair());
+					//setArc(startArcPairKey); 
 					this.orientation = graph.getOrientation(startArcPairKey);
 					this.movement = graph.getMovement(startArcPairKey);
 
@@ -1103,8 +1232,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		this.getCurrentStop().isActive = currentStopActive;
 	}
 
-	public void setvaluesfromEngine(int referenceTruckNo,
-			M43_TruckData_Display m43_TruckData_Display) {
+	public void setvaluesfromEngine(int referenceTruckNo, M43_TruckData_Display m43_TruckData_Display) {
 		this.setArc(m43_TruckData_Display.getArc());
 		this.settArc(m43_TruckData_Display.gettArc());
 		//this assumes the engine is in the same arc pair as the truck. need a better method
@@ -1147,6 +1275,24 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	public void setCurrentStop(M76Stop currentStop) {
 		this.currentStop = currentStop;
+	}
+
+
+
+	protected float getDistance(){
+		//this is a value which is only used to compare distances, it is not an actual distance
+		int indexOfStartArcPairList = this.getIndexOfStartArcPairList();
+		float segment_no = this.getSegmentNo();
+		float fraction = this.getSegmentFraction();
+		float distance = 100*indexOfStartArcPairList+segment_no + fraction;
+		return distance;
+	}
+	public void setAllParameters(D_MyGraph graph) {
+		
+		String startArcPairKey = getEngineRoutePairKey(this.getStartArcPair());
+		this.orientation = graph.getOrientation(startArcPairKey);
+		this.movement = graph.getMovement(startArcPairKey);
+		
 	}
 
 

@@ -166,6 +166,13 @@ public class E3_TNode {
 					Primitive.GENERATE_NORMALS |
 					Primitive.GENERATE_TEXTURE_COORDS, app);
 		rotateBy90.addChild(nodeMarker);
+		
+		TransformGroup rotateBy90Text = new TransformGroup(t3d);
+		Vector3d pt = new Vector3d(0.25,-0.5,5);
+		String NodeNo = _NodeName.getNodeName();
+		rotateBy90Text.addChild(makeText(pt,""+NodeNo));
+
+		rotateBy90.addChild(rotateBy90Text  );
 
 		return rotateBy90;
 	}
@@ -180,6 +187,8 @@ public class E3_TNode {
 		TransformGroup rotateBy90 = new TransformGroup(t3d);
 		rotateBy90.addChild(get_station_TG());
 		//rotateBy90.addChild(stationBase);
+		
+
 		return rotateBy90;
 	}
 

@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 
 import A_Inglenook.Inglenook;
 import myscene.listenerObjects;
+import mytrack.U4_Constants;
 
 import com.evelopers.common.exception.CommonException;
 import com.evelopers.unimod.adapter.standalone.provider.Timer;
@@ -118,7 +119,9 @@ public class Main {
 
 	public static listenerObjects lo = new listenerObjects();
 
-
+	public static void stopEngine(){
+		U4_Constants.setEngineSpeedSetting(0f);
+	}
 
 }
 

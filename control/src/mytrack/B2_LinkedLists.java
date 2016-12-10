@@ -25,6 +25,7 @@ import javax.vecmath.Vector3d;
 import com.google.common.primitives.Ints;
 
 import A_Inglenook.Myfunctions;
+import A_Inglenook.trainPosition;
 
 public class B2_LinkedLists  {
 
@@ -1215,7 +1216,7 @@ public class B2_LinkedLists  {
 //
 //	private H2_Engine_Route eRoute1;
 	
-	private static M6_Trains_On_Routes trainsOnRoute = new M6_Trains_On_Routes();
+	static M6_Trains_On_Routes trainsOnRoute = new M6_Trains_On_Routes();
 	
 	private static M61_Train_On_Route route2;
 
@@ -1225,6 +1226,8 @@ public class B2_LinkedLists  {
 
 	private static M61_Train_On_Route route1;
 	private static M61_Train_On_Route route21;
+
+	private static trainPosition trainPosition;
 	
 //	private M75Stops stops = new M75Stops();
 
@@ -1661,7 +1664,7 @@ public class B2_LinkedLists  {
 //		this.stops = stops;
 //	}
 	
-	public static void getTrainParametersfromLong(D_MyGraph graph, long[] init) {
+	public static void getTrainParametersfromLongAndSetStopAndSensorPositions(D_MyGraph graph, long[] init) {
 
 		//99System.out.print("getTrainParametersfromLong");
 
@@ -1677,6 +1680,10 @@ public class B2_LinkedLists  {
 //				+ startFraction + " startDirection " + startDirection);
 		addStopPositions(graph);
 		addSensorPositions(graph);
+		
+		
+		
+		
 	}
 
 	private static void getParameters(D_MyGraph graph, Queue<Integer[]> deque, String trainName) {
@@ -1879,10 +1886,10 @@ public class B2_LinkedLists  {
 			strTruckLength = "0.5";
 			
 //			truckLength = 1;
-			route = "1_To_Rev,3_To_Rev";
+			route = "1_To_Rev,3_To_Rev";  //changed rev to for
 			startArc = "1_F_2_B";
-			startFraction = "1.5";
-			startDirection = "Rev";
+			startFraction = "0.1";
+			startDirection = "Rev";		 //changed rev to for
 			trainStr = "T0";
 			trainNo = 4; 
 

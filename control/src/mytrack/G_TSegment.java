@@ -1,12 +1,14 @@
 package mytrack;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Node;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.vecmath.Color3f;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Tuple3d;
@@ -19,6 +21,7 @@ import Utilities.StringHelper;
 import com.ajexperience.utils.DeepCopyException;
 import com.ajexperience.utils.DeepCopyUtil;
 import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.geometry.Text2D;
 
 
 public class G_TSegment {
@@ -764,13 +767,13 @@ public class G_TSegment {
 //		return "fred";
 	}
 
-	public void set_BG() {
+	public void set_BG(int i) {
 		// TODO Auto-generated method stub
-		this._BG.addChild(get_node_position_TG());
+		this._BG.addChild(get_node_position_TG(i));
 		
 	}
 
-	private TransformGroup get_node_position_TG() {
+	private TransformGroup get_node_position_TG(int i) {
 		
 		Vector3d P = new Vector3d(_position1);
 		Transform3D t3d = new Transform3D();
@@ -778,11 +781,11 @@ public class G_TSegment {
 		//create the branchgroup for the node
 		TransformGroup translateToNode1 = new TransformGroup(t3d);
 		//translateToNode1.addChild(trackBase);
-		translateToNode1.addChild(rotateToTangent_TG());
+		translateToNode1.addChild(rotateToTangent_TG(i));
 		return translateToNode1;
 	}
 	
-	private TransformGroup rotateToTangent_TG() {
+	private TransformGroup rotateToTangent_TG(int i) {
 		//rotate by the angle between the tangent and the vector from the origin to the node
 		Vector3d nodePosition = new Vector3d(1,0,0);
 		Vector3d tangent = new Vector3d(_tangent1);
@@ -793,15 +796,21 @@ public class G_TSegment {
 		//t3d.rotZ(Math.PI/2);
 		//t3d.rotZ(0);
 		TransformGroup rotateToTangent = new TransformGroup(t3d);
-		rotateToTangent.addChild(get_trackelement_TG());
+		rotateToTangent.addChild(get_trackelement_TG(i));
 		return rotateToTangent;
 	}
 	
-	private TransformGroup get_trackelement_TG() {
+	private TransformGroup get_trackelement_TG(int i) {
 		TransformGroup trackelement_BG;
+
 		if (_TrackType.equals("RT"))	{
 			//rotate to
-			trackelement_BG = get_Straight_TG();	
+			trackelement_BG = get_Straight_TG();
+			boolean _drawNodeMarker = true;
+			if (_drawNodeMarker){
+				trackelement_BG.addChild(segmentMarker_TG(i));
+			}
+			return trackelement_BG;
 		}
 		else	{
 			//join up the two points
@@ -817,10 +826,54 @@ public class G_TSegment {
 			//t3d.rotZ(0);
 			TransformGroup rotateToTangent = new TransformGroup(t3d);
 			rotateToTangent.addChild(get_Straight_TG());
+			boolean _drawNodeMarker = true;
+			if (_drawNodeMarker){
+				rotateToTangent.addChild(segmentMarker_TG(i));
+			}
 			return rotateToTangent;	
 		}
-		return trackelement_BG;
+		
 	}
+	
+	private Node segmentMarker_TG(int i) {
+		Transform3D t3d = new Transform3D();
+		t3d.rotY(0);
+		TransformGroup rotateBy90 = new TransformGroup(t3d);
+		U1_TAppearance A = new U1_TAppearance(Color.green);
+		Appearance app = A.get_Appearance();
+		float boxHeight=0.5f;
+		float boxWidth=0.1f;
+		float boxLen=.50f;
+		com.sun.j3d.utils.geometry.Box nodeMarker= 
+			new com.sun.j3d.utils.geometry.Box(boxWidth/2, boxLen/2, boxHeight/2, 
+					Primitive.GENERATE_NORMALS |
+					Primitive.GENERATE_TEXTURE_COORDS, app);
+		rotateBy90.addChild(nodeMarker);
+		
+		TransformGroup rotateBy90Text = new TransformGroup(t3d);
+		Vector3d pt = new Vector3d(0,-.3,0.5/2);
+		String NodeNo = String.valueOf(i);
+		rotateBy90Text.addChild(makeText(pt,""+NodeNo));
+
+		rotateBy90.addChild(rotateBy90Text  );
+
+		return rotateBy90;
+	}
+	
+	  private TransformGroup makeText(Vector3d vertex, String text)
+	  // Create a Text2D object at the specified vertex
+	  {
+		final Color3f white = new Color3f(Color.white);
+		Text2D message = new Text2D(text, white , "SansSerif", 130, Font.BOLD );
+	       // 36 point bold Sans Serif
+
+	    TransformGroup tg = new TransformGroup();
+	    Transform3D t3d = new Transform3D();
+	    t3d.setTranslation(vertex);
+	    tg.setTransform(t3d);
+	    tg.addChild(message);
+	    return tg;
+	  } // end of getTG()
 	private TransformGroup get_Straight_TG() {
 			
 			// go at 90 deg to tangent
@@ -866,7 +919,7 @@ public class G_TSegment {
 			
 			// go up by boxheight/2
 			// draw the rail
-			float railHeight=.20f;
+			float railHeight=.10f;
 			float boxWidth1=.020f;
 			float boxLen1=(float)((Point3d) _position1).distance((Point3d)_position2);
 			 U1_TAppearance appearanceRail = new U1_TAppearance(Color.red);

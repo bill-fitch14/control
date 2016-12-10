@@ -31,7 +31,7 @@ public class CreateTrainMovementDeque {
 
 	static Deque <String[]> deque = new ArrayDeque<String[]>();
 
-	static D_MyGraph graph;
+	public static D_MyGraph graph;
 
 	static boolean use3Dgraphics = false;
 
@@ -43,6 +43,7 @@ public class CreateTrainMovementDeque {
 		displayStackWhileMoving = displayStackWhileMoving2;
 
 		int noTrucksToMove = 2;
+		swapRouteOppDirectionTravelling(2, 4);
 		for (int i = 0; i < 10; i++) {
 			int fromBranch = 2;
 			int toBranch = 4;
@@ -92,6 +93,7 @@ public class CreateTrainMovementDeque {
 			if (use3Dgraphics) {
 
 				//move from 4 to from branch
+				swapRouteOppDirectionTravelling(4, fromBranch);  //this is what i added
 				swapRouteSameDirectionTravelling(4, fromBranch);
 
 				moveEngineToBranch(4, fromBranch); // move and connect with existing trucks if any

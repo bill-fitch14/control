@@ -415,6 +415,7 @@ public final class M75Stops {
 		case "tosthr1":
 			arc = "2_B_1_F";
 			fraction = "3.625";
+			fraction = "2.5";
 			directionFacing = "Rev";
 			//stopNo = "S1";
 			M76Stop stop_displaytosthr1 = new M76Stop(arc, directionFacing, graph, fraction, true);
@@ -431,6 +432,7 @@ public final class M75Stops {
 		case "tosthr2":
 			arc = "2_B_1_F";
 			fraction = "2.20625";
+
 			directionFacing = "Rev";
 			//stopNo = "S1";
 			M76Stop stop_displaytosthr2 = new M76Stop(arc, directionFacing, graph, fraction, true);
@@ -447,6 +449,7 @@ public final class M75Stops {
 		case "fromsthf1":
 			arc = "1_F_2_B";
 			fraction = "2.20625";
+
 			directionFacing = "Rev";
 			//stopNo = "S1F1";
 			M76Stop stop_displayfromsthf1 = new M76Stop(arc, directionFacing, graph, fraction, true);
@@ -461,6 +464,7 @@ public final class M75Stops {
 		case "fromsthf2":
 			arc = "1_F_2_B";
 			fraction = "3.625";
+			fraction = "2.5";
 			directionFacing = "Rev";
 			//stopNo = "S1F1";
 			M76Stop stop_displayfromsthf2 = new M76Stop(arc, directionFacing, graph, fraction, true);

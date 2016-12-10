@@ -671,12 +671,12 @@ public class F3_TArc {
 		ListIterator<G_TSegment> itr = _TrackSegments.listIterator();
 		//2//3//99System.out.print("Iterating through elements of Arc LinkedList using" + " ListIterator in forward direction...");
 
-		int i=1;
+		int i=0;
 		while(itr.hasNext())
 		{      
 			G_TSegment segment = itr.next();
 			//2//3//99System.out.print(i + " " +segment.toString());
-			segment.set_BG();
+			segment.set_BG(i);
 			this._BG.addChild(segment.get_BG());
 			i++;
 		} 

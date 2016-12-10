@@ -469,7 +469,7 @@ public class MoveTrainUsingDeque  {
 		M62_train train0 = M6_Trains_On_Routes.getTrainOnRoute("T0");	
 	
 		K2_Route route= assignRoute(strFromBranch, strToBranch);
-	
+		//set route.startArcPair 
 		if(!train0.getTruckPositions().get(0).swapDirectiontravelling(route, CreateTrainMovementDeque.graph,direction)){
 			//99System.out.print("unable to swap route");
 		}
@@ -499,11 +499,12 @@ public class MoveTrainUsingDeque  {
 			//99System.out.print("unable to swap route");
 		}
 	
-		train0.getTruckPositions().get(0).setRoute(route);
+		train0.getTruckPositions().get(0).setRoute(route);  //set route of engine
 	
 		train0.reset_truck_locations(0);
 	}
 
+	
 
 
 	/**

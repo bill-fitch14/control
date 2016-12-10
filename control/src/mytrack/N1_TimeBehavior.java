@@ -31,7 +31,7 @@ public class N1_TimeBehavior extends Behavior
 
 	public void processStimulus(Enumeration criteria)
 	{
-		//3//99System.out.print("Processing stimulus");
+		//System.out.println("Processing stimulus");
 		N2_Time.update();
 		//h1engineRoute.update();      // ignore criteria
 		trainsOnRoute.update();

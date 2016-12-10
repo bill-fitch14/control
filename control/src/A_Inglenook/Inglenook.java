@@ -103,6 +103,7 @@ public class Inglenook {
 		// //get random arrangement
 	}
 
+	//this is called from A_Setup
 	public static void runInglenook2(long init, C2_DJGraph graph, C1_BranchGroup branchGroup) {
 
 		Inglenook.graph = graph;
@@ -421,6 +422,14 @@ public class Inglenook {
 	protected static K2_Route route2h;
 	protected static K2_Route routeh3;
 	protected static K2_Route route3h;
+
+
+
+
+	public static K2_Route routetFromRev;
+	public static K2_Route routetToRev;
+	public static K2_Route routetFromFor;
+	public static K2_Route routetToFor;
 	
 	public static void set_routes(D_MyGraph graph2, C2_DJGraph graphx, C1_BranchGroup branchGroup) {
 //		Inglenook.D_MyGraphgraph = graph2;
@@ -430,7 +439,12 @@ public class Inglenook {
 		route2h = new K2_Route("5_From_Rev,1_From_Rev", graph2, branchGroup);
 		routeh3 =  new K2_Route("1_To_Rev,6_To_Rev", graph2, branchGroup);
 		route3h = new K2_Route("6_From_Rev,1_From_Rev", graph2, branchGroup);
-	
+		
+		routetFromRev= new K2_Route("8_From_Rev,1_From_Rev", graph2, branchGroup);
+		routetToRev= new K2_Route("1_To_Rev,8_To_Rev", graph2, branchGroup);
+		routetFromFor= new K2_Route("8_From_For,1_From_For", graph2, branchGroup);
+		routetToFor= new K2_Route("1_To_For,8_To_For", graph2, branchGroup);
+		
 		CreateTrainMovementDeque.graph3 = graphx;
 	}
 

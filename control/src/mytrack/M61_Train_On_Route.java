@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Container;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -13,6 +16,13 @@ import sm2.Main;
 import A_Inglenook.MoveTrainUsingDeque;
 
 public class M61_Train_On_Route extends M62_train{
+	
+	private static boolean DEBUG = true;
+	private static void print(String x){
+		if (DEBUG ){
+		System.out.print(x);
+		}
+	}
 	
 	//we need a train, a route and a truckData-Position
 	// and use this to create a M3_DisplayTrain
@@ -84,15 +94,37 @@ public class M61_Train_On_Route extends M62_train{
 		return isMoving();
 	}
 	
-	public void updatePositionToNextSensor()
+	public void updatePositionToNextSensor(String sensorName){
+		print("updating engine");
+		M43_TruckData_Display engine = getTruckPositions().get(0);
+		float distance = 1.0f; //a small amount
+		boolean SensorReachedCurrentTruck = engine.updateToSensor(distance, sensorName, 0);
+		
+		// now reposition the trucks on the train
+		
+	}
+
+	float totaldist = 0f;
+	public void updatePositionToNextSensorold(String sensorName)
 	{
 		boolean SensorReached = false;
-		while (SensorReached = false){
-			float distance = 0.1f;
+		while (SensorReached == false){
+			float distance = 1.0f; //a small amount
+			int truckno = -1;
 			for (M43_TruckData_Display truckPosition:getTruckPositions()){
-				boolean SensorReachedCurrentTruck = truckPosition.updateToSensor(distance); 
+				truckno++;
+				totaldist = totaldist+distance;
+//				print("M61 updating" + totaldist);
+				boolean SensorReachedCurrentTruck = truckPosition.updateToSensor(distance, sensorName, truckno); 
+				String x;
+				x = String.valueOf(totaldist);
+				if (totaldist % 100 > 99.8f){
+					print( x + " " ); //same amount as above
+				}
 				if (SensorReachedCurrentTruck == true){
 					SensorReached = true; 
+					//print("M61 updating" + " SensorReached " + SensorReached +" totaldist= "+totaldist);
+					totaldist = 0;
 				}
 			}
 		}
@@ -112,10 +144,6 @@ public class M61_Train_On_Route extends M62_train{
 		
 		if(!objectIsOnRoute(route, truck_display, graph)){
 			//99System.out.print("train is not on route");
-			if(!objectIsOnRoute(route, truck_display, graph)){
-				//99System.out.print("train is not on route");
-				return;
-			}
 			
 			return;
 		}
@@ -152,6 +180,9 @@ public class M61_Train_On_Route extends M62_train{
 //		}
 //	}
 	
+
+	
+
 
 
 
@@ -287,6 +318,7 @@ public class M61_Train_On_Route extends M62_train{
 					//get the index corresponding to the list of arcs
 					routeInOppDirTravelling.indexOfStartArcPairList = j;
 					routeInOppDirTravelling.startArcPair = routeInOppDirTravelling.startArcPairList.get(routeInOppDirTravelling.indexOfStartArcPairList);
+
 //					route.indexOfStartArcPairList = j;
 //					route.setIndexOfStartArcPairList(j);
 //					truckdata_position.setIndexOfStartArcPairList(j);
@@ -318,7 +350,26 @@ public class M61_Train_On_Route extends M62_train{
 		return false;
 	}
 
+	private static <V, K> Map<V, K> invert(Map<K, V> map) {
 
+	    Map<V, K> inv = new HashMap<V, K>();
+
+	    for (Entry<K, V> entry : map.entrySet()){
+	        inv.put(entry.getValue(), entry.getKey());
+
+	    	//99System.out.print("key" + entry.getKey() + "value" + Arrays.deepToString((String[]) entry.getValue()) + "returned value" + inv.get(entry.getValue()));
+	    	
+	    }
+	   //99//99System.out.print("*****");
+	    
+	    for (Entry<V, K> entry : inv.entrySet()){
+	        //inv.put(entry.getValue(), entry.getKey());
+
+	    	//99System.out.print( Arrays.deepToString((String[]) entry.getKey()) + "value" + entry.getValue() + "key");
+	    	
+	    }
+	    return inv;
+	}
 	public String getEngineRoutePairKey(String[] engineRoutePair) {
 
 		String erpkey = Arrays.deepToString(engineRoutePair);
@@ -464,6 +515,14 @@ public class M61_Train_On_Route extends M62_train{
 		return ToMoveToSensor;
 	}
 
+	public void setToMoveToSensor(boolean toMoveToSensor) {
+		ToMoveToSensor = toMoveToSensor;
+	}
 
+
+
+	public int NumberItems() {
+		return getNumberEngines()+getNumberTrucks();
+	}
 
 }

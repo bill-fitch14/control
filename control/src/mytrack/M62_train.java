@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Group;
+import javax.media.j3d.Node;
 
 import com.ajexperience.utils.DeepCopyException;
 import com.ajexperience.utils.DeepCopyUtil;
@@ -29,7 +31,7 @@ public class M62_train {
 	private float truckLength;
 	private Integer[] truckNos;
 
-	private List<M43_TruckData_Display> truckPositions;
+	public List<M43_TruckData_Display> truckPositions;
 	/*
 	 * types in M43_TruckData_Display
 	 * float objectLength;	
@@ -47,7 +49,7 @@ public class M62_train {
 	float[] distancesFromHeadToCoupling;
 
 	private BranchGroup trainBranchGroup = new BranchGroup();
-	private double trainSpeed = U4_Constants.simSpeedSetting;
+	private double trainSpeed = 0;
 
 	public M62_train(String trainStr, int trainNo, String strEngineColor,
 			int numberEngines, float engineLength, int numberTrucks,
@@ -141,6 +143,12 @@ public class M62_train {
 	public void checkforstop(M43_TruckData_Display stop, int truckNo) {
 
 	}
+	
+	public void setTrucksAndEngines(int noEngines, int NoTrucks){
+		setNumberEngines(noEngines);
+		setNumberTrucks(NoTrucks);
+		setTruckTypes(numberEngines, numberTrucks);
+	}
 
 	public void reset_truck_locations(int referenceTruckNo) {
 
@@ -150,14 +158,12 @@ public class M62_train {
 		distancesFromHeadToMidpoint = distancesFromHeadToMidpointOfTruck();
 
 		// for all the items in the train
-		for (int truckEngineNo = 0; truckEngineNo < this.getNumberEngines()
-				+ this.getNumberTrucks(); truckEngineNo++) {
+		for (int truckEngineNo = 0; truckEngineNo < this.getNumberEngines() + this.getNumberTrucks(); truckEngineNo++) {
+			
 			// for (int truckEngineNo = 0; truckEngineNo < 2; truckEngineNo++){
 			M43_TruckData_Display temp = getTruckPositions().get(truckEngineNo);
-			temp.setvaluesfromEngine(referenceTruckNo,
-					getTruckPositions().get(0));
-			temp.setKeyValues(referenceTruckNo,
-					getTruckPositions().get(referenceTruckNo));			
+			temp.setvaluesfromEngine(referenceTruckNo, getTruckPositions().get(0));
+			temp.setKeyValues(referenceTruckNo,	getTruckPositions().get(referenceTruckNo));			
 			if (temp.getOrientation().equals("same")) {
 				if (this.getTrainCoupling().equals("tail")) {
 					temp.positionTrucks(-(distancesFromHeadToMidpoint[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
@@ -188,6 +194,7 @@ public class M62_train {
 //			}
 		}
 	}
+	
 
 	public void set_truck_locations(M43_TruckData_Display truckData_Display,
 			K2_Route route, String arc, String directionFacing,
@@ -224,6 +231,11 @@ public class M62_train {
 			m43_Data = new M43_TruckData_Display(arc, directionFacing, graph,
 					startFraction, trainCoupling);
 			m43_Data.setArcPairList(route);
+
+			//use startarcPair to generate movement and orientation
+			m43_Data.setAllParameters(graph);
+			
+			
 			// } else{
 			// m43_Data = truckData_Display;
 			// }
@@ -259,7 +271,11 @@ public class M62_train {
 						String.valueOf(truckNos[truckEngineNo]),
 						truckType[truckEngineNo]);
 			}
-
+//			Node parent = trainBranchGroup.getParent();
+//			trainBranchGroup.detach();
+//			trainBranchGroup = null;
+//			trainBranchGroup = new BranchGroup();
+//			((Group) parent).addChild(trainBranchGroup);
 			trainBranchGroup.addChild(m43_Data.get_BG());
 			// }
 			// //create a BG object and set the position and tangent
@@ -367,12 +383,14 @@ public class M62_train {
 		// return truckType;
 	}
 
-	private float[] setLengthsOfTrain() {
-		float[] lengths = new float[(int) (this.getNumberTrucks() + 1)];
-		for (int i = 0; i < lengths.length; i++) {
+	float[] setLengthsOfTrain() {
+		float[] lengths = new float[(int) (this.getNumberTrucks() + this.getNumberEngines())];
+		for (int i = 0; i < this.getNumberEngines(); i++) {
+			lengths[i] = this.getEngineLength();
+		}
+		for (int i = this.getNumberEngines(); i < lengths.length; i++) {
 			lengths[i] = this.getTruckLength();
 		}
-		lengths[0] = this.getEngineLength();
 		return lengths;
 	}
 
@@ -523,6 +541,7 @@ public class M62_train {
 	 * @return the trainSpeed
 	 */
 	public double getTrainSpeed() {
+		trainSpeed = U4_Constants.getSimSpeedSetting();
 		return trainSpeed;
 	}
 

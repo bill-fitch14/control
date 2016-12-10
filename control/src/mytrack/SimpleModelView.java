@@ -83,7 +83,7 @@ public class SimpleModelView extends JFrame {
         configureUniverse();
         addModelToUniverse();
         addLightsToUniverse();
-        root.compile();
+        //root.compile();
         universe.addBranchGraph(root);
     }
 

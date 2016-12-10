@@ -35,6 +35,9 @@ public class M4_TruckData  {
 	
 	protected String orientation;
 	protected String movement;
+
+
+	private K2_Route route;
 	
 
 	
@@ -109,7 +112,7 @@ public class M4_TruckData  {
 		
 		G_TSegment seg = tArc.get_TrackSegments().get(segmentNo);
 		
-		
+
 	
 		//F3_TArc tArc = getArc(startArcPair);
 		
@@ -884,12 +887,17 @@ public class M4_TruckData  {
 
 	public void setRoute(K2_Route route) {
 		
+		this.route = route;
 		this.routePath=route.getRoutePath();
 		this.indexOfRoutePath=route.indexOfRoutePath;
 		this.routePairs=route.getRoutePairs();
 		this.indexOfStartArcPairList=route.indexOfStartArcPairList;
 		this.startArcPairList=route.startArcPairList;	
 		this.startArcPair=route.startArcPair;	
+	}
+
+	public K2_Route getRoute() {
+		return route;
 	}
 
 	public void setArc(String arc) {

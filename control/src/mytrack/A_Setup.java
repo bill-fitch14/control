@@ -10,6 +10,7 @@ import net.net_Console;
 
 import A_Inglenook.Inglenook;
 import A_Inglenook.Myfunctions;
+import A_Inglenook.trainPosition;
 
 
 public class A_Setup {
@@ -74,7 +75,10 @@ public class A_Setup {
 		//arcAndNodeLinkedList.addStopPositions();
 		
 		//why is this done here. It would be better done in graph??
-		B2_LinkedLists.getTrainParametersfromLong(graph.get_DJG(),new long[] {Myfunctions.getInit(), Myfunctions.getInit() });
+		B2_LinkedLists.getTrainParametersfromLongAndSetStopAndSensorPositions(graph.get_DJG(),new long[] {Myfunctions.getInit(), Myfunctions.getInit() });
+		
+		//ensure we can use trainPosition effectively
+		trainPosition.settrainPositionParameters(graph, B2_LinkedLists.trainsOnRoute, branchGroup);
 		//H1_Engine_Routes _engine_routes = arcAndNodeLinkedList.get_H1_EngineRoutes();  //engine routes now contain M5_Engine_Route
 		
 		//M6_Trains_On_Routes _trainsOnRoutes = arcAndNodeLinkedList.getTrainsOnRoute();
@@ -100,7 +104,11 @@ public class A_Setup {
 		} finally {
 		}
 		
-		Inglenook.runInglenook2(init,graph,branchGroup);
+		Inglenook.set_routes(graph.get_DJG(), graph, branchGroup);
+		
+//		B2_LinkedLists.
+		
+		//Inglenook.runInglenook2(init,graph,branchGroup);
 //		TestTrack.runInglenook2(init,graph,branchGroup);
 	}
 

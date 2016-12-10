@@ -19,6 +19,10 @@ import java.util.Enumeration;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import com.sun.j3d.utils.universe.*;
+
+import mytrack.U4_Constants;
+import sm2.Main;
+
 import com.sun.j3d.utils.behaviors.vp.*;
 
 
@@ -27,6 +31,7 @@ public class KeyBehavior extends ViewPlatformBehavior
 {
   private static final double ROT_AMT = Math.PI / 36.0;   // 5 degrees
   private static final double MOVE_STEP = 0.2;
+  private static final double SPD_AMT = 0.1;
 
   // hardwired movement vectors
   private static final Vector3d UP = new Vector3d(0,0,-MOVE_STEP);
@@ -41,6 +46,21 @@ public class KeyBehavior extends ViewPlatformBehavior
   private int backKey = KeyEvent.VK_DOWN;
   private int leftKey = KeyEvent.VK_LEFT;
   private int rightKey = KeyEvent.VK_RIGHT;
+  private int zeroKey = KeyEvent.VK_0;
+  private int oneKey = KeyEvent.VK_1;
+  private int twoKey = KeyEvent.VK_2;
+  private int threeKey = KeyEvent.VK_3;
+  private int fourKey = KeyEvent.VK_4;
+  private int fiveKey = KeyEvent.VK_5;
+  private int sixKey = KeyEvent.VK_6;
+  private int sevenKey = KeyEvent.VK_7;
+  private int eightKey = KeyEvent.VK_8;
+  
+  private int f1 = KeyEvent.VK_F1;
+  private int f2 = KeyEvent.VK_F2;
+  private int f3 = KeyEvent.VK_F3;
+  private int f4 = KeyEvent.VK_F4;
+  
 
   private WakeupCondition keyPress;
 
@@ -80,7 +100,14 @@ public class KeyBehavior extends ViewPlatformBehavior
     wakeupOn( keyPress );
   } // end of processStimulus()
 
+  private void functionMove(int keycode)
+  // the function moves are for moving the train and are dealt with in trainPosition
+  { 
+      A_Inglenook.trainPosition.positionTrain(keycode);
 
+
+  }  // end of altMove()
+  
   private void processKeyEvent(KeyEvent eventKey)
   {
     int keyCode = eventKey.getKeyCode();
@@ -88,8 +115,10 @@ public class KeyBehavior extends ViewPlatformBehavior
 
     if(eventKey.isAltDown())   // key + <alt>
       altMove(keyCode);
-    else
+    else 
       standardMove(keyCode);
+    
+  	functionMove(keyCode);
   } // end of processKeyEvent()
 
 
@@ -104,6 +133,13 @@ public class KeyBehavior extends ViewPlatformBehavior
       rotateY(ROT_AMT);
     else if(keycode == rightKey)
       rotateY(-ROT_AMT);
+    else if(keycode == zeroKey)
+        engineSpeed(0);
+    else if(keycode == oneKey)
+    	engineSpeed(0.1f);
+  
+  A_Inglenook.trainPosition.StandardMove(keycode);
+
   } // end of standardMove()
 
 
@@ -142,5 +178,11 @@ public class KeyBehavior extends ViewPlatformBehavior
     targetTG.setTransform(t3d);
   } // end of doMove()
 
+  private float engineSpeedLocal = U4_Constants.engineSpeedSetting;
+  private void engineSpeed(float theSpeed)
+  { 
+	  Main.lo.setEngineSpeed(theSpeed);
+	  U4_Constants.engineSpeedSetting = theSpeed;
+  } // end of doMove()
 
 }  // end of KeyBehavior class

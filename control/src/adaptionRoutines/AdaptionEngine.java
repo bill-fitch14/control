@@ -56,13 +56,13 @@ public class AdaptionEngine {
 	private boolean DEBUG = false;
 	private void print(Object x){
 		if (DEBUG ){
-			if (AdaptionName.equals("EngineForwardAdaption")){
+//			if (AdaptionName.equals("EngineForwardAdaption")){
 				System.out.println(this.AdaptionName + ": " + x);
-			}
+//			}
 		}
 	}
 	
-	private boolean LDEBUG = true;
+	private boolean LDEBUG = false;
 	private void lprint(Object x){
 		if (LDEBUG ){
 //			if (AdaptionName.equals("EngineForwardAdaption")){
@@ -177,7 +177,7 @@ public class AdaptionEngine {
 	public boolean processMeasurement(long millis , long distancetravelled, float enginesetting,
 			float min, float max){
 		print ("££££££££££££££££££££££ Initialise = " + initialise + "    " + AdaptionName);
-		print("SRIM Analysis: " + AdaptionName + " engine setting: " + enginesetting);
+		lprint("SRIM Analysis: " + AdaptionName + " engine setting: " + enginesetting);
 		double x = (double)enginesetting;				//80 for simulation
 		double y = (double)distancetravelled/(double)millis;  // 80/100 = 0.8
 		print("distancetravelled = "+distancetravelled + "millis = "+millis + "y = "+y );
@@ -218,7 +218,7 @@ public class AdaptionEngine {
 			Matrix newAdaptors = getParameters2();
 			lprint("about to write adaptors to U4Constants");
 			saveAdaptorsToU4Constants(newAdaptors);
-			lprint("AdaptionSim saved adaptors");
+			lprint("AdaptionEngine saved adaptors");
 			try {
 				lprint("about to write adaptors to " + getAdaptorsFilename());
 				saveAdaptorsToFile(newAdaptors);
