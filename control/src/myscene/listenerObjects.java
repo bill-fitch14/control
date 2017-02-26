@@ -29,6 +29,16 @@ public final class listenerObjects {
 	
 	public static void setSensor( String sensorAddress, 
 			String sensorName, long millis) {
+
+		java.awt.Toolkit.getDefaultToolkit().beep(); 
+		pcs.firePropertyChange(sensorName, listenerObjects.sensortime, millis);
+		listenerObjects.sensortime = millis;
+	}
+	
+	public static void setPhysicalSensor( String sensorAddress, 
+			String sensorName, long millis) {
+
+		//java.awt.Toolkit.getDefaultToolkit().beep(); 
 		pcs.firePropertyChange(sensorName, listenerObjects.sensortime, millis);
 		listenerObjects.sensortime = millis;
 	}

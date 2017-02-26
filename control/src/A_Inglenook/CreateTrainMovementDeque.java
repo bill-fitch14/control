@@ -44,6 +44,7 @@ public class CreateTrainMovementDeque {
 
 		int noTrucksToMove = 2;
 		swapRouteOppDirectionTravelling(2, 4);
+		swapRouteOppDirectionTravelling(4, 2);
 		for (int i = 0; i < 10; i++) {
 			int fromBranch = 2;
 			int toBranch = 4;
@@ -93,7 +94,7 @@ public class CreateTrainMovementDeque {
 			if (use3Dgraphics) {
 
 				//move from 4 to from branch
-				swapRouteOppDirectionTravelling(4, fromBranch);  //this is what i added
+				//swapRouteOppDirectionTravelling(4, fromBranch);  //this is what i added
 				swapRouteSameDirectionTravelling(4, fromBranch);
 
 				moveEngineToBranch(4, fromBranch); // move and connect with existing trucks if any
@@ -193,7 +194,7 @@ public class CreateTrainMovementDeque {
 					swapRouteSameDirectionTravelling(destBranch, 4); 
 				}
 
-				pause(2); // pause for 1 sec
+				pause(4); // pause for 1 sec
 				//move
 				moveEngineToBranch(destBranch, 4);
 				swapRouteOppDirectionTravelling(4, destBranch);

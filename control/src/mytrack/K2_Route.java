@@ -26,9 +26,9 @@ public class K2_Route {
 	private List <String> route = new LinkedList <String>();
 	private List<String[]> routePairs;
 	private List<List<String[]>> routePath;
-	int indexOfRoutePath;
+	private int indexOfRoutePath;
 	List<String[]> startArcPairList;
-	int indexOfStartArcPairList;
+	public int indexOfStartArcPairList;
 	String[] startArcPair;
 	private C1_BranchGroup branchgroup;
 	
@@ -50,16 +50,17 @@ public class K2_Route {
 	
 	public void setup(){
 		
-		this.route = convertRouteToEngineRoute(strRoute);
-		this.routePairs = generateEngineRoutePairs(route);
+		this.setRoute(convertRouteToEngineRoute(strRoute));
+		this.routePairs = generateEngineRoutePairs(getRoute());
 		
 		this.routePath = generateEngineRoutePath(routePairs, graph);
 		this.startArcPairList = routePath.get(0);
+		
 	}
 	
 	public void switchPointsOnRoute(D_MyGraph graph2, C2_DJGraph graph3){
 		//assume the route is a simple route with no changes of direction. 
-		//If there is a change of direction we need to do somethisng more complicated
+		//If there is a change of direction we need to do something more complicated
 		//but we don't need it for the shunting puzzle
 
 		setup();
@@ -127,13 +128,13 @@ public class K2_Route {
 
 		// route is of the form 1_F_To_For,2_B_To_For
 		String[] r = strRoute.split(",");
-		route = new LinkedList<String>(Arrays.asList(r));
-		return route;
+		setRoute(new LinkedList<String>(Arrays.asList(r)));
+		return getRoute();
 	}
 	
 	// private List<String[]> EngineRoutePairs = new LinkedList<String[]>();
 	
-	public LinkedList<String[]> generateEngineRoutePairs(List<String> EngineRoute) {
+	public static LinkedList<String[]> generateEngineRoutePairs(List<String> EngineRoute) {
 		
 		// the engineroute consists of the
 		// the engineroutepairs consist of the routefrom and the routeto pira
@@ -342,6 +343,18 @@ public class K2_Route {
 //		}
 //		
 //	}
+
+	public void setRoute(List <String> route) {
+		this.route = route;
+	}
+
+	public int getIndexOfRoutePath() {
+		return indexOfRoutePath;
+	}
+
+	public void setIndexOfRoutePath(int indexOfRoutePath) {
+		this.indexOfRoutePath = indexOfRoutePath;
+	}
 
 	
 	

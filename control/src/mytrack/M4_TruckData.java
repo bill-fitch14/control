@@ -10,6 +10,13 @@ import com.ajexperience.utils.DeepCopyUtil;
 
 public class M4_TruckData  {
 	
+	private static boolean DEBUG = false;
+	private static void print(String x){
+		if (DEBUG ){
+			System.out.println(x);
+		}
+	}
+	
 	private D_MyGraph DJG;
 
 	
@@ -390,6 +397,8 @@ public class M4_TruckData  {
 			int a=1;
 			a++;
 		}
+		
+		print ("indexOfStartArcPairList " + String.valueOf(indexOfStartArcPairList));
 		if (indexOfStartArcPairList < this.getStartArcPairList().size() - 1) {
 //			//99System.out.print("indexOfStartArcPairList: "
 //					+ indexOfStartArcPairList);
@@ -416,6 +425,7 @@ public class M4_TruckData  {
 		} else {
 			// move to next route
 //			//99System.out.print("can't move");
+			
 			return false;
 		}
 	}
@@ -430,7 +440,7 @@ public class M4_TruckData  {
 
 	}
 	
-	void moveWithinSegment3(float distance,String trainCoupling){			
+	boolean moveWithinSegment3(float distance,String trainCoupling){			
 		float distanceRemainingInSegment = getDistanceRemainingInSegmentFromFractionWhenMoving(trainCoupling);
 		////99System.out.print("distanceRemainingInSegment1:" +
 		//distanceRemainingInSegment);
@@ -447,6 +457,7 @@ public class M4_TruckData  {
 			distanceM = distance;
 		}
 		distance = distance*mult;
+		boolean ans = true;
 		if ((truckMovement.equals("opposite") && trainCoupling.equals("tail"))||
 				(truckMovement.equals("same") && trainCoupling.equals("head"))) {
 			if (distanceM > distanceRemainingInSegment) {
@@ -457,7 +468,7 @@ public class M4_TruckData  {
 //				//99System.out.print("distance = " + distance);
 //				//99System.out.print("distanceToGo = " + distanceToGo);
 //				//99System.out.print("1 distanceToGo="+distanceToGo);
-				moveToNextSegment3(distanceToGo);
+				ans  = moveToNextSegment3(distanceToGo);
 			} else {
 				setSegmentFraction(distanceM, distanceRemainingInSegment);
 				distanceRemainingInSegment = getDistanceRemainingInSegmentFromFractionWhenMoving(trainCoupling);
@@ -471,18 +482,18 @@ public class M4_TruckData  {
 //				//99System.out.print("distance = " + distance);
 //				//99System.out.print("distanceToGo = " + distanceToGo);
 
-				moveToNextSegment3(distanceToGo);
+				ans = moveToNextSegment3(distanceToGo);
 			} else {
 				setSegmentFraction(distanceM, distanceRemainingInSegment);
 				distanceRemainingInSegment = getDistanceRemainingInSegmentFromFractionWhenMoving(trainCoupling);			
 			}
 		}
-
+		return ans;
 	}
 
 	
 	
-	void moveWithinSegment3(float distance) {
+	boolean moveWithinSegment3(float distance) {
 //		//99System.out.print("distance =" + distance);
 		// if new position is in current segment, then move within segment
 		float distanceRemainingInSegment = getDistanceRemainingInSegmentFromFractionWhenMoving();
@@ -493,6 +504,7 @@ public class M4_TruckData  {
 		////99//99System.out.print(headOfTrainData.toString());
 //		//99System.out.print("truckMovement = "+ truckMovement);
 		float distanceToGo;
+		boolean ans=true;
 		if (truckMovement.equals("opposite")) {
 			if (distance > distanceRemainingInSegment) {
 				distanceToGo =  distanceRemainingInSegment - distance;   //this will be negative as the distance is greater than distance remaining
@@ -502,7 +514,7 @@ public class M4_TruckData  {
 //				//99System.out.print("distance = " + distance);
 //				//99System.out.print("distanceToGo = " + distanceToGo);
 //				//99System.out.print("1 distanceToGo="+distanceToGo);
-				moveToNextSegment3(distanceToGo);
+				ans = moveToNextSegment3(distanceToGo);
 			} else {
 				setSegmentFraction(distance, distanceRemainingInSegment);
 				//				//99System.out.print("segmentfraction1="
@@ -522,15 +534,16 @@ public class M4_TruckData  {
 //				//99System.out.print("distance = " + distance);
 //				//99System.out.print("distanceToGo = " + distanceToGo);
 				
-				moveToNextSegment3(distanceToGo);
+				ans = moveToNextSegment3(distanceToGo);
 			} else {
 				setSegmentFraction(distance, distanceRemainingInSegment);
 				distanceRemainingInSegment = getDistanceRemainingInSegmentFromFractionWhenMoving();			
 			}
 		}
+		return ans;
 	}
 	
-	void positionWithinSegment3(float distance) {
+	boolean positionWithinSegment3(float distance) {
 		//99System.out.print("distance =" + distance);
 		// if new position is in current segment, then move within segment
 		float distanceRemainingInSegment = getDistanceRemainingInSegmentFromFraction3WhenPositioning();
@@ -587,6 +600,7 @@ public class M4_TruckData  {
 //				//99System.out.print("B1 distanceRemainingInSegment = " + distanceRemainingInSegment);
 			}
 		}
+		return true;
 	}
 
 
@@ -613,14 +627,9 @@ public class M4_TruckData  {
 				this.setSegmentFraction(0);
 				
 				////99//99System.out.print("");
-				moveWithinSegment3(distance);
-				return true;
+				return moveWithinSegment3(distance);
 			} else {
-				if (moveToNextArc3(distance) == true) {
-					return true;
-				} else {
-					return false;
-				}
+				return moveToNextArc3(distance);
 			}
 		} else {
 			if (segmentNo > 0) {
@@ -633,14 +642,10 @@ public class M4_TruckData  {
 				this.setSegmentFraction(1);
 				
 				////99//99System.out.print("");
-				moveWithinSegment3(distance);
-				return true;
+				return moveWithinSegment3(distance);
+				
 			} else {
-				if (moveToNextArc3(distance) == true) {
-					return true;
-				} else {
-					return false;
-				}
+				return moveToNextArc3(distance);
 			}
 		}
 	}
@@ -889,7 +894,7 @@ public class M4_TruckData  {
 		
 		this.route = route;
 		this.routePath=route.getRoutePath();
-		this.indexOfRoutePath=route.indexOfRoutePath;
+		this.indexOfRoutePath=route.getIndexOfRoutePath();
 		this.routePairs=route.getRoutePairs();
 		this.indexOfStartArcPairList=route.indexOfStartArcPairList;
 		this.startArcPairList=route.startArcPairList;	

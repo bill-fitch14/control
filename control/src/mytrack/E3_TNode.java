@@ -83,7 +83,7 @@ public class E3_TNode {
     void set_BG(){
     	
 		if(_NodeName.getStation().equals("T")){
-			_drawStation = true;
+			_drawStation = false;
 		}
 		else{
 			_drawStation = false;
@@ -156,7 +156,7 @@ public class E3_TNode {
 		Transform3D t3d = new Transform3D();
 		t3d.rotY(0);
 		TransformGroup rotateBy90 = new TransformGroup(t3d);
-		U1_TAppearance A = new U1_TAppearance(Color.black);
+		U1_TAppearance A = new U1_TAppearance(Color.red);
 		Appearance app = A.get_Appearance();
 		float boxHeight=1.0f;
 		float boxWidth=.50f;
@@ -168,7 +168,7 @@ public class E3_TNode {
 		rotateBy90.addChild(nodeMarker);
 		
 		TransformGroup rotateBy90Text = new TransformGroup(t3d);
-		Vector3d pt = new Vector3d(0.25,-0.5,5);
+		Vector3d pt = new Vector3d(-boxWidth/4,-boxLen/2,boxHeight/2);
 		String NodeNo = _NodeName.getNodeName();
 		rotateBy90Text.addChild(makeText(pt,""+NodeNo));
 

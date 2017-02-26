@@ -90,7 +90,7 @@ public class C1_BranchGroup {
 //		}
 		
 
-		addModels();
+		//addModels();
 		addGroundCover();
 		
 
@@ -132,10 +132,10 @@ public class C1_BranchGroup {
 	  {
 	    Transform3D t3d = new Transform3D();
 
-	    t3d.set( new Vector3d(0,0,4)); 
-	    TransformGroup tg1 = new TransformGroup(t3d);
-	    tg1.addChild( new GroundShape("tree1.gif", 3) );
-	    _BG.addChild(tg1);
+//	    t3d.set( new Vector3d(0,0,4)); 
+//	    TransformGroup tg1 = new TransformGroup(t3d);
+//	    tg1.addChild( new GroundShape("tree1.gif", 3) );
+//	    _BG.addChild(tg1);
 	    
 
 
@@ -190,9 +190,9 @@ public class C1_BranchGroup {
 
 	    t3d.set( new Vector3d(0,0,10));   // move, and resets other parts of t3d
 	    t3d.setScale(1.0);   // shrink
-	    TransformGroup tg2 = new TransformGroup(t3d);
-	    tg2.addChild( ml.getModel("penguin.obj") );
-	    _BG.addChild(tg2);
+//	    TransformGroup tg2 = new TransformGroup(t3d);
+//	    tg2.addChild( ml.getModel("penguin.obj") );
+//	    _BG.addChild(tg2);
 
 	    t3d.set( new Vector3d(0,0,100)); 
 	    TransformGroup tg3 = new TransformGroup(t3d);

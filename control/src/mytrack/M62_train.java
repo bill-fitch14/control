@@ -152,7 +152,7 @@ public class M62_train {
 
 	public void reset_truck_locations(int referenceTruckNo) {
 
-		this.numberTrucks = this.getTruckPositions().size() - 1;
+		this.numberTrucks = this.getTruckPositions().size() - numberEngines;
 		lengths = setLengthsOfTrain();
 		setTruckTypes(numberEngines, numberTrucks);
 		distancesFromHeadToMidpoint = distancesFromHeadToMidpointOfTruck();
@@ -162,8 +162,8 @@ public class M62_train {
 			
 			// for (int truckEngineNo = 0; truckEngineNo < 2; truckEngineNo++){
 			M43_TruckData_Display temp = getTruckPositions().get(truckEngineNo);
-			temp.setvaluesfromEngine(referenceTruckNo, getTruckPositions().get(0));
-			temp.setKeyValues(referenceTruckNo,	getTruckPositions().get(referenceTruckNo));			
+			temp.setvaluesfromEngine( getTruckPositions().get(0));
+			temp.setKeyValues(	getTruckPositions().get(referenceTruckNo));			
 			if (temp.getOrientation().equals("same")) {
 				if (this.getTrainCoupling().equals("tail")) {
 					temp.positionTrucks(-(distancesFromHeadToMidpoint[truckEngineNo] - 0.5f*U4_Constants.enginelength*U4_Constants.scalefactor));
@@ -385,6 +385,8 @@ public class M62_train {
 
 	float[] setLengthsOfTrain() {
 		float[] lengths = new float[(int) (this.getNumberTrucks() + this.getNumberEngines())];
+		engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+		truckLength = U4_Constants.trucklength*U4_Constants.scalefactor; 
 		for (int i = 0; i < this.getNumberEngines(); i++) {
 			lengths[i] = this.getEngineLength();
 		}

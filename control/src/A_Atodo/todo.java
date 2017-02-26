@@ -6,7 +6,31 @@ import mytrack.D_MyGraph;
 import mytrack.M76Stop;
 import mytrack.U7_StartArcPairs;
 
+/**
+ * @author bill
+ *
+ */
 public class todo {
+	
+	/*
+	 * set train
+	 * add truck from other train
+	 * delete truck from other train
+	 * 
+	 * try out the 4 directions and see if the train is displayed correctly
+	 * in two of the directions it must point the same way, and in the rest it must point the other
+	 * 
+	 * if we set the connection to head the trucks must go on the front of the engine
+	 * if we set the connection to tail the trucks must go on the back of the engine
+	 * 
+	 * 
+	 * move the truck from 0 and see what happens. 
+	 * It should catch up if the train is not set up too far from the first sensor
+	 * 
+	 */
+	
+	
+	
 	
 	/*
 	 * The actions on each event take place in class M_TruckMovements

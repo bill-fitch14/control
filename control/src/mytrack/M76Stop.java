@@ -8,7 +8,7 @@ import javax.media.j3d.Node;
 public class M76Stop extends M43_TruckData_Display{
 	
 	boolean isSensor;
-	boolean isActive;
+	private boolean isActive;
 	
 	public M76Stop(String arc, String directionFacing, D_MyGraph graph,
 			String startFraction, boolean isSensor) {
@@ -61,7 +61,7 @@ public class M76Stop extends M43_TruckData_Display{
 
 		for (int i = 0; i < route.getRoutePath().size(); i++) {
 			route.startArcPairList = route.getRoutePath().get(i);
-			route.indexOfRoutePath = i;
+			route.setIndexOfRoutePath(i);
 			
 			   //check this
 			
@@ -104,6 +104,14 @@ public class M76Stop extends M43_TruckData_Display{
 			}	
 		}
 		return false;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 }

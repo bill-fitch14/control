@@ -131,12 +131,12 @@ public class M61_Train_On_Route extends M62_train{
 	}
 
 	public M61_Train_On_Route(String trainStr, int trainNo, String strEngineColor,
-			float engineLength, int numberTrucks, float truckLength,
-			Integer[] truckNames, String strRoute, String arc,
+			int numberEngines, float engineLength, int numberTrucks,  float truckLength,
+			 Integer[] truckNames, String strRoute, String arc,
 			String startFraction, String directionFacing, String trainCoupling, D_MyGraph graph) {
 		
 		//set the distances from head
-		super(trainStr, trainNo, strEngineColor, 1, engineLength, numberTrucks, truckLength, truckNames, trainCoupling);
+		super(trainStr, trainNo, strEngineColor, numberEngines, engineLength, numberTrucks, truckLength, truckNames, trainCoupling);
 		
 		M43_TruckData_Display truck_display = new M43_TruckData_Display(arc, directionFacing, graph, startFraction, trainCoupling);
 		
@@ -220,7 +220,7 @@ public class M61_Train_On_Route extends M62_train{
 
 		for (int i = 0; i < route.getRoutePath().size(); i++) {
 			route.startArcPairList = route.getRoutePath().get(i);
-			route.indexOfRoutePath = i;
+			route.setIndexOfRoutePath(i);
 			
 			   //check this
 			
@@ -301,7 +301,7 @@ public class M61_Train_On_Route extends M62_train{
 
 		for (int i = 0; i < routeInOppDirTravelling.getRoutePath().size(); i++) {
 			routeInOppDirTravelling.startArcPairList = routeInOppDirTravelling.getRoutePath().get(i);
-			routeInOppDirTravelling.indexOfRoutePath = i;
+			routeInOppDirTravelling.setIndexOfRoutePath(i);
 			
 			   //check this
 			

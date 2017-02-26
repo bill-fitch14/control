@@ -2,6 +2,7 @@ package A_Inglenook;
 
 import java.util.List;
 
+import myscene.listenerObjects;
 import mytrack.C1_BranchGroup;
 import mytrack.C2_DJGraph;
 import mytrack.D_MyGraph;
@@ -12,6 +13,7 @@ import mytrack.M62_train;
 import mytrack.M6_Trains_On_Routes;
 import mytrack.M75Stops;
 import mytrack.M76Stop;
+import mytrack.N2_Time;
 import mytrack.U3_Utils;
 import mytrack.U4_Constants;
 import sm2.E1;
@@ -26,12 +28,12 @@ public class MoveTrainUsingDeque  {
 	private static boolean DEBUG = false;
 	private static void print(String x){
 		if (DEBUG ){
-		System.out.print(x);
+		System.out.println(x);
 		}
 	}
 	
 	protected static void printreadfromdeque(String[] st, int i) {
-		boolean DEBUG = false;
+		boolean DEBUG = true;
 		if(DEBUG){
 		E1.threads.get_serialModel().print("readfromdeque  ");
 		for (int j = 0; j <= i; j++) {
@@ -137,7 +139,7 @@ public class MoveTrainUsingDeque  {
 				M61_Train_On_Route train2 = M6_Trains_On_Routes.getTrainOnRoute(trainStr);
 				////			train1.moving = false;
 				////			train2.moving = false;
-				//			//99System.out.print(train2.getNumberTrucks());
+				System.out.print("train2 number of trucks" + train2.getNumberTrucks());
 				decoupleFrom1CoupleTo2(train2, train1, train2.getNumberTrucks());
 				//			//99System.out.print("trucks connected");
 				//			//99System.out.print("t1 size " + train1.getTruckPositions().size());
@@ -185,7 +187,7 @@ public class MoveTrainUsingDeque  {
 				direction = U4_Constants.swapDirection();
 				swapRouteOppDirection(strFromBranch, strToBranch,direction);
 				//Main.lo.setEngineDirection(direction);  //don't need this 'cos in move
-	//			Main.lo.moveLoco(direction, 0);
+				listenerObjects.moveLoco(direction, 0);
 				readDeque();
 				break;
 			case "swapRouteSameDirectionTravelling":
@@ -386,7 +388,8 @@ public class MoveTrainUsingDeque  {
 		//		}
 	
 		String trainStr = null;
-		trainStr = "T0";	
+		trainStr = "T0";
+
 		M6_Trains_On_Routes.moveTrainCheckForStop(trainStr, stop, sensors, NoTrucks);
 	
 	}
@@ -399,7 +402,7 @@ public class MoveTrainUsingDeque  {
 	
 		if (noTrucks > 0) {    //
 			//check if number of trucks in train1 >= no of trucks to be removed
-			if (trainData1.size() - 1 >= noTrucks) {
+			if (trainData1.size() - train1.getNumberEngines() >= noTrucks) {
 				for (int i = 0; i < noTrucks; i++) {
 					M43_TruckData_Display remove = trainData1.remove(trainData1.size() - 1);
 					trainData2.add(remove);
@@ -407,7 +410,7 @@ public class MoveTrainUsingDeque  {
 			}
 		} else {
 			//check if number of trucks in train2 >= no of trucks to be removed
-			if (trainData2.size() - 1  >= -noTrucks) {
+			if (trainData2.size() - train2.getNumberEngines()  >= -noTrucks) {
 				for (int i = 0; i < -noTrucks; i++) {
 					M43_TruckData_Display remove = trainData2.remove(trainData1.size() - 1);
 					trainData1.add(remove);

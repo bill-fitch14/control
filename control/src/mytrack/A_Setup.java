@@ -21,8 +21,8 @@ public class A_Setup {
 	private static B2_LinkedLists arcAndNodeLinkedList = new B2_LinkedLists();
 	
 	private B3_Hashmaps arcAndNodeHashmaps = new B3_Hashmaps();
-	static private C1_BranchGroup branchGroup = new C1_BranchGroup();
-	private C2_DJGraph graph = new C2_DJGraph();
+	static C1_BranchGroup branchGroup = new C1_BranchGroup();
+	private static C2_DJGraph graph = new C2_DJGraph();
 	
 	/**
 	 * @param serialIO
@@ -55,9 +55,9 @@ public class A_Setup {
 		gui.set_modelBranchGroup(branchGroup);
 
 		// Calculate DJGraph
-		graph.set_HM(getArcAndNodeLinkedList(), arcAndNodeHashmaps);
-		graph.get_linkedLists().set_jTree(jTree);
-		graph.ProduceDJGraph();
+		getGraph().set_HM(getArcAndNodeLinkedList(), arcAndNodeHashmaps);
+		getGraph().get_linkedLists().set_jTree(jTree);
+		getGraph().ProduceDJGraph();
 
 		// Model Engines and Routes
 		// this call gets the routes for each train and adds to linked
@@ -74,11 +74,14 @@ public class A_Setup {
 //		Myfunctions.drawStacks(Myfunctions.getPole());
 		//arcAndNodeLinkedList.addStopPositions();
 		
-		//why is this done here. It would be better done in graph??
-		B2_LinkedLists.getTrainParametersfromLongAndSetStopAndSensorPositions(graph.get_DJG(),new long[] {Myfunctions.getInit(), Myfunctions.getInit() });
-		
+		Inglenook.set_routes(getGraph().get_DJG(), getGraph(), branchGroup);
 		//ensure we can use trainPosition effectively
-		trainPosition.settrainPositionParameters(graph, B2_LinkedLists.trainsOnRoute, branchGroup);
+		trainPosition.settrainPositionParameters(getGraph(), B2_LinkedLists.trainsOnRoute, branchGroup);
+		
+		//why is this done here. It would be better done in graph??
+		B2_LinkedLists.getTrainParametersfromLongAndSetStopAndSensorPositions(getGraph().get_DJG(),new long[] {Myfunctions.getInit(), Myfunctions.getInit() });
+		
+
 		//H1_Engine_Routes _engine_routes = arcAndNodeLinkedList.get_H1_EngineRoutes();  //engine routes now contain M5_Engine_Route
 		
 		//M6_Trains_On_Routes _trainsOnRoutes = arcAndNodeLinkedList.getTrainsOnRoute();
@@ -104,7 +107,7 @@ public class A_Setup {
 		} finally {
 		}
 		
-		Inglenook.set_routes(graph.get_DJG(), graph, branchGroup);
+		
 		
 //		B2_LinkedLists.
 		
@@ -127,5 +130,13 @@ public class A_Setup {
 
 	public static B_myGUI getGui() {
 		return gui;
+	}
+
+	public static C2_DJGraph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(C2_DJGraph graph) {
+		this.graph = graph;
 	}
 }

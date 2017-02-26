@@ -431,6 +431,16 @@ public class Inglenook {
 	public static K2_Route routetFromFor;
 	public static K2_Route routetToFor;
 	
+	public static K2_Route routeFromRev1;
+	public static K2_Route routeToRev1;
+	public static K2_Route routeFromFor1;
+	public static K2_Route routeToFor1;
+	
+	public static K2_Route routeFromRev2;
+	public static K2_Route routeToRev2;
+	public static K2_Route routeFromFor2;
+	public static K2_Route routeToFor2;
+	
 	public static void set_routes(D_MyGraph graph2, C2_DJGraph graphx, C1_BranchGroup branchGroup) {
 //		Inglenook.D_MyGraphgraph = graph2;
 		routeh1 =  new K2_Route("1_To_Rev,3_To_Rev", graph2, branchGroup);
@@ -445,6 +455,15 @@ public class Inglenook {
 		routetFromFor= new K2_Route("8_From_For,1_From_For", graph2, branchGroup);
 		routetToFor= new K2_Route("1_To_For,8_To_For", graph2, branchGroup);
 		
+		routeFromRev1= new K2_Route("3_From_Rev,1_From_Rev", graph2, branchGroup);
+		routeToRev1= new K2_Route("1_To_Rev,3_To_Rev", graph2, branchGroup);
+		routeFromFor1= new K2_Route("3_From_For,1_From_For", graph2, branchGroup);
+		routeToFor1= new K2_Route("1_To_For,3_To_For", graph2, branchGroup);
+		
+		routeFromRev2= new K2_Route("5_From_Rev,1_From_Rev", graph2, branchGroup);
+		routeToRev2= new K2_Route("1_To_Rev,5_To_Rev", graph2, branchGroup);
+		routeFromFor2= new K2_Route("5_From_For,1_From_For", graph2, branchGroup);
+		routeToFor2= new K2_Route("1_To_For,5_To_For", graph2, branchGroup);
 		CreateTrainMovementDeque.graph3 = graphx;
 	}
 

@@ -100,13 +100,7 @@ public class KeyBehavior extends ViewPlatformBehavior
     wakeupOn( keyPress );
   } // end of processStimulus()
 
-  private void functionMove(int keycode)
-  // the function moves are for moving the train and are dealt with in trainPosition
-  { 
-      A_Inglenook.trainPosition.positionTrain(keycode);
 
-
-  }  // end of altMove()
   
   private void processKeyEvent(KeyEvent eventKey)
   {
@@ -114,15 +108,33 @@ public class KeyBehavior extends ViewPlatformBehavior
     // //1//2//3//99System.out.print(keyCode);    
 
     if(eventKey.isAltDown())   // key + <alt>
-      altMove(keyCode);
-    else 
-      standardMove(keyCode);
-    
-  	functionMove(keyCode);
+    	altMove(keyCode);  //position graph
+    else if(eventKey.isControlDown())   // key + <altgraph>
+    	controlfunctionMove(keyCode); 
+    else{
+    	standardMove(keyCode);
+    	functionMove(keyCode);
+    }
+//    if(eventKey.isAltGraphDown())   // key + <alt>
+//    	altfunctionMove(keyCode);
+//    else 
+//    	functionMove(keyCode);
   } // end of processKeyEvent()
 
 
-  private void standardMove(int keycode)
+  private void controlfunctionMove(int keyCode) {
+	  A_Inglenook.trainPosition.altpositionTrain(keyCode);
+	
+}
+  private void functionMove(int keycode)
+  // the function moves are for moving the train and are dealt with in trainPosition
+  { 
+      A_Inglenook.trainPosition.positionTrain(keycode);
+
+
+  }  // end of altMove()
+
+private void standardMove(int keycode)
   /* Make viewer moves forward or backward; 
      rotate left or right */
   { if(keycode == forwardKey)

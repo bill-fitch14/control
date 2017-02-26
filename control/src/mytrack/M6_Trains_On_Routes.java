@@ -47,6 +47,7 @@ public class M6_Trains_On_Routes {
 		for (M43_TruckData_Display truck : tr.getTruckPositions()) {
 			truck.setCurrentStopActive(false);
 		}
+		N2_Time.initialise();
 		tr.setMoving(true);
 
 	}
@@ -94,6 +95,7 @@ public class M6_Trains_On_Routes {
 
 
 		// set the train moving
+		N2_Time.initialise();
 		((M61_Train_On_Route) tr).setMoving(true);
 
 	}

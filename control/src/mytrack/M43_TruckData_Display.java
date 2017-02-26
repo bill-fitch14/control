@@ -29,7 +29,7 @@ import com.sun.j3d.utils.geometry.Text2D;
 public class M43_TruckData_Display extends M42_Position_Tangent implements Cloneable 
 {
 	
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	private static void print(String x){
 		if (DEBUG ){
 		System.out.println(x);
@@ -119,7 +119,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		this.objectStr = objectStr;
 		this.objectText = objectText;
 		this.objectType = objectType;
-		this.getCurrentStop().isActive= currentStopActive;
+		this.getCurrentStop().setActive(currentStopActive);
 		//engine_position_TG = engine_position_TG();
 
 		//System.out.println("set_BG before  engine_position_TG[truckNo], truckno"+ engine_position_TG.toString() );
@@ -316,18 +316,18 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	private Node sensor_TG(String type) {
 		float objectLen = objectLength;
-		float objectHeight = 0.5f;
-		float objectWidth = .4f;
-		Color objectColor = Color.green;
-		float textOffset = -0.3f;
+		float objectHeight = 1.0f;
+		float objectWidth = 1.0f;
+		Color objectColor = Color.white;
+		float textOffset = -0.0f;
 		return block_TG_stop(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
 	}
 
 	private Node stop_TG(String type) {
 		float objectLen = objectLength;
-		float objectHeight = 0.5f;
-		float objectWidth = .4f;
-		Color objectColor = Color.cyan;
+		float objectHeight = 10.0f;
+		float objectWidth = 1.0f;
+		Color objectColor = Color.red;
 		float textOffset = -0.3f;
 		return block_TG_stop(type, objectHeight, objectWidth, objectLen, objectColor, textOffset);
 	}
@@ -367,8 +367,8 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 	private TransformGroup makeText(Vector3d vertex, String text)
 	// Create a Text2D object at the specified vertex
 	{
-		final Color3f black = new Color3f(Color.black);
-		Text2D message = new Text2D(text, black , "SansSerif", 130, Font.BOLD );
+		final Color3f black = new Color3f(Color.white);
+		Text2D message = new Text2D(text, black , "SansSerif", 100, Font.BOLD );
 		// 36 point bold Sans Serif
 
 		TransformGroup tg = new TransformGroup();
@@ -402,7 +402,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		Transform3D t3d = new Transform3D();
 		t3d.rotY(0);
 		TransformGroup rotateBy90 = new TransformGroup(t3d);
-		U1_TAppearance A = new U1_TAppearance(Color.green);
+		U1_TAppearance A = new U1_TAppearance(objectColor);
 		Appearance app = A.get_Appearance();
 		//		float boxHeight = 0.5f;
 		//		float boxWidth = .4f;
@@ -420,18 +420,18 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 		//define rotational transform group rotateBy90Text
 		Transform3D t3d1 = new Transform3D();
-		t3d1.rotZ(-Math.PI);   //rotates text
-		t3d1.rotZ(0);
+		t3d1.rotZ(Math.PI/2);   //rotates text
+		//t3d1.rotZ(0);
 		TransformGroup rotateBy90Text = new TransformGroup(t3d1);
 
 		//define translation group makeText(pt,""+objectStr)
-		Vector3d pt = new Vector3d(0,textOffset,5+objectHeight/2);
+		Vector3d pt = new Vector3d(0,textOffset,objectHeight/2);
 
 		//add the text to rotateBy90Text
 		rotateBy90Text.addChild(makeText(pt,""+objectText));
 
 		//add the text to the box
-		//objectBody.addChild(rotateBy90Text);   //put this back if you want text
+		objectBody.addChild(rotateBy90Text);   //put this back if you want text
 
 		//		Vector3d P = new Vector3d(3 * boxLen / 8, 0, objectHeight);
 		//		t3d.setTranslation(P);
@@ -650,36 +650,27 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	public boolean update( float distance) {
 
-		//float distance = (float) N2_Time.getDistance(trainSpeed);
-
-		//	//99System.out.print("train speed = " + trainSpeed);
-//		System.out.print("******************************calling update " + "distance = " + distance);
-
-		//distance = 1;
-		//	//99System.out.print("updating truck");
-
-		//	if (E1.mybreak == true){
-		//		int a=1;
-		//		a = a+3;
-		//	}
-		//	System.out.println("currentsensors active test" + currentSensorsActive);
-
-
 		try {
+			boolean ans = true;
 			//if the train is moving backwards!!! 
-			if(this.getMovement()=="same"){
+			
+			if(this.getMovement().equals("same")){
 				this.tailOfTruck = (M43_TruckData_Display)this.clone();
 				translatedStop = getCurrentStop();
 				float distToHead = (tailOfTruck.objectLength/2.0f);
-				tailOfTruck.moveWithinSegment3(distToHead);
+				//distToHead =0;
+				ans  = tailOfTruck.moveWithinSegment3(distToHead);
 			}else{
 				this.tailOfTruck = this;
 				if( isCurrentStopActive()){	
 				translatedStop = (M76Stop) currentStop.clone();
 				float distToHead = (tailOfTruck.objectLength/2.0f);
-				translatedStop.moveWithinSegment3(distToHead);
+				//distToHead =0;
+				ans = translatedStop.moveWithinSegment3(distToHead);
 				}				
 			}
+			
+			//System.out.println(this.getMovement() + " " + tailOfTruck.objectLength);
 
 //				float distToHead = (headOfTruck.objectLength/2.0f);
 //				if(headOfTruck.getOrientation().equals("same")) {
@@ -706,7 +697,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 		if(getCurrentSensors()!=null){
 			for(M76Stop x:getCurrentSensors()){
 				if (x != null){
-					if(x.isActive){
+					if(x.isActive()){
 						checkForSensor(distance, x);
 					}
 				}
@@ -721,10 +712,11 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 		}else{
 			//System.out.print("updating truck moving current stop not active" + this.objectStr + distance);
-			moveWithinSegment3(distance);
+			boolean ans = true;
+			ans = moveWithinSegment3(distance);
 			setPositionTangent();
 			updatePositionAndTangent(getPosition(),getTangent());
-			return true;
+			return ans;
 		}
 		
 //		if( isCurrentStopActive()){	
@@ -785,19 +777,23 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 				tailOfTruck.getSegmentNo()==x.getSegmentNo()){
 			if(tailOfTruck.getOrientation().equals("same")) {
 				if(tailOfTruck.getSegmentFraction() > x.getSegmentFraction()){
+					
 					long millis = System.currentTimeMillis();
+					//java.awt.Toolkit.getDefaultToolkit().beep(); 
 					print("&&& sensor detected " + x.objectStr + " " + millis + " Orientation " + tailOfTruck.getOrientation() + " Movement " + tailOfTruck.getMovement());
 					Main.lo.setSensor(x.objectStr,x.objectStr, millis);
-					x.isActive = false;
+					x.setActive(false);
 
 				}
 
 			}else if (this.getOrientation().equals("opposite")){
 				if(tailOfTruck.getSegmentFraction() < x.getSegmentFraction()){
+					
 					long millis = System.currentTimeMillis();
+					//java.awt.Toolkit.getDefaultToolkit().beep(); 
 					print("&&& sensor detected " + x.objectStr + " " + millis + " Orientation " + tailOfTruck.getOrientation() + " Movement " + tailOfTruck.getMovement());
 					Main.lo.setSensor(x.objectStr,x.objectStr, millis);
-					x.isActive = false;
+					x.setActive(false);
 				}
 
 			}else{
@@ -819,7 +815,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			if(truckPosition.getOrientation().equals("same")) {
 				if(truckPosition.getSegmentFraction() > stopPosition.getSegmentFraction()){
 					//System.out.print("whoopee");
-					stopPosition.isActive = false;
+					stopPosition.setActive(false);
 
 					return false;
 				}else{
@@ -834,7 +830,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			}else if (this.getOrientation().equals("opposite")){
 				if(truckPosition.getSegmentFraction() < stopPosition.getSegmentFraction()){
 					//99System.out.print("whoopee");
-					stopPosition.isActive = false;
+					stopPosition.setActive(false);
 
 					return false;
 				}else{
@@ -874,13 +870,14 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			if(truckPosition.getOrientation().equals("same")) {
 				if(truckPosition.getSegmentFraction() > stopPosition.getSegmentFraction()){
 					System.out.print("whoopee");
-					stopPosition.isActive = false;
+					java.awt.Toolkit.getDefaultToolkit().beep();
+					stopPosition.setActive(false);
 
 					return false;
 				}else{
 					//					//99System.out.print("movement " + this.getMovement() + " orientation " + this.getOrientation());
 					//					//99System.out.print("not yet"  + "this.getSegmentFraction()" + this.getSegmentFraction()+ "currentStop.getSegmentFraction()" + currentStop.getSegmentFraction() );
-					moveWithinSegment3(distance);
+					if (moveWithinSegment3(distance) == false) return false;
 					setPositionTangent();
 					updatePositionAndTangent(getPosition(),getTangent());
 					//generate new event
@@ -889,7 +886,8 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			}else if (this.getOrientation().equals("opposite")){
 				if(truckPosition.getSegmentFraction() < stopPosition.getSegmentFraction()){
 					//99System.out.print("whoopee");
-					stopPosition.isActive = false;
+					java.awt.Toolkit.getDefaultToolkit().beep();
+					stopPosition.setActive(false);
 
 					return false;
 				}else{
@@ -910,7 +908,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 			//99System.out.print("this.getSegmentNo()" + this.getSegmentNo());
 			//99System.out.print("currentStop.getSegmentNo()" + currentStop.getSegmentNo());
 			printPair("currentstop " , stopPosition.getStartArcPair());
-			System.out.println("movement" + this.getMovement() + "segmentNo" + this.getSegmentNo() + " IndexOfStartArcPairList " + this.getIndexOfStartArcPairList());
+			//System.out.println("movement" + this.getMovement() + "segmentNo" + this.getSegmentNo() + " IndexOfStartArcPairList " + this.getIndexOfStartArcPairList());
 			moveWithinSegment3(distance);
 			setPositionTangent();
 			updatePositionAndTangent(getPosition(),getTangent());
@@ -991,7 +989,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 		for (int i = 0; i < routeInOppDirTravelling.getRoutePath().size(); i++) {
 			routeInOppDirTravelling.startArcPairList = routeInOppDirTravelling.getRoutePath().get(i);
-			routeInOppDirTravelling.indexOfRoutePath = i;
+			routeInOppDirTravelling.setIndexOfRoutePath(i);
 
 			//check this
 
@@ -1100,7 +1098,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 		for (int i = 0; i < routeInOppDirTravelling.getRoutePath().size(); i++) {
 			routeInOppDirTravelling.startArcPairList = routeInOppDirTravelling.getRoutePath().get(i);
-			routeInOppDirTravelling.indexOfRoutePath = i;
+			routeInOppDirTravelling.setIndexOfRoutePath(i);
 
 			//check this
 
@@ -1196,7 +1194,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 	 * @param referenceTrucknNo
 	 * @param m43_TruckData_Display
 	 */
-	public void setKeyValues(int referenceTrucknNo,
+	public void setKeyValues(
 			M43_TruckData_Display m43_TruckData_Display) {
 
 		this.segmentNo = m43_TruckData_Display.segmentNo;
@@ -1211,7 +1209,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 	}
 	
 	public boolean isCurrentSensorsActive(int i) {
-		return getCurrentSensors()[i].isActive;
+		return getCurrentSensors()[i].isActive();
 	}
 
 	/**
@@ -1219,7 +1217,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 	 */
 	public boolean isCurrentStopActive() {
 		if (currentStop != null){
-			return getCurrentStop().isActive;
+			return getCurrentStop().isActive();
 		}else{
 			return false;
 		}
@@ -1229,10 +1227,10 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 	 * @param currentStopActive the currentStopActive to set
 	 */
 	public void setCurrentStopActive(boolean currentStopActive) {
-		this.getCurrentStop().isActive = currentStopActive;
+		this.getCurrentStop().setActive(currentStopActive);
 	}
 
-	public void setvaluesfromEngine(int referenceTruckNo, M43_TruckData_Display m43_TruckData_Display) {
+	public void setvaluesfromEngine( M43_TruckData_Display m43_TruckData_Display) {
 		this.setArc(m43_TruckData_Display.getArc());
 		this.settArc(m43_TruckData_Display.gettArc());
 		//this assumes the engine is in the same arc pair as the truck. need a better method
@@ -1257,7 +1255,7 @@ public class M43_TruckData_Display extends M42_Position_Tangent implements Clone
 
 	void setCurrentSensorsActive(boolean trueOrfalse) {
 		for(M76Stop sensor:getCurrentSensors()){
-			sensor.isActive = trueOrfalse;	
+			sensor.setActive(trueOrfalse);	
 		}
 	}
 

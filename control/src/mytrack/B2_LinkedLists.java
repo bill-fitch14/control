@@ -1670,10 +1670,12 @@ public class B2_LinkedLists  {
 
 		// convert long to stacks
 		Myfunctions.convertLongToStacks(init);
+		getParameters(graph, null, "siding");
 		getParameters(graph, Myfunctions.getSt1(), "st1");
 		getParameters(graph, Myfunctions.getSt2(), "st2");
 		getParameters(graph, Myfunctions.getSt3(), "st3");
 		getParameters(graph, Myfunctions.getSth(), "sth");
+		
 //		//99System.out.print("engineLength = " + strEngineLength + " noTrucks = "
 //				+ strNoTrucks + " truckLength = " + strTruckLength + " route = "
 //				+ route + " startArc = " + startArc + " startFraction "
@@ -1688,10 +1690,14 @@ public class B2_LinkedLists  {
 
 	private static void getParameters(D_MyGraph graph, Queue<Integer[]> deque, String trainName) {
 		float engineLength;
-		float truckLength;
-		
+		float truckLength = 0;
+		//this is done below
 		if(trainName.equals("sth")){
 			trainNo = 0;
+		}else if(trainName.equals("siding")){
+			trainNo = 4;
+//			trainStr = "T4";
+//			trainNumber = 4;
 		}else{
 			trainNo = Integer.parseInt(trainName.substring(2));
 		}
@@ -1704,14 +1710,25 @@ public class B2_LinkedLists  {
 			strEngineLength = "4";
 			engineLength = 4;
 		}
-		strNoTrucks = Integer.toString(deque.size());
-		int noTrucks = deque.size();
-		int numberTrucks=deque.size();
 		
-//		strNoTrucks = "4";
-//		noTrucks = 4;
-//		numberTrucks = 4;
-		
+		int noTrucksTrainSiding = 5;
+		int numberTrucks;
+		int numberEngines = 0;
+		if(!trainName.equals("siding")){
+			strNoTrucks = Integer.toString(deque.size());
+			int noTrucks = deque.size();
+			numberTrucks=deque.size();
+		}else{
+			
+			strNoTrucks = Integer.toString(noTrucksTrainSiding);
+			int noTrucks = noTrucksTrainSiding;
+			numberTrucks=noTrucksTrainSiding;
+			if(trainName.equals("sth")){
+				numberEngines = 1;
+			}else{
+			numberEngines = 0;
+			}
+		}
 		truckNames = null;
 		
 		truckNames = new Integer[8];
@@ -1720,12 +1737,22 @@ public class B2_LinkedLists  {
 //			truckNames[i] = tn[1];
 //			//99System.out.print(truckNames[i]);
 //		}
-		Integer i = 0;
-		for (Iterator iterator = deque.iterator(); iterator.hasNext();) {
-			Integer tn[] = (Integer[]) iterator.next();
-			//99System.out.print(i+"   "+tn[0]);
-			truckNames[i+1] = tn[0];
-			i++;
+		
+		int offset=20;
+		if(!trainName.equals("siding")){
+			Integer i = 0;
+			for (Iterator iterator = deque.iterator(); iterator.hasNext();) {
+				Integer tn[] = (Integer[]) iterator.next();
+				//99System.out.print(i+"   "+tn[0]);
+				truckNames[i+numberEngines] = tn[0];
+				i++;
+			}
+		}else{
+			for (int i = 0; i < numberTrucks+numberEngines; i++) {
+
+				//				Integer[] tn = (Integer[])( deque).get(i);
+				truckNames[i] = offset + i;
+			}
 		}
 //		for (int j = 0; j < 4; j++) {
 //			truckNames[j+1] = j;
@@ -1737,7 +1764,56 @@ public class B2_LinkedLists  {
 		String trainStr;
 		int trainNumber;
 		M61_Train_On_Route route31;
+
+//		D_MyGraph graph2;
+		C1_BranchGroup branchGroup;
+//		D_MyGraph DJG;
 		switch (trainName) {
+		case "siding":
+			truckLength = 1;
+			String routeString = "8_From_Rev,1_From_Rev";
+//			DJG = A_Setup.getGraph().get_DJG();
+			branchGroup = A_Setup.branchGroup;
+			K2_Route k2_route =  new K2_Route(routeString, graph, branchGroup);
+			int startArcPairIndex=0;
+			String[] startArcPair = k2_route.getRoutePairs().get(startArcPairIndex);
+			String startArc = U7_StartArcPairs.getIdentFromArcStringArray(startArcPair, graph);
+			String arc = U7_StartArcPairs.getArcFromIdent(startArc);
+			String direction =  U7_StartArcPairs.getDirectionFromIdent(startArc);
+			String[] arcStringArray = graph.getIdentToArcStringArrayMap().get(startArc);
+			String routePairKey = k2_route.getEngineRoutePairKey(arcStringArray);
+			String orientation = graph.getArcStringArrayKeyToTrainOrientationMap().get(routePairKey);
+			String movement = graph.getArcStringArrayKeyToTrainMovementMap().get(routePairKey);
+			
+			
+			numberEngines = 0;
+			
+			//startArc = "3_B_2_F";
+			startFraction = "10.1";
+			//startDirection = "For";
+			
+			
+			
+			trainStr = "T5";
+			trainNumber = 5;
+			trainStr = "T5"; 
+			trainNo = 5; 
+			
+			
+			
+			//String strEngineColor;
+			 
+			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor;  
+			String traincoupling = "tail";
+			route1 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
+					numberEngines, engineLength,  numberTrucks,  truckLength,
+					 truckNames,  routeString,  arc,
+					 startFraction,  direction, traincoupling, graph);
+
+			trainsOnRoute.addtrainOnRoute(route1);
+			
+			break;
 		case "st1":
 			
 //			truckLength = 1;
@@ -1787,7 +1863,7 @@ public class B2_LinkedLists  {
 			trainStr = "T1"; 
 			trainNo = 1; 
 			//String strEngineColor;
-			int numberEngines = 1; 
+			numberEngines = 0; 
 			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
 			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor;  
 
@@ -1797,9 +1873,9 @@ public class B2_LinkedLists  {
 			//trainStr = trainNo;
 			//trainNumber = 1;
 			
-			String traincoupling = "tail";
+			traincoupling = "tail";
 			route1 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
-					 engineLength,  numberTrucks,  truckLength,
+					numberEngines, engineLength,  numberTrucks,  truckLength,
 					 truckNames,  route,  startArc,
 					 startFraction,  startDirection, traincoupling, graph);
 			//L3_TrackLocation etrain = new L3_TrackLocation("Engine", trainName, startArc, startFraction, startDirection);
@@ -1825,12 +1901,12 @@ public class B2_LinkedLists  {
 			trainStr = "T2";
 			trainNo = 2; 
 
-			numberEngines = 1; 
+			numberEngines = 0; 
 			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
 			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor; 
 			traincoupling = "tail";
 			route2 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
-					 engineLength,  numberTrucks,  truckLength,
+					numberEngines, engineLength,  numberTrucks,  truckLength,
 					 truckNames,  route,  startArc,
 					 startFraction,  startDirection, traincoupling, graph);
 			// add the engine_route to the list of engine routes
@@ -1853,7 +1929,7 @@ public class B2_LinkedLists  {
 			startDirection = "For";
 			trainStr = "T3";
 			trainNo = 3; 
-			numberEngines = 5; 			
+			numberEngines = 0; 			
 
 			trainStr = "T3";
 			trainNo = 3; 
@@ -1861,7 +1937,7 @@ public class B2_LinkedLists  {
 			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor; 
 			traincoupling = "tail";
 			route31 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
-					 engineLength,  numberTrucks,  truckLength,
+					numberEngines, engineLength,  numberTrucks,  truckLength,
 					 truckNames,  route,  startArc,
 					 startFraction,  startDirection, traincoupling, graph);
 			// add the engine_route to the list of engine routes
@@ -1872,7 +1948,7 @@ public class B2_LinkedLists  {
 			//M6_Trains_On_Routes.moveTrainCheckForStop(trainStr, stop, numberTrucks);
 			
 			break;
-		case "sth":
+		case "sth1":
 
 			
 //			strTruckLength = "1";
@@ -1886,7 +1962,7 @@ public class B2_LinkedLists  {
 			strTruckLength = "0.5";
 			
 //			truckLength = 1;
-			route = "1_To_Rev,3_To_Rev";  //changed rev to for
+			route = "1_To_Rev,2_To_Rev";  //changed rev to for
 			startArc = "1_F_2_B";
 			startFraction = "0.1";
 			startDirection = "Rev";		 //changed rev to for
@@ -1900,13 +1976,97 @@ public class B2_LinkedLists  {
 
 			traincoupling = "tail";
 			route21 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
-					 engineLength,  numberTrucks,  truckLength,
+					numberEngines, engineLength,  numberTrucks,  truckLength,
 					 truckNames,  route,  startArc,
 					 startFraction,  startDirection, traincoupling, graph);
 			
 			trainsOnRoute.addtrainOnRoute(route21);
 			
 			//er = new M5_Train_Route(trainNo, color, engineLength, noTrucks, truckLength, route, startArc, startFraction, startDirection, truckNames);// assumes
+			break;
+		case "sth2":
+//			String noEngines = "1";
+//			String noTrucks = "0";
+//			startFraction = "0.1";
+//			A_Inglenook.trainPosition.setTrainParameters("To1", "Rev1", "T0",startFraction,noEngines,engineLength,noTrucks,truckLength);
+			break;
+		case "sth":
+			truckLength = 1;
+			routeString = "1_To_Rev,5_To_Rev";
+//			DJG = A_Setup.getGraph().get_DJG();
+			branchGroup = A_Setup.branchGroup;
+			k2_route =  new K2_Route(routeString, graph, branchGroup);
+			startArcPairIndex=1;
+			
+			
+//			M62_train train0 = M6_Trains_On_Routes.getTrainOnRoute("T0");  //trainString = "T0" say
+//			
+//			numberEngines =1;
+//			numberTrucks = 0;
+//			train0.setNumberEngines(numberEngines);
+//			train0.setNumberTrucks(numberTrucks);
+			
+			k2_route.setup();
+	/*
+	 * does this
+	 * 			route.route = route.convertRouteToEngineRoute(route.getStrRoute());
+				this.routePairs = K2_Route.generateEngineRoutePairs(route);
+			
+				this.routePath = generateEngineRoutePath(routePairs, graph);
+				routePairIndex = 0;
+				startArcPairList = routePath.get(0);*/
+			//String[] startArcPair = k2_route.getRoutePairs().get(startArcPairIndex);
+			List<String[]> startArcPairList = k2_route.getStartArcPairList();
+			int indexOfStartArcPairList = 1;
+			startArcPair = startArcPairList.get(indexOfStartArcPairList);
+			
+			
+			//startArcPair = k2_route.getRoutePairs().get(startArcPairIndex);
+			startArc = U7_StartArcPairs.getIdentFromArcStringArray(startArcPair, graph);
+			arc = U7_StartArcPairs.getArcFromIdent(startArc);   
+			direction =  U7_StartArcPairs.getDirectionFromIdent(startArc);
+			arcStringArray = graph.getIdentToArcStringArrayMap().get(startArc);
+			routePairKey = k2_route.getEngineRoutePairKey(arcStringArray);
+			orientation = graph.getArcStringArrayKeyToTrainOrientationMap().get(routePairKey);
+			movement = graph.getArcStringArrayKeyToTrainMovementMap().get(routePairKey);
+			
+			
+			numberEngines = 1;
+			
+			//startArc = "3_B_2_F";
+			startFraction = "1.0";
+			//startDirection = "For";
+			
+			
+			
+			trainStr = "T0";
+			trainNumber = 4;
+			trainStr = "T0"; 
+			trainNo = 4; 
+			
+			
+			
+			//String strEngineColor;
+			 
+			engineLength = U4_Constants.enginelength*U4_Constants.scalefactor; 
+			truckLength = U4_Constants.trucklength*U4_Constants.scalefactor;  
+			traincoupling = "tail";
+			route1 = new M61_Train_On_Route( trainStr,  trainNo,  strEngineColor,
+					numberEngines, engineLength,  numberTrucks,  truckLength,
+					 truckNames,  routeString,  arc,
+					 startFraction,  direction, traincoupling, graph);
+
+			trainsOnRoute.addtrainOnRoute(route1);
+			//route1.reset_truck_locations(0);
+			A_Inglenook.trainPosition.positionTrainOnRoute("T0", k2_route, 0, startFraction, direction,numberEngines, engineLength,numberTrucks, truckLength);
+			
+			String noEngines = "1";
+			String noTrucks = "0";
+			startFraction = "1.0";
+			K2_Route r1 = A_Inglenook.trainPosition.setTrainParameters("From2", "Rev2", "T0", 2, startFraction,noEngines,engineLength, noTrucks, truckLength);
+			
+			//route = setTrainParameters("To2", "For2", "T0",stringFraction,noEngines,engineLength, noTrucks, truckLength);
+			break;
 		}
 
 	}

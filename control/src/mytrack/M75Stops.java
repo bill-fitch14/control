@@ -38,6 +38,24 @@ public final class M75Stops {
 		return null;
 	}
 
+	
+	public static void addStopPosition2(D_MyGraph graph, String arc, String fraction, String directionFacing, float stopLength, String stopStr){
+//		arc = "2_F_3_B";
+//		fraction = "2.1";
+//		directionFacing = "Rev";
+
+		M76Stop stop_display1f1 = new M76Stop(arc, directionFacing, graph, fraction, false);
+		stop_display1f1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
+
+
+//		stopLength = 0.5f*U4_Constants.scalefactor;
+		stopLength = stopLength*U4_Constants.scalefactor;
+		stopStr = "S1F1";
+		stop_display1f1.set_BG(stopLength, stopStr, stopStr, "Stop");
+		stop_display1f1.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
+		//trainsOnRoute.addtrainOnRoute(route1);
+		addstop(stop_display1f1);
+	}
 
 	public static void addStopPosition(D_MyGraph graph, String stopName){
 
@@ -400,6 +418,18 @@ public final class M75Stops {
 	}
 
 	public static void addSensorPosition(D_MyGraph graph, String sensorName) {
+		
+		/*
+		 * Calculation of sensor positions
+		 * 
+		 * length of straight 87mm but I am taking straight as 160mm as that is the lenghth of the straight I am using
+		 * 
+		 * distance from point a)   60 mm      60/87 = 0.689      60/160 = 0.375   4 segments hence 3.625
+		 * distance from point b)  286.5       286.5/87 = 3.293  286.5/160 = 1.79  4 segments hence 2.21
+		 * distance apart          226.5mm     226.5/87 = 2.603
+		 * 
+		 * 
+		 */
 
 		String arc = null;
 		String fraction = null;
@@ -415,14 +445,13 @@ public final class M75Stops {
 		case "tosthr1":
 			arc = "2_B_1_F";
 			fraction = "3.625";
-			fraction = "2.5";
 			directionFacing = "Rev";
 			//stopNo = "S1";
 			M76Stop stop_displaytosthr1 = new M76Stop(arc, directionFacing, graph, fraction, true);
 			stop_displaytosthr1.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
 
 
-			stopLength = 0.5f*U4_Constants.scalefactor;
+			stopLength = 1.0f*U4_Constants.scalefactor;
 			stopStr = "SENR1";
 			stop_displaytosthr1.set_BG(stopLength, stopStr, stopStr, "Sensor");
 			stop_displaytosthr1.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
@@ -432,6 +461,7 @@ public final class M75Stops {
 		case "tosthr2":
 			arc = "2_B_1_F";
 			fraction = "2.20625";
+			//fraction = "2.21";
 
 			directionFacing = "Rev";
 			//stopNo = "S1";
@@ -439,7 +469,7 @@ public final class M75Stops {
 			stop_displaytosthr2.positionWithinSegment3(0.5f*U4_Constants.scalefactor);
 
 
-			stopLength = 0.5f*U4_Constants.scalefactor;
+			stopLength = 1.0f*U4_Constants.scalefactor;
 			stopStr = "SENR2";
 			stop_displaytosthr2.set_BG(stopLength, stopStr, stopStr, "Sensor");
 			stop_displaytosthr2.moveWithinSegment3(0.5f*U4_Constants.scalefactor);
@@ -449,7 +479,7 @@ public final class M75Stops {
 		case "fromsthf1":
 			arc = "1_F_2_B";
 			fraction = "2.20625";
-
+			//fraction = "2.21";
 			directionFacing = "Rev";
 			//stopNo = "S1F1";
 			M76Stop stop_displayfromsthf1 = new M76Stop(arc, directionFacing, graph, fraction, true);
@@ -464,7 +494,6 @@ public final class M75Stops {
 		case "fromsthf2":
 			arc = "1_F_2_B";
 			fraction = "3.625";
-			fraction = "2.5";
 			directionFacing = "Rev";
 			//stopNo = "S1F1";
 			M76Stop stop_displayfromsthf2 = new M76Stop(arc, directionFacing, graph, fraction, true);

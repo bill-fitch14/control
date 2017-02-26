@@ -311,7 +311,7 @@ public final class U7_StartArcPairs {
 
 		for (int i = 0; i < route.getRoutePath().size(); i++) {
 			route.startArcPairList = route.getRoutePath().get(i);
-			route.indexOfRoutePath = i;
+			route.setIndexOfRoutePath(i);
 			
 			   //check this
 			
